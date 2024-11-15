@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+}
+
+/* MapLibre GL Styles */
+.maplibregl-map {
+  width: 100%;
+  height: 100%;
+}
+
+.maplibregl-popup {
+  max-width: 300px !important;
+}
+
+.maplibregl-popup-content {
+  padding: 0 !important;
+  border-radius: 0.5rem !important;
+}
+
+.custom-popup {
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+}
+
+/* Control Panel Styles */
+.form-checkbox {
+  @apply rounded border-gray-300 text-blue-500 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50;
+}
+
+select {
+  @apply block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50;
+}
+
+/* Legend Styles */
+.legend-dot {
+  @apply w-4 h-4 rounded-full border border-gray-300;
+}
