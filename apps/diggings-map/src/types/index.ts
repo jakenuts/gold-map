@@ -1,3 +1,6 @@
+
+//type locationType = 'mine' | 'prospect' | 'past producer' | 'producer' | 'occurrence' | 'mineral location' | 'mineral deposit' | 'claim' | 'default';
+
 export interface MiningClaim {
   id: string;
   claimId: string;
