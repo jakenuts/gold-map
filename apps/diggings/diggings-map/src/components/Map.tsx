@@ -64,11 +64,9 @@ const Map = () => {
   }, [usgsRecords, layers.usgsRecords]);
 
   return (
-    <div className="absolute inset-0 flex flex-col">
-      <div ref={mapContainer} className="flex-1 relative">
-        <div className="absolute inset-0">
-          {/* Map will be rendered here */}
-        </div>
+    <div className="w-full h-full absolute inset-0">
+      <div ref={mapContainer} className="w-full h-full">
+        {/* Map will be rendered here */}
         
         {/* Overlays */}
         <div className="absolute top-0 right-0 z-10 p-4 space-y-4">

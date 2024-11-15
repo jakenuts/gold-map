@@ -21,7 +21,7 @@ function App() {
         <MapProvider>
           <div className="flex flex-col h-full">
             <header className="bg-gray-800 text-white p-4 shadow-lg z-10">
-              <h1 className="text-2xl font-bold">California Mining Claims Map</h1>
+              <h1 className="text-xl font-bold">California Mining Claims Map</h1>
             </header>
             <main className="flex-1 relative">
               <ErrorBoundary>
