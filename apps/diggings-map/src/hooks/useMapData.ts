@@ -12,7 +12,7 @@ const filterMiningClaims = (claims: MiningClaim[], filters: FilterState): Mining
   });
  
   const filtered = claims.filter(claim => {
-    if (filters.claimType !== 'all' && claim.claimType !== filters.claimType) return false;
+    if (filters.locationType !== 'all' && claim.locationType !== filters.locationType) return false;
     if (filters.status !== 'all' && claim.status !== filters.status) return false;
     if (filters.year !== 'all') {
       const claimYear = new Date(claim.filingDate).getFullYear().toString();
@@ -23,7 +23,7 @@ const filterMiningClaims = (claims: MiningClaim[], filters: FilterState): Mining
 
   console.log('Filtered claims:', {
     remainingClaims: filtered.length,
-    claimTypes: [...new Set(filtered.map(c => c.claimType))],
+    locationTypes: [...new Set(filtered.map(c => c.locationType))],
     statuses: [...new Set(filtered.map(c => c.status))]
   });
 

@@ -4,7 +4,17 @@ import { KMLService } from './kmlService';
 // Cache for loaded KML data
 let cachedClaims: MiningClaim[] | null = null;
 
-export const api = {
+interface API {
+  getMiningClaims(bounds: {
+    north: number;
+    south: number;
+    east: number;
+    west: number;
+  }): Promise<MiningClaim[]>;
+  getUSGSRecords(): Promise<USGSRecord[]>;
+}
+
+export const api: API = {
   async getMiningClaims(bounds: {
     north: number;
     south: number;
@@ -16,6 +26,9 @@ export const api = {
       if (!cachedClaims) {
         console.log('No cached claims found, loading KMZ data...');
         try {
+          // Clear any existing cache
+          cachedClaims = null;
+          
           cachedClaims = await KMLService.parseKMZ('/data/filtered-norcal-west.kmz');
           console.log('Successfully loaded and cached claims:', {
             total: cachedClaims.length,
@@ -25,9 +38,20 @@ export const api = {
               east: Math.max(...cachedClaims.map(c => c.longitude)),
               west: Math.min(...cachedClaims.map(c => c.longitude))
             },
-            types: [...new Set(cachedClaims.map(c => c.claimType))],
+            locationTypes: [...new Set(cachedClaims.map(c => c.locationType))],
+            claimTypes: [...new Set(cachedClaims.map(c => c.claimType))],
             statuses: [...new Set(cachedClaims.map(c => c.status))]
           });
+
+          // Log the first few claims to help debug
+          console.log('Sample claims:', cachedClaims.slice(0, 3).map(c => ({
+            name: c.claimName,
+            locationType: c.locationType,
+            claimType: c.claimType,
+            status: c.status,
+            coords: [c.longitude, c.latitude]
+          })));
+
         } catch (err) {
           const error = err instanceof Error ? err : new Error('Unknown error loading KMZ file');
           console.error('Error loading KMZ file:', error);
@@ -46,7 +70,13 @@ export const api = {
 
       console.log('Filtered claims:', {
         total: filteredClaims.length,
-        sample: filteredClaims.slice(0, 3)
+        locationTypes: [...new Set(filteredClaims.map(c => c.locationType))],
+        sample: filteredClaims.slice(0, 3).map(c => ({
+          name: c.claimName,
+          locationType: c.locationType,
+          status: c.status,
+          coords: [c.longitude, c.latitude]
+        }))
       });
 
       return filteredClaims;

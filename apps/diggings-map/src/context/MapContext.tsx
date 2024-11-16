@@ -1,19 +1,10 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { LayerState, FilterState } from '../types';
+import { LayerState, FilterState, MapContextType } from '../types';
 
 interface Viewport {
   longitude: number;
   latitude: number;
   zoom: number;
-}
-
-interface MapContextType {
-  layers: LayerState;
-  setLayers: (layers: LayerState) => void;
-  filters: FilterState;
-  setFilters: (filters: FilterState) => void;
-  viewport: Viewport;
-  setViewport: (viewport: Viewport) => void;
 }
 
 const defaultViewport: Viewport = {
@@ -29,7 +20,7 @@ const defaultLayers: LayerState = {
 };
 
 const defaultFilters: FilterState = {
-  claimType: 'all',
+  locationType: 'mine',  // Default to showing mines
   status: 'all',
   year: 'all'
 };
@@ -40,6 +31,7 @@ export const MapProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [layers, setLayers] = useState<LayerState>(defaultLayers);
   const [filters, setFilters] = useState<FilterState>(defaultFilters);
   const [viewport, setViewport] = useState<Viewport>(defaultViewport);
+  const [controlPanelVisible, setControlPanelVisible] = useState(false); // Hidden by default
 
   return (
     <MapContext.Provider
@@ -49,7 +41,9 @@ export const MapProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         filters,
         setFilters,
         viewport,
-        setViewport
+        setViewport,
+        controlPanelVisible,
+        setControlPanelVisible
       }}
     >
       {children}

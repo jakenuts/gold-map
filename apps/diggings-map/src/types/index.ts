@@ -5,7 +5,7 @@ export interface MiningClaim {
   claimId: string;
   claimName: string;
   claimType: 'lode' | 'placer' | 'mill' | 'tunnel';
-  locationType: LocationType;  // Added this field
+  locationType: LocationType;
   status: 'active' | 'closed' | 'void';
   township: string;
   range: string;
@@ -34,7 +34,7 @@ export interface LayerState {
 }
 
 export interface FilterState {
-  claimType: string;
+  locationType: string;  // Changed from claimType
   status: string;
   year: string;
 }
@@ -50,4 +50,6 @@ export interface MapContextType {
     zoom: number;
   };
   setViewport: (viewport: { longitude: number; latitude: number; zoom: number }) => void;
+  controlPanelVisible: boolean;  // Added this
+  setControlPanelVisible: (visible: boolean) => void;  // Added this
 }
