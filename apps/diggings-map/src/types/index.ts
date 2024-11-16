@@ -1,11 +1,11 @@
-
-//type locationType = 'mine' | 'prospect' | 'past producer' | 'producer' | 'occurrence' | 'mineral location' | 'mineral deposit' | 'claim' | 'default';
+export type LocationType = 'mine' | 'prospect' | 'past producer' | 'producer' | 'occurrence' | 'mineral location' | 'mineral deposit' | 'claim' | 'default';
 
 export interface MiningClaim {
   id: string;
   claimId: string;
   claimName: string;
   claimType: 'lode' | 'placer' | 'mill' | 'tunnel';
+  locationType: LocationType;  // Added this field
   status: 'active' | 'closed' | 'void';
   township: string;
   range: string;

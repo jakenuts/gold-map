@@ -9,6 +9,12 @@ export interface PlacemarkData {
   [key: string]: any;
 }
 
+interface KMLNode {
+  Placemark?: any | any[];
+  Folder?: any | any[];
+  [key: string]: any;
+}
+
 export class KMLService {
   private static parser = new XMLParser({
     ignoreAttributes: false,
@@ -16,18 +22,34 @@ export class KMLService {
     removeNSPrefix: true
   });
 
+  private static extractPlacemarks(node: KMLNode, placemarks: any[] = []): any[] {
+    // Handle direct Placemarks
+    if (node.Placemark) {
+      const nodePlacemarks = Array.isArray(node.Placemark) ? node.Placemark : [node.Placemark];
+      placemarks.push(...nodePlacemarks);
+    }
+
+    // Recursively process Folders
+    if (node.Folder) {
+      const folders = Array.isArray(node.Folder) ? node.Folder : [node.Folder];
+      folders.forEach((folder: KMLNode) => {
+        this.extractPlacemarks(folder, placemarks);
+      });
+    }
+
+    return placemarks;
+  }
+
   private static parseKMLString(kmlString: string): PlacemarkData[] {
     try {
       const result = this.parser.parse(kmlString);
       
-      if (!result.kml?.Document?.Placemark) {
+      if (!result.kml?.Document) {
         return [];
       }
 
-      // Ensure Placemark is always an array
-      const placemarks = Array.isArray(result.kml.Document.Placemark) 
-        ? result.kml.Document.Placemark 
-        : [result.kml.Document.Placemark];
+      // Extract all Placemarks recursively from Document and its Folders
+      const placemarks = this.extractPlacemarks(result.kml.Document);
 
       return placemarks.map((placemark: any, index: number) => {
         // Extract coordinates from different possible geometries
@@ -49,76 +71,42 @@ export class KMLService {
         // Extract extended data
         const extendedDataObj: { [key: string]: string } = {};
         if (placemark.ExtendedData?.Data) {
-          reject(err);
-          return;
-        }
+          const extendedData = Array.isArray(placemark.ExtendedData.Data)
+            ? placemark.ExtendedData.Data
+            : [placemark.ExtendedData.Data];
 
-        try {
-          if (!result.kml?.Document?.[0]) {
-            throw new Error('Invalid KML structure');
-          }
-
-          const placemarks = result.kml.Document[0].Placemark || [];
-          const data = placemarks.map((placemark, index) => {
-            // Extract coordinates from different possible geometries
-            let coordinates = '';
-            if (placemark.Point?.[0]?.coordinates?.[0]) {
-              coordinates = placemark.Point[0].coordinates[0];
-            } else if (placemark.MultiGeometry?.[0]?.Point?.[0]?.coordinates?.[0]) {
-              coordinates = placemark.MultiGeometry[0].Point[0].coordinates[0];
-            } else if (placemark.LineString?.[0]?.coordinates?.[0]) {
-              coordinates = placemark.LineString[0].coordinates[0];
-            } else if (placemark.Polygon?.[0]?.outerBoundaryIs?.[0]?.LinearRing?.[0]?.coordinates?.[0]) {
-              coordinates = placemark.Polygon[0].outerBoundaryIs[0].LinearRing[0].coordinates[0];
+          extendedData.forEach((data: any) => {
+            if (data['@_name'] && data.value) {
+              extendedDataObj[data['@_name']] = data.value;
             }
-
-            // Extract basic properties
-            const name = placemark.name?.[0] || '';
-            const description = placemark.description?.[0] || '';
-
-            // Extract extended data
-            const extendedData = placemark.ExtendedData?.[0]?.Data || [];
-            const extendedDataObj: { [key: string]: string } = {};
-            
-            extendedData.forEach(data => {
-              if (data.$ && data.$.name) {
-                const name = data.$.name;
-                const value = data.value?.[0] || '';
-                if (name && value) {
-                  extendedDataObj[name] = value;
-                }
-              }
-            });
-
-            // Create the placemark object
-            const placemarkObj: PlacemarkData = {
-              id: `placemark-${index}`,
-              name: name.trim(),
-              description: description.trim(),
-              coordinates: coordinates.trim(),
-              ...extendedDataObj
-            };
-
-            // Remove any undefined or null values
-            Object.keys(placemarkObj).forEach(key => {
-              if (placemarkObj[key] === undefined || placemarkObj[key] === null) {
-                delete placemarkObj[key];
-              }
-            });
-
-            return placemarkObj;
           });
-
-          resolve(data);
-        } catch (error) {
-          console.error('Error parsing KML:', error);
-          reject(new Error('Failed to parse KML content'));
         }
+
+        // Create the placemark object
+        const placemarkObj: PlacemarkData = {
+          id: `placemark-${index}`,
+          name: name.trim(),
+          description: description.trim(),
+          coordinates: coordinates.trim(),
+          ...extendedDataObj
+        };
+
+        // Remove any undefined or null values
+        Object.keys(placemarkObj).forEach(key => {
+          if (placemarkObj[key] === undefined || placemarkObj[key] === null) {
+            delete placemarkObj[key];
+          }
+        });
+
+        return placemarkObj;
       });
-    });
+    } catch (error) {
+      console.error('Error parsing KML:', error);
+      throw new Error('Failed to parse KML content');
+    }
   }
 
-  static async parseKMZFile(file: File): Promise<PlacemarkData[]> {
+  private static async parseKMZFile(file: File): Promise<PlacemarkData[]> {
     try {
       const arrayBuffer = await file.arrayBuffer();
       const zip = new JSZip();
@@ -141,7 +129,7 @@ export class KMLService {
     }
   }
 
-  static async parseKMLFile(file: File): Promise<PlacemarkData[]> {
+  private static async parseKMLFile(file: File): Promise<PlacemarkData[]> {
     try {
       const text = await file.text();
       return this.parseKMLString(text);

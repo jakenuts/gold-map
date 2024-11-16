@@ -1,6 +1,6 @@
 import * as toGeoJSON from '@tmcw/togeojson';
 import JSZip from 'jszip';
-import { MiningClaim } from '../types';
+import { MiningClaim, LocationType } from '../types';
 
 // Track all types we find
 const foundTypes = new Set<string>();
@@ -37,6 +37,22 @@ const STATUS_MAPPINGS: Record<string, MiningClaim['status']> = {
   'occurrence': 'active',
   'default': 'active'
 };
+
+// Function to normalize type string to LocationType
+function normalizeLocationType(type: string): LocationType {
+  const normalized = type.toLowerCase();
+  if (normalized === 'mine' || 
+      normalized === 'prospect' || 
+      normalized === 'past producer' || 
+      normalized === 'producer' || 
+      normalized === 'occurrence' || 
+      normalized === 'mineral location' || 
+      normalized === 'mineral deposit' || 
+      normalized === 'claim') {
+    return normalized as LocationType;
+  }
+  return 'default';
+}
 
 export class KMLService {
   private static async extractKMLFromKMZ(kmzData: ArrayBuffer): Promise<Document> {
@@ -87,12 +103,14 @@ export class KMLService {
       const typeKey = type.toLowerCase();
       const mappedType = TYPE_MAPPINGS[typeKey] || TYPE_MAPPINGS.default;
       const mappedStatus = STATUS_MAPPINGS[status] || STATUS_MAPPINGS.default;
+      const locationType = normalizeLocationType(type);
 
       return {
         id: `kml-${Math.random().toString(36).substr(2, 9)}`,
         claimId: `KML-${Math.random().toString(36).substr(2, 9)}`,
         claimName: properties.name || 'Unknown',
         claimType: mappedType,
+        locationType: locationType,  // Added this field
         status: mappedStatus,
         latitude: 0, // Will be set later
         longitude: 0, // Will be set later
@@ -109,6 +127,7 @@ export class KMLService {
         claimId: `KML-ERROR-${Math.random().toString(36).substr(2, 9)}`,
         claimName: 'Error',
         claimType: 'lode',
+        locationType: 'default',  // Added this field
         status: 'active',
         latitude: 0,
         longitude: 0,

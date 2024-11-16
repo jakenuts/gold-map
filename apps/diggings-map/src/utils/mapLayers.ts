@@ -1,10 +1,11 @@
 import maplibregl, { Map, MapGeoJSONFeature } from 'maplibre-gl';
-import { MiningClaim, USGSRecord } from '../types';
+import { MiningClaim, USGSRecord, LocationType } from '../types';
 
 interface Properties {
   claimName?: string;
   claimId?: string;
   claimType?: string;
+  locationType?: LocationType;
   status?: string;
   township?: string;
   range?: string;
@@ -15,6 +16,19 @@ interface Properties {
   commodityTypes?: string[];
   operationType?: string;
 }
+
+// Color mappings for different location types
+const LOCATION_COLORS: Record<LocationType, string> = {
+  'mine': '#FF4136',           // Red
+  'prospect': '#FFDC00',       // Yellow
+  'past producer': '#B10DC9',  // Purple
+  'producer': '#01FF70',       // Green
+  'occurrence': '#7FDBFF',     // Blue
+  'mineral location': '#FF851B', // Orange
+  'mineral deposit': '#F012BE', // Pink
+  'claim': '#39CCCC',          // Teal
+  'default': '#AAAAAA'         // Gray
+};
 
 export const addMiningClaimsLayer = (
   map: Map,
@@ -39,8 +53,7 @@ export const addMiningClaimsLayer = (
           },
           properties: {
             ...claim,
-            color: claim.status === 'active' ? '#4CAF50' : 
-                   claim.status === 'closed' ? '#F44336' : '#9E9E9E'
+            color: LOCATION_COLORS[claim.locationType] || LOCATION_COLORS.default
           }
         }))
       }
@@ -154,7 +167,8 @@ const renderMiningClaimPopup = (props: Properties): string => `
     <h3 class="text-lg font-bold mb-2">${props.claimName}</h3>
     <div class="space-y-1">
       <p><span class="font-medium">Claim ID:</span> ${props.claimId}</p>
-      <p><span class="font-medium">Type:</span> ${props.claimType}</p>
+      <p><span class="font-medium">Location Type:</span> ${props.locationType}</p>
+      <p><span class="font-medium">Claim Type:</span> ${props.claimType}</p>
       <p><span class="font-medium">Status:</span> ${props.status}</p>
       <p><span class="font-medium">Location:</span> ${props.township}, ${props.range}, Section ${props.section}</p>
       <p><span class="font-medium">Filed:</span> ${props.filingDate ? new Date(props.filingDate).toLocaleDateString() : 'N/A'}</p>
@@ -173,3 +187,6 @@ const renderUSGSRecordPopup = (props: Properties): string => `
     </div>
   </div>
 `;
+
+// Export colors for use in Legend
+export const LOCATION_TYPE_COLORS = LOCATION_COLORS;
