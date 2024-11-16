@@ -8,11 +8,21 @@ import maplibregl from 'maplibre-gl';
 const filterMiningClaims = (claims: MiningClaim[], filters: FilterState): MiningClaim[] => {
   console.log('Filtering claims:', {
     totalClaims: claims.length,
-    filters
+    filters,
+    locationTypes: [...new Set(claims.map(c => c.locationType))]
   });
  
   const filtered = claims.filter(claim => {
-    if (filters.locationType !== 'all' && claim.locationType !== filters.locationType) return false;
+    // Only filter by locationType if it's not set to 'all'
+    if (filters.locationType !== 'all' && claim.locationType !== filters.locationType) {
+      console.log('Filtering out claim due to locationType:', {
+        claimType: claim.locationType,
+        filterType: filters.locationType,
+        claimName: claim.claimName
+      });
+      return false;
+    }
+    
     if (filters.status !== 'all' && claim.status !== filters.status) return false;
     if (filters.year !== 'all') {
       const claimYear = new Date(claim.filingDate).getFullYear().toString();
@@ -35,6 +45,7 @@ export const useMapData = (mapRef: RefObject<maplibregl.Map>) => {
 
   console.log('Map data hook state:', {
     layers,
+    filters,
     viewport,
     mapInitialized: !!mapRef.current
   });
@@ -71,7 +82,12 @@ export const useMapData = (mapRef: RefObject<maplibregl.Map>) => {
         });
         console.log('Received claims:', {
           total: claims.length,
-          sample: claims.slice(0, 3)
+          locationTypes: [...new Set(claims.map(c => c.locationType))],
+          sample: claims.slice(0, 3).map(c => ({
+            name: c.claimName,
+            type: c.locationType,
+            status: c.status
+          }))
         });
         return filterMiningClaims(claims, filters);
       } catch (error) {

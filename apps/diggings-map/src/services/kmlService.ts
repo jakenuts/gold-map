@@ -40,17 +40,22 @@ const STATUS_MAPPINGS: Record<string, MiningClaim['status']> = {
 
 // Function to normalize type string to LocationType
 function normalizeLocationType(type: string): LocationType {
-  const normalized = type.toLowerCase();
-  if (normalized === 'mine' || 
-      normalized === 'prospect' || 
-      normalized === 'past producer' || 
-      normalized === 'producer' || 
-      normalized === 'occurrence' || 
-      normalized === 'mineral location' || 
-      normalized === 'mineral deposit' || 
-      normalized === 'claim') {
-    return normalized as LocationType;
-  }
+  // Log the raw type for debugging
+  console.log('Normalizing location type:', type);
+  
+  const normalized = type.toLowerCase().trim();
+  
+  // Check for variations of mine types
+  if (normalized.includes('mine')) return 'mine';
+  if (normalized.includes('prospect')) return 'prospect';
+  if (normalized.includes('past producer')) return 'past producer';
+  if (normalized.includes('producer')) return 'producer';
+  if (normalized.includes('occurrence')) return 'occurrence';
+  if (normalized.includes('mineral location')) return 'mineral location';
+  if (normalized.includes('mineral deposit')) return 'mineral deposit';
+  if (normalized.includes('claim')) return 'claim';
+  
+  console.log('Using default type for:', type);
   return 'default';
 }
 
@@ -105,12 +110,20 @@ export class KMLService {
       const mappedStatus = STATUS_MAPPINGS[status] || STATUS_MAPPINGS.default;
       const locationType = normalizeLocationType(type);
 
+      // Log the type mapping for debugging
+      console.log('Type mapping:', {
+        original: type,
+        normalized: typeKey,
+        locationType: locationType,
+        claimType: mappedType
+      });
+
       return {
         id: `kml-${Math.random().toString(36).substr(2, 9)}`,
         claimId: `KML-${Math.random().toString(36).substr(2, 9)}`,
         claimName: properties.name || 'Unknown',
         claimType: mappedType,
-        locationType: locationType,  // Added this field
+        locationType: locationType,
         status: mappedStatus,
         latitude: 0, // Will be set later
         longitude: 0, // Will be set later
@@ -127,7 +140,7 @@ export class KMLService {
         claimId: `KML-ERROR-${Math.random().toString(36).substr(2, 9)}`,
         claimName: 'Error',
         claimType: 'lode',
-        locationType: 'default',  // Added this field
+        locationType: 'default',
         status: 'active',
         latitude: 0,
         longitude: 0,
@@ -143,6 +156,9 @@ export class KMLService {
   static async parseKMZ(kmzUrl: string): Promise<MiningClaim[]> {
     console.log('Starting KMZ parsing from URL:', kmzUrl);
     try {
+      // Clear the types set for fresh data
+      foundTypes.clear();
+      
       const response = await fetch(kmzUrl);
       if (!response.ok) {
         throw new Error(`Failed to fetch KMZ file: ${response.status} ${response.statusText}`);
@@ -188,7 +204,8 @@ export class KMLService {
       console.log('KMZ parsing complete:', {
         totalFeatures: geoJson.features.length,
         validClaims: claims.length,
-        foundTypes: Array.from(foundTypes)
+        foundTypes: Array.from(foundTypes),
+        locationTypes: [...new Set(claims.map(c => c.locationType))]
       });
 
       return claims;
