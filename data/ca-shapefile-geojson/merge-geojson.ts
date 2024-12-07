@@ -18,7 +18,6 @@ interface GeoJSONFeature {
 
 interface GeoJSONCollection {
     type: string;
-    name?: string;
     features: GeoJSONFeature[];
 }
 
@@ -95,61 +94,43 @@ async function mergeGeoJSON() {
         const pointGeoJSON: GeoJSONCollection = JSON.parse(pointContent);
         const polyGeoJSON: GeoJSONCollection = JSON.parse(polyContent);
 
-        // Process and group features
-        const groupedFeatures: { [key: string]: GeoJSONFeature[] } = {};
-
-        // Process point features
-        console.log('Processing point features...');
-        pointGeoJSON.features
-            .filter(feature => shouldIncludeFeature(feature.properties.FTR_TYPE))
-            .forEach(feature => {
-                const processedFeature = {
-                    ...feature,
+        // Process features
+        console.log('Processing features...');
+        const processedFeatures = [
+            ...pointGeoJSON.features
+                .filter(feature => shouldIncludeFeature(feature.properties.FTR_TYPE))
+                .map(feature => ({
+                    type: "Feature",
+                    geometry: feature.geometry,
                     properties: {
                         ...feature.properties,
                         original_type: feature.properties.FTR_TYPE,
                         category: consolidateCategory(feature.properties.FTR_TYPE),
+                        group: getFeatureGroup(consolidateCategory(feature.properties.FTR_TYPE)),
                         geometry_type: 'point',
                         feature_class: 'mining_site'
                     }
-                };
-                const group = getFeatureGroup(processedFeature.properties.category);
-                if (!groupedFeatures[group]) {
-                    groupedFeatures[group] = [];
-                }
-                groupedFeatures[group].push(processedFeature);
-            });
-
-        // Process polygon features
-        console.log('Processing polygon features...');
-        polyGeoJSON.features
-            .filter(feature => shouldIncludeFeature(feature.properties.FTR_TYPE))
-            .forEach(feature => {
-                const processedFeature = {
-                    ...feature,
+                })),
+            ...polyGeoJSON.features
+                .filter(feature => shouldIncludeFeature(feature.properties.FTR_TYPE))
+                .map(feature => ({
+                    type: "Feature",
+                    geometry: feature.geometry,
                     properties: {
                         ...feature.properties,
                         original_type: feature.properties.FTR_TYPE,
                         category: consolidateCategory(feature.properties.FTR_TYPE),
+                        group: getFeatureGroup(consolidateCategory(feature.properties.FTR_TYPE)),
                         geometry_type: 'polygon',
                         feature_class: 'mining_site'
                     }
-                };
-                const group = getFeatureGroup(processedFeature.properties.category);
-                if (!groupedFeatures[group]) {
-                    groupedFeatures[group] = [];
-                }
-                groupedFeatures[group].push(processedFeature);
-            });
+                }))
+        ];
 
-        // Create the final grouped structure
+        // Create the final GeoJSON
         const mergedGeoJSON = {
             type: "FeatureCollection",
-            features: Object.entries(groupedFeatures).map(([group, features]) => ({
-                type: "FeatureCollection",
-                name: group,
-                features: features
-            }))
+            features: processedFeatures
         };
 
         // Write merged data
@@ -158,10 +139,16 @@ async function mergeGeoJSON() {
         console.log(`\nMerged data saved to: ${outputPath}`);
 
         // Print summary
-        console.log('\nFeature Groups:');
-        Object.entries(groupedFeatures).forEach(([group, features]) => {
-            console.log(`${group}: ${features.length} features`);
+        const groups = new Map<string, number>();
+        processedFeatures.forEach(feature => {
+            const group = feature.properties.group;
+            groups.set(group, (groups.get(group) || 0) + 1);
         });
+
+        console.log('\nFeature Groups:');
+        for (const [group, count] of groups) {
+            console.log(`${group}: ${count} features`);
+        }
 
     } catch (error) {
         console.error('Error:', error);
