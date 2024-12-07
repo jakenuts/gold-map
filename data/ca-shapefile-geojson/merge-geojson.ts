@@ -22,7 +22,8 @@ interface GeoJSONCollection {
 }
 
 function shouldIncludeFeature(ftrType: string): boolean {
-    return !['Coal Mine', 'Sand Pit'].includes(ftrType);
+    // Skip quarries, coal mines, and sand pits
+    return !['Coal Mine', 'Sand Pit', 'Quarry', 'Quarry - Rock'].includes(ftrType);
 }
 
 function getFeatureGroup(category: string): string {
@@ -30,11 +31,12 @@ function getFeatureGroup(category: string): string {
     if (['Prospect Pit', 'Gravel/Borrow Pit', 'Other Pit'].includes(category)) {
         return 'Pits';
     }
-    if (['Mine', 'Mine Shaft', 'Placer Mine', 'Open Pit Mine', 'Hydraulic Mine'].includes(category)) {
+    if (['Mine', 'Mine Shaft', 'Open Pit Mine', 'Hydraulic Mine'].includes(category)) {
         return 'Mines';
     }
-    if (['Quarry'].includes(category)) {
-        return 'Quarries';
+    // Placer Mine gets its own group
+    if (category === 'Placer Mine') {
+        return 'Placer Mines';
     }
     if (['Tailings'].includes(category)) {
         return 'Tailings';
@@ -66,11 +68,6 @@ function consolidateCategory(originalCategory: string): string {
     }
     if (['Mine'].includes(originalCategory)) {
         return 'Mine';
-    }
-    
-    // Quarry consolidations
-    if (['Quarry', 'Quarry - Rock'].includes(originalCategory)) {
-        return 'Quarry';
     }
     
     // Tailings consolidations
@@ -146,7 +143,7 @@ async function mergeGeoJSON() {
         });
 
         console.log('\nFeature Groups:');
-        for (const [group, count] of groups) {
+        for (const [group, count] of Array.from(groups).sort((a, b) => b[1] - a[1])) {
             console.log(`${group}: ${count} features`);
         }
 

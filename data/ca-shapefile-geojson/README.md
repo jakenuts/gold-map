@@ -29,20 +29,20 @@ The data is filtered to the following area:
 1. Filter source files to bounding box:
    - Points: 61,347 → 2,617 features
    - Polygons: 7,626 → 727 features
-2. Merge filtered files
+2. Filter out non-relevant features (quarries, coal mines, sand pits)
 3. Add organizational properties
 4. Generate standard GeoJSON output
 
 ## Data Structure
 
 ### Feature Groups
-Features are organized using the `group` property (3,340 total features):
+Features are organized using the `group` property (3,285 total features):
 1. Pits (1,309 features)
 2. Adits (911 features)
 3. Tailings (633 features)
-4. Mines (408 features)
-5. Quarries (55 features)
-6. Mine Dumps (21 features)
+4. Mines (402 features)
+5. Mine Dumps (21 features)
+6. Placer Mines (6 features)
 7. Diggings (2 features)
 8. Other (1 feature)
 
@@ -81,9 +81,12 @@ The output follows the standard GeoJSON format:
 ## Project Files
 
 ### Data Files
-- `CA-point.json` & `CA-poly.json`: Source files
-- `CA-point-filtered.json` & `CA-poly-filtered.json`: Bounding box filtered files
-- `CA-merged-filtered.json`: Final GeoJSON output
+- Source files:
+  - `CA-point.json` & `CA-poly.json`
+- Intermediate files:
+  - `CA-point-filtered.json` & `CA-poly-filtered.json`: Bounding box filtered
+- Output file:
+  - `CA-merged-filtered.json`: Complete dataset
 
 ### Processing Scripts
 - `filter-points.ts`: Filters point features to bounding box
@@ -100,7 +103,6 @@ Several categories were consolidated for simplicity:
 - Gravel/Borrow Pit includes: Borrow Pit, Gravel Pit, Gravel/Borrow Pit
 - Open Pit Mine includes: Open Pit Mine, Open Pit Mine or Quarry
 - Tailings includes: Tailings - Dredge, Tailings - Undifferentiated
-- Quarry includes: Quarry, Quarry - Rock
 
 ## Usage in GIS Applications
 
