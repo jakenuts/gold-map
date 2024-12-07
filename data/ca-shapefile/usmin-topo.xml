@@ -1,0 +1,1190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <idinfo>
+    <citation>
+      <citeinfo>
+        <origin>John D. Horton</origin>
+        <origin>Carma A. San Juan</origin>
+        <pubdate>20160804</pubdate>
+        <title>Prospect- and Mine-Related Features from U.S. Geological Survey 7.5- and 15-Minute Topographic Quadrangle Maps of the United States (ver. 10.0, May 2023)</title>
+        <edition>Version 10.0</edition>
+        <geoform>Vector Digital Data Set (Point and Polygon)</geoform>
+        <serinfo>
+          <sername>U.S. Geological Survey data release</sername>
+          <issue>DOI: 10.5066/F78W3CHG</issue>
+        </serinfo>
+        <pubinfo>
+          <pubplace>Denver, CO</pubplace>
+          <publish>U.S. Geological Survey</publish>
+        </pubinfo>
+        <othercit>Additional information on Originators: John D. Horton, https://orcid.org/0000-0003-2969-9073; Carma San Juan, https://orcid.org/0000-0002-9151-1919.
+
+Suggested citation: Horton, J.D., and San Juan, C.A., 2016, Prospect- and Mine-Related Features from U.S. Geological Survey 7.5- and 15-Minute Topographic Quadrangle Maps of the United States (ver. 10.0, May 2023): U.S. Geological Survey data release, https://doi.org/10.5066/F78W3CHG.</othercit>
+        <onlink>https://doi.org/10.5066/F78W3CHG</onlink>
+      </citeinfo>
+    </citation>
+    <descript>
+      <abstract>Version 10.0 of these data are part of a larger U.S. Geological Survey (USGS) project to develop an updated geospatial database of mines, mineral deposits, and mineral regions in the United States. Mine and prospect-related symbols, such as those used to represent prospect pits, mines, adits, dumps, tailings, etc., hereafter referred to as “mine” symbols or features, have been digitized from the 7.5-minute (1:24,000, 1:25,000-scale; and 1:10,000, 1:20,000 and 1:30,000-scale in Puerto Rico only) and the 15-minute (1:48,000 and 1:62,500-scale; 1:63,360-scale in Alaska only) archive of the USGS Historical Topographic Map Collection (HTMC), or acquired from available databases (California and Nevada, 1:24,000-scale only). Compilation of these features is the first phase in capturing accurate locations and general information about features related to mineral resource exploration and extraction across the U.S. The compilation of 725,690 point and polygon mine symbols from approximately 106,350 maps across 50 states, the Commonwealth of Puerto Rico (PR) and the District of Columbia (DC) has been completed: Alabama (AL), Alaska (AK), Arizona (AZ), Arkansas (AR), California (CA), Colorado (CO), Connecticut (CT), Delaware (DE), Florida (FL), Georgia (GA), Hawaii (HI), Idaho (ID), Illinois (IL), Indiana (IN), Iowa (IA), Kansas (KS), Kentucky (KY), Louisiana (LA), Maine (ME), Maryland (MD), Massachusetts (MA), Michigan (MI), Minnesota (MN), Mississippi (MS), Missouri (MO), Montana (MT), Nebraska (NE), Nevada (NV), New Hampshire (NH), New Jersey (NJ), New Mexico (NM), New York (NY), North Carolina (NC), North Dakota (ND), Ohio (OH), Oklahoma (OK), Oregon (OR), Pennsylvania (PA), Rhode Island (RI), South Carolina (SC), South Dakota (SD), Tennessee (TN), Texas (TX), Utah (UT), Vermont (VT), Virginia (VA), Washington (WA), West Virginia (WV), Wisconsin (WI), and Wyoming (WY). The process renders not only a more complete picture of exploration and mining in the U.S., but an approximate timeline of when these activities occurred. These data may be used for land use planning, assessing abandoned mine lands and mine-related environmental impacts, assessing the value of mineral resources from Federal, State and private lands, and mapping mineralized areas and systems for input into the land management process. These data are presented as three groups of layers based on the scale of the source maps. No reconciliation between the data groups was done.</abstract>
+      <purpose>These data are a digital version of mine symbols found on USGS 7.5- and 15-minute series topographic maps. These data are suitable for use in Geographic Information Systems (GIS) or other database and geospatial software. Collection of data of this type is a part of the mission of the Mineral Resources Program of the USGS. The information is intended to meet the needs of a wide community of users that extends from geoscience and mineral exploration communities to State and Federal agencies, private industry, and the general public.</purpose>
+      <supplinf>This USGS data release consists of an ArcGIS 10.8.1 geodatabase (USGS_TopoMineSymbols_ver10.gdb) containing six feature classes representing the different scales of topographic maps:
+
+USGS_TopoMineSymbols_24k_Points;
+USGS_TopoMineSymbols_48k_Points;
+USGS_TopoMineSymbols_625k_Points;
+USGS_TopoMineSymbols_24k_Polygons;
+USGS_TopoMineSymbols_48k_Polygons;
+USGS_TopoMineSymbols_625k_Polygons
+
+No reconciliation between the data sets was done. Raster images of historic topographic maps may be obtained from the USGS topoView web mapping application: https://ngmdb.usgs.gov/topoview/.</supplinf>
+    </descript>
+    <timeperd>
+      <timeinfo>
+        <rngdates>
+          <begdate>1886</begdate>
+          <enddate>2006</enddate>
+        </rngdates>
+      </timeinfo>
+      <current>Topographic map date</current>
+    </timeperd>
+    <status>
+      <progress>Complete</progress>
+      <update>As needed</update>
+    </status>
+    <spdom>
+      <bounding>
+        <westbc>-170.377219</westbc>
+        <eastbc>-65.587443</eastbc>
+        <northbc>70.560180</northbc>
+        <southbc>17.945627</southbc>
+      </bounding>
+    </spdom>
+    <keywords>
+      <theme>
+        <themekt>ISO 19115 Topic Category</themekt>
+        <themekey>geoscientificInformation</themekey>
+        <themekey>location</themekey>
+      </theme>
+      <theme>
+        <themekt>USGS Thesaurus</themekt>
+        <themekey>data services</themekey>
+        <themekey>geospatial datasets</themekey>
+        <themekey>geographic information systems</themekey>
+        <themekey>land use and land cover</themekey>
+        <themekey>mine waste</themekey>
+        <themekey>mining and quarrying</themekey>
+        <themekey>mine drainage</themekey>
+        <themekey>mining hazards</themekey>
+        <themekey>topographic maps</themekey>
+      </theme>
+      <theme>
+        <themekt>American Geological Institute, 1997</themekt>
+        <themekey>abandoned mine</themekey>
+        <themekey>adit</themekey>
+        <themekey>air shaft</themekey>
+        <themekey>borrow pit</themekey>
+        <themekey>diggings</themekey>
+        <themekey>dredge tailings</themekey>
+        <themekey>evaporation pond</themekey>
+        <themekey>gravel pit</themekey>
+        <themekey>hydraulic mine</themekey>
+        <themekey>leach pond</themekey>
+        <themekey>linear prospect</themekey>
+        <themekey>mill site</themekey>
+        <themekey>mine</themekey>
+        <themekey>mine dump</themekey>
+        <themekey>mine shaft</themekey>
+        <themekey>mineral resource</themekey>
+        <themekey>open pit mine</themekey>
+        <themekey>ore dump</themekey>
+        <themekey>ore stockpile/storage</themekey>
+        <themekey>placer mine</themekey>
+        <themekey>placer tailings</themekey>
+        <themekey>prospect pit</themekey>
+        <themekey>quarry</themekey>
+        <themekey>settling pond</themekey>
+        <themekey>strip mine</themekey>
+        <themekey>tailings</themekey>
+        <themekey>tipple</themekey>
+        <themekey>topographic map</themekey>
+        <themekey>trench</themekey>
+      </theme>
+      <theme>
+        <themekt>None</themekt>
+        <themekey>U.S. Geological Survey (USGS)</themekey>
+        <themekey>Mineral Resources Program (MRP)</themekey>
+        <themekey>Geology, Geophysics, and Geochemistry Science Center (GGGSC)</themekey>
+        <themekey>USGS Quadrangles</themekey>
+        <themekey>USGS Mineral Deposit Database (USMIN)</themekey>
+        <themekey>Historical Topographic Map Collection (HTMC)</themekey>
+        <themekey>TopoView</themekey>
+      </theme>
+      <theme>
+        <themekt>USGS Metadata Identifier</themekt>
+        <themekey>USGS:5a1492c3e4b09fc93dcfd574</themekey>
+      </theme>
+      <place>
+        <placekt>Common geographic areas</placekt>
+        <placekey>United States</placekey>
+        <placekey>Alabama (AL)</placekey>
+        <placekey>Alaska (AK)</placekey>
+        <placekey>Arizona (AZ)</placekey>
+        <placekey>Arkansas (AR)</placekey>
+        <placekey>California (CA)</placekey>
+        <placekey>Colorado (CO)</placekey>
+        <placekey>Connecticut (CT)</placekey>
+        <placekey>Delaware (DE)</placekey>
+        <placekey>District of Columbia (DC)</placekey>
+        <placekey>Florida (FL)</placekey>
+        <placekey>Georgia (GA)</placekey>
+        <placekey>Hawaii (HI)</placekey>
+        <placekey>Idaho (ID)</placekey>
+        <placekey>Illinois (IL)</placekey>
+        <placekey>Indiana (IN)</placekey>
+        <placekey>Iowa (IA)</placekey>
+        <placekey>Kansas (KS)</placekey>
+        <placekey>Kentucky (KY)</placekey>
+        <placekey>Louisiana (LA)</placekey>
+        <placekey>Maine (ME)</placekey>
+        <placekey>Maryland (MD)</placekey>
+        <placekey>Massachusetts (MA)</placekey>
+        <placekey>Michigan (MI)</placekey>
+        <placekey>Minnesota (MN)</placekey>
+        <placekey>Mississippi (MS)</placekey>
+        <placekey>Missouri (MO)</placekey>
+        <placekey>Montana (MT)</placekey>
+        <placekey>Nebraska (NE)</placekey>
+        <placekey>Nevada (NV)</placekey>
+        <placekey>New Hampshire (NH)</placekey>
+        <placekey>New Jersey (NJ)</placekey>
+        <placekey>New Mexico (NM)</placekey>
+        <placekey>New York (NY)</placekey>
+        <placekey>North Carolina (NC)</placekey>
+        <placekey>North Dakota (ND)</placekey>
+        <placekey>Ohio (OH)</placekey>
+        <placekey>Oklahoma (OK)</placekey>
+        <placekey>Oregon (OR)</placekey>
+        <placekey>Pennsylvania (PA)</placekey>
+        <placekey>Puerto Rico (PR)</placekey>
+        <placekey>Rhode Island (RI)</placekey>
+        <placekey>South Carolina (SC)</placekey>
+        <placekey>South Dakota (SD)</placekey>
+        <placekey>Tennessee (TN)</placekey>
+        <placekey>Texas (TX)</placekey>
+        <placekey>Utah (UT)</placekey>
+        <placekey>Vermont (VT)</placekey>
+        <placekey>Virginia (VA)</placekey>
+        <placekey>Washington (WA)</placekey>
+        <placekey>West Virginia (WV)</placekey>
+        <placekey>Wisconsin (WI)</placekey>
+        <placekey>Wyoming (WY)</placekey>
+      </place>
+    </keywords>
+    <accconst>None. Please see "Distribution Information" for details.</accconst>
+    <useconst>These data are intended for use at approximately 1:24,000-scale or smaller. Any use of trade, firm, or product names is for descriptive purposes only and does not imply endorsement by the U.S. Government. Although these data have been processed successfully on a computer system at the U.S. Geological Survey (USGS), no warranty expressed or implied is made regarding the display or utility of these data for other purposes, nor on all computer systems, nor shall the act of distribution constitute any such warranty. The USGS or the U.S. Government shall not be held liable for improper or incorrect use of these data described and/or contained herein. Acknowledgment of the U.S. Geological Survey would be appreciated in products derived from these data.</useconst>
+    <ptcontac>
+      <cntinfo>
+        <cntperp>
+          <cntper>John D. Horton</cntper>
+          <cntorg>U.S. Geological Survey</cntorg>
+        </cntperp>
+        <cntpos>Physical Scientist</cntpos>
+        <cntaddr>
+          <addrtype>mailing address</addrtype>
+          <address>PO Box 25046, Mail Stop 973</address>
+          <city>Lakewood</city>
+          <state>CO</state>
+          <postal>80225</postal>
+          <country>USA</country>
+        </cntaddr>
+        <cntvoice>303-236-1921</cntvoice>
+        <cntfax>303-236-1425</cntfax>
+        <cntemail>jhorton@usgs.gov</cntemail>
+      </cntinfo>
+    </ptcontac>
+    <datacred>Datasets were developed by the U.S. Geological Survey Geology, Geophysics, and Geochemistry Science Center (GGGSC). Compilation work was completed by USGS National Association of Geoscience Teachers (NAGT) interns: Emma L. Boardman-Larson, Grayce M. Gibbs, William R. Gnesda, Montana E. Hauke, Jacob D. Melendez, Amanda L. Ringer, and Alex J. Schwarz; USGS student contractors: Margaret B. Hammond, Germán Schmeda, Patrick C. Scott, Tyler Reyes, Morgan Mullins, Thomas Carroll, Margaret Brantley, and Logan Barrett; and by USGS personnel Virgil S. Alfred, Damon Bickerstaff, E.G. Boyce, Madelyn E. Eysel, Stuart A. Giles, Autumn L. Helfrich, Alan A. Hurlbert, Cheryl L. Novakovich, Sophia J. Pinter, and Andrew F. Smith.</datacred>
+    <native>Microsoft Windows 10 Enterprise, Version 20H2 (Build 19042.1586); Esri ArcGIS 10.8.1.14362; Blue Marble Geographics Global Mapper 18</native>
+  </idinfo>
+  <dataqual>
+    <attracc>
+      <attraccr>Attribute fields and values were reviewed and checked for consistency of schema, accuracy, adherence to established vocabularies, and completeness.</attraccr>
+    </attracc>
+    <logic>Digital data were checked throughout the compilation process for accuracy of mine feature locations, completeness, accuracy, and consistency of attributes; completeness of data capture; and appropriate representation of mine features through time. A final review (see "Process Step" section – fourth level review) consisted of randomly selecting 5 quadrangles per state (some with multiple versions per quadrangle) and comparing the maps to the digitized data. Errors, which included missing, mislocated or misattributed data, were tabulated and an error percentage was calculated. From these results it is estimated that the error rate is less than 1-percent.</logic>
+    <complete>Available 7.5- and 15-minute topographic maps were acquired on a state-by-state basis from the HTMC for the archived period of record (1886 to 2006). More recent topographic maps in the USGS USTopo series do not include mine symbols and thus were not relevant. For quadrangles where HTMC topographic maps were not available, a lower-resolution USGS digital raster graphic version of the map was used. In specific regions such as South Dakota, 1:25,000-scale topographic maps were used to fill gaps. Mine feature data compiled by the states of California and Nevada were also based on USGS 7.5-minute topographic maps. Because the HTMC archive was not available at the time of those compilations, the California and Nevada mine features were probably acquired from a single, most recent version of each topographic map. The California and Nevada datasets were subsequently updated by USGS staff to include polygonal and point mine features from older versions of topographic maps where available. Automated routines and reviews were used to check the completeness of map coverage for each state.</complete>
+    <posacc>
+      <horizpa>
+        <horizpar>U.S. Geological Survey topographic maps adhere to National Map Accuracy Standards that specify that for maps on publication scales larger than 1:20,000, not more than 10 percent of the points tested shall be in error by more than 1/30th inch, measured on the publication scale; for maps on publication scales of 1:20,000 or smaller, 1/50th inch. As applied to the USGS 7.5-minute quadrangle topographic map, the horizontal accuracy standard requires that the positions of 90 percent of all points tested must be accurate within 1/50th of an inch on the map. At 1:24,000 scale, 1/50th of an inch is 40 feet, at 1:48,000 scale, 1/50th of an inch is 80 feet, at 1:62,500 scale, 1/50th of an inch is 104 feet.
+This data set was captured by heads-up digitizing from georeferenced raster images of USGS topographic maps from the HTMC. Georeferencing error was checked by measuring the distance between the corners of topographic maps and the actual coordinates of the corner. This error was found to be 50 feet on the average.
+The combination of map accuracy and georeferencing error gives an average horizontal accuracy for features in the data set that ranges from about 100 to 155 feet.</horizpar>
+      </horizpa>
+      <vertacc>
+        <vertaccr>Not applicable.</vertaccr>
+      </vertacc>
+    </posacc>
+    <lineage>
+      <srcinfo>
+        <srccite>
+          <citeinfo>
+            <origin>Fernette, G.L., Horton, J.D., King, Z., San Juan, C.A., and Schweitzer, P.N.</origin>
+            <pubdate>2016</pubdate>
+            <title>Prospect- and Mine-Related Features from U.S. Geological Survey 7.5- and 15-Minute Topographic Quadrangle Maps of the Western United States</title>
+            <geoform>Vector Digital Dataset</geoform>
+            <pubinfo>
+              <pubplace>Denver, CO</pubplace>
+              <publish>USGS ScienceBase</publish>
+            </pubinfo>
+            <othercit>Fernette, G.L., Horton, J.D., King, Zachary, San Juan, C.A., and Schweitzer, P.N., 2016, Prospect- and Mine-Related Features from U.S. Geological Survey 7.5- and 15-Minute Topographic Quadrangle Maps of the Western United States: U.S. Geological Survey data release, http://dx.doi.org/10.5066/F7JD4TWT.</othercit>
+            <onlink>https://doi.org/10.5066/F7JD4TWT</onlink>
+          </citeinfo>
+        </srccite>
+        <srcscale>24000 25000 48000 62500</srcscale>
+        <typesrc>Digital and/or Hardcopy Resources</typesrc>
+        <srctime>
+          <timeinfo>
+            <sngdate>
+              <caldate>2016</caldate>
+            </sngdate>
+          </timeinfo>
+          <srccurr>publication date</srccurr>
+        </srctime>
+        <srccitea>TopoWest</srccitea>
+        <srccontr>Source information used in support of the development of the data set. See Process section for more information.</srccontr>
+      </srcinfo>
+      <srcinfo>
+        <srccite>
+          <citeinfo>
+            <origin>U.S. Geological Survey</origin>
+            <pubdate>2015</pubdate>
+            <title>USGS Historical Topographic Map Collection (HTMC); now part of topoView</title>
+            <geoform>Raster Digital Dataset</geoform>
+            <pubinfo>
+              <pubplace>Denver, CO</pubplace>
+              <publish>U.S. Geological Survey</publish>
+            </pubinfo>
+            <onlink>https://ngmdb.usgs.gov/topoview/</onlink>
+          </citeinfo>
+        </srccite>
+        <srcscale>10000 20000 24000 25000 30000 48000 62500 63360</srcscale>
+        <typesrc>Digital and/or Hardcopy Resources</typesrc>
+        <srctime>
+          <timeinfo>
+            <rngdates>
+              <begdate>1886</begdate>
+              <enddate>2006</enddate>
+            </rngdates>
+          </timeinfo>
+          <srccurr>publication date</srccurr>
+        </srctime>
+        <srccitea>HTMC</srccitea>
+        <srccontr>Source information used in support of the development of the data set. See Process section for more information.</srccontr>
+      </srcinfo>
+      <srcinfo>
+        <srccite>
+          <citeinfo>
+            <origin>American Geological Institute</origin>
+            <pubdate>1997</pubdate>
+            <title>Dictionary of mining, mineral, and related terms</title>
+            <edition>2nd</edition>
+            <geoform>publication</geoform>
+            <pubinfo>
+              <pubplace>Alexandria, VA</pubplace>
+              <publish>American Geological Institute in Cooperation with the Society for Mining, Metallurgy, and Exploration, Inc.</publish>
+            </pubinfo>
+            <othercit>American Geological Institute, 1997, Dictionary of mining, mineral, and related terms, 2nd Ed.: American Geological Institute in Cooperation with the Society for Mining, Metallurgy, and Exploration, Inc., Alexandria, VA, 646 p.</othercit>
+            <onlink>https://www.americangeosciences.org/</onlink>
+          </citeinfo>
+        </srccite>
+        <typesrc>Digital and/or Hardcopy Resources</typesrc>
+        <srctime>
+          <timeinfo>
+            <sngdate>
+              <caldate>1997</caldate>
+            </sngdate>
+          </timeinfo>
+          <srccurr>publication date</srccurr>
+        </srctime>
+        <srccitea>American Geological Institute (1997)</srccitea>
+        <srccontr>Definitions used for some attributes in the Type field.</srccontr>
+      </srcinfo>
+      <srcinfo>
+        <srccite>
+          <citeinfo>
+            <origin>Maxwell, A.E., Bester, M.S., Guillen, L.A., Ramezan, C.A., Carpinello, D.J., Fan, Y., Hartley, F.M., Maynard, S.M., and Pyron, J.L.</origin>
+            <pubdate>2020</pubdate>
+            <title>Semantic Segmentation Deep Learning for Extracting Surface Mine Extents from Historic Topographic Maps</title>
+            <edition>Remote Sensing 12 no. 24: 4145</edition>
+            <geoform>Vector Digital Dataset</geoform>
+            <pubinfo>
+              <pubplace>Basel, Switzerland</pubplace>
+              <publish>MDPI</publish>
+            </pubinfo>
+            <othercit>Maxwell, A.E., Bester, M.S., Guillen, L.A., Ramezan, C.A., Carpinello, D.J., Fan, Y., Hartley, F.M., Maynard, S.M., and Pyron, J.L., 2020, Semantic Segmentation Deep Learning for Extracting Surface Mine Extents from Historic Topographic Maps: Remote Sensing 12, no. 24: 4145.</othercit>
+            <onlink>https://doi.org/10.3390/rs12244145</onlink>
+          </citeinfo>
+        </srccite>
+        <typesrc>Digital and/or Hardcopy Resources</typesrc>
+        <srctime>
+          <timeinfo>
+            <sngdate>
+              <caldate>1997</caldate>
+            </sngdate>
+          </timeinfo>
+          <srccurr>publication date</srccurr>
+        </srctime>
+        <srccitea>Maxwell (2020)</srccitea>
+        <srccontr>Vector polygons for 1:24,000-scale maps were used in some parts of West Virginia.</srccontr>
+      </srcinfo>
+      <procstep>
+        <procdesc>A data search by state was conducted to ascertain where digital, geospatial mine feature information from 7.5 and 15-minute topographic maps were available. Geospatial mine feature data, available for Nevada and California at 1;24,000-scale, were acquired and used as a starting point for those states. For remaining states, historical 7.5- and 15-minute topographic maps were acquired from the USGS Historical Topographic Map Collection/topoView website (https://ngmdb.usgs.gov/topoview/) as geoPDF files. In the 7.5-minute series, about 60 percent of the quadrangles had multiple versions. In the 15-minute, 1:48,000-scale series, about 10 percent of the maps had multiple versions, and in the 15-minute, 1:62,500-scale series, about 20 percent of the maps had multiple versions. For quadrangles with two map versions at the same scale, both maps were acquired. For quadrangles with more than two versions at the same scale, the oldest map, and versions at approximately 10-year intervals up to the most recent were acquired. Using Global Mapper software, acquired maps were converted from geoPDF to geoTIF format to make them accessible in ArcGIS.
+
+Capture of mine features was accomplished at each scale by visually inspecting the maps for mine symbols and digitizing points and/or polygons into an ArcGIS file geodatabase. No reconciliation between these data from different map scales was done. For example, if a mine feature occurred on a 7.5-minute map and a similar feature occurred on a 15-minute map, the feature was digitized twice. Information describing the feature type (prospect pits, mines, adits, dumps, tailings, etc.) and the map date, name, and Geospatial Data Architecture (GDA) and Scan identification number was compiled in the corresponding attribute table. Where mine symbols occurred on multiple versions (dates) of a map of the same scale, the first occurrence of the symbol was digitized. If subsequent versions of the map showed the same symbol within a permissible tolerance of the original location, the symbol was not re-digitized. The permissible tolerance for point symbols was roughly the area of a "box" which completely enclosed the map symbol. In the case of polygonal features, if the shape of the feature changed between map versions, the entire polygon was re-digitized. Slight shifts between versions of a map were common and reflected map scanning and georegistration variance.
+
+When mine symbols were located within a topographic depression but no explicit pit outline was shown on the map, the depression was assumed to be a pit related to mining activity and the outermost depression contour was digitized as a polygon. The polygon was then attributed according to the mine symbol and/or the label contained on the map. When a map label name was surrounded by numerous symbols, the closest major symbol received the name. For example, if a name was surrounded by prospect pit and adit symbols on the map, the name would be applied to the closest adit symbol.
+
+Pre-existing, 1:24,000-scale mine feature data for the states of Nevada and California were checked for locational accuracy; attribute table schema were modified and updated for consistency; and mine features (point and polygon) from older versions of maps were captured.
+
+Data inspection and checks were performed by the individual digitizing the maps (first-level review), by team members reviewing a random selection of maps in a state (second-level review), by a project lead who reviewed data compiled at the state level (third-level review), and a final spot check of the merged data for the western US by USGS colleagues (fourth-level review). In each case, reviews addressed the accuracy and completeness of mine feature capture, completeness and consistency of attributes, adherence to established project schema, and representation of mine features through time.</procdesc>
+        <srcused>TopoWest</srcused>
+        <procdate>20160630</procdate>
+      </procstep>
+      <procstep>
+        <procdesc>Similar to the initial process step, mine symbols on 7.5- and 15-minute topographic maps for the states of Arkansas (AR), Iowa (IA), Louisiana (LA), Minnesota (MN), Missouri (MO), and Texas (TX) were digitized and appended to the existing source data. Some notable changes were made to some of the database attribute values.
+
+Terms in the attribute field Ftr_Type were modified as follows: 1) added "Iron Pit" and "Shell Pit"; 2) changed "Ore Storage Pond" to "Ore Stockpile/Storage"; moved "Ore Storage Pond" to Ftr_Name; 3) changed "Tailings - Thickener" to "Tailings - Undifferentiated"; moved "Tailing Thickeners" to Ftr_Name; 4) changed "Pumice Mine" to "Pumice Pit"; moved "Pumice Mine" to Ftr_Name; 5) changed "Unidentified Feature" to "Disturbed Surface" or "Disturbed Surface - Pit"; and 6) changed "Gravel/Borrow pit - Undifferentiated" to "Gravel/Borrow Pit - Undifferentiated".
+
+Terms removed from the Remarks field include:  1) "Unidentified - generic disturbed ground symbol"; 2) "Unidentified - generic disturbed ground symbol. Labeled as Pit only"; 3) "Photorevised"; 4) "Revised"; and 5) "Coincident feature labeled as &lt;Ftr_Type&gt; on 19xx map" (changed to "Feature designated as &lt;Ftr_Type&gt; from feature on 19xx map").
+
+Unlabeled features attributed as Ftr_Type "Disturbed Surface" or "Disturbed Surface - Pit" (previously attributed as "Unidentified Feature"), were re-evaluated to identify some of these features. A buffer was applied to identify other nearby labeled features within approximately 1 kilometer. If it was reasonable to assume that a nearby labeled feature could be used to infer the Ftr_Type of the unlabeled "Disturbed Surface" feature, then the Ftr_Type was changed and the Remark "Inferred &lt;Ftr_Type&gt; from adjacent feature" was entered in the Remarks field. For example, several polygons labeled as "gravel pits" are present on a map dated 1950. A 1980 version of the map contains some pink, photorevised unlabeled disturbed surface polygons near the 1950 polygons. The 1980 disturbed surface polygons were assigned the Ftr_Type "Gravel Pit" and "Inferred Gravel Pit from adjacent feature." was entered in the Remarks field. This was not done when multiple Ftr_Types surrounded an unlabeled feature or if it was not reasonable to infer the Ftr_Type based on geographic factors.
+
+The field "Topo_Date" has been changed from a text field type to an integer field type to facilitate numeric analysis.
+
+Some features included in the original source dataset may have been added, deleted or otherwise modified if errors were discovered while performing these updates.</procdesc>
+        <srcused>HTMC</srcused>
+        <procdate>20171119</procdate>
+      </procstep>
+      <procstep>
+        <procdesc>Version 2.0 - Similar to the initial process step, mine symbols on 7.5- and 15-minute topographic maps for the states of Michigan (MI), Wisconsin (WI), Indiana (IN), and Illinois (IL) were digitized and appended to the existing source data. The terms "Tipple" and "Mine" have been added to the Ftr_Type field domain.
+
+Some features included in the original source dataset may have been added, deleted or otherwise modified if errors were discovered while performing these updates.</procdesc>
+        <srcused>HTMC</srcused>
+        <procdate>20180430</procdate>
+      </procstep>
+      <procstep>
+        <procdesc>Version 3.0 - Similar to the initial process step, mine symbols on 7.5- and 15-minute topographic maps for the states of Kentucky (KY), Ohio (OH), and Tennessee (TN) were digitized and appended to the existing source data.
+
+Some features included in the original source dataset may have been added, deleted or otherwise modified if errors were discovered while performing these updates.</procdesc>
+        <srcused>HTMC</srcused>
+        <procdate>20190410</procdate>
+      </procstep>
+      <procstep>
+        <procdesc>Version 4.0 - Similar to the initial process step, mine symbols on 7.5- and 15-minute topographic maps for the states of Alabama (AL), Florida (FL), Georgia (GA), North Carolina (NC), Mississippi (MS) and South Carolina (SC) were digitized and appended to the existing source data. The feature type (Ftr_Type) "Pumice Pit" has been merged into the existing Ftr_Type "Quarry - Pumice" for simplification. "Chert Pit" and "Marl Pit" have been added to the Ftr_Type domain.
+
+Some features included in the original source dataset may have been added, deleted or otherwise modified if errors were discovered while performing these updates.</procdesc>
+        <srcused>HTMC</srcused>
+        <procdate>20191118</procdate>
+      </procstep>
+      <procstep>
+        <procdesc>Version 5.0 - Similar to the initial process step, mine symbols on 7.5- and 15-minute topographic maps for the states of Delaware (DE), Maryland (MD), New Jersey (NJ), and Virginia (VA) were digitized and appended to the existing source data.
+
+Some features included in the original source dataset may have been added, deleted or otherwise modified if errors were discovered while performing these updates.</procdesc>
+        <srcused>HTMC</srcused>
+        <procdate>20200601</procdate>
+      </procstep>
+      <procstep>
+        <procdesc>Version 6.0 - Similar to the initial process step, mine symbols on 7.5- and 15-minute topographic maps for the states of Connecticut (CT), Maine (ME), Massachusetts (MA), New Hampshire (NH), Rhode Island (RI), and Vermont (VT) were digitized and appended to the existing source data.
+
+Some features included in the original source dataset may have been added, deleted or otherwise modified if errors were discovered while performing these updates.</procdesc>
+        <srcused>HTMC</srcused>
+        <procdate>20210224</procdate>
+      </procstep>
+      <procstep>
+        <procdesc>Version 7.0 - Similar to the initial process step, mine symbols on 7.5- and 15-minute topographic maps for the state of Pennsylvania (PA) were digitized and appended to the existing source data.
+
+Some features included in the original source dataset may have been added, deleted or otherwise modified if errors were discovered while performing these updates.</procdesc>
+        <srcused>HTMC</srcused>
+        <procdate>20220315</procdate>
+      </procstep>
+      <procstep>
+        <procdesc>Version 8.0 - Similar to the initial process step, mine symbols on 7.5- and 15-minute topographic maps for the state of New York (NY) were digitized and appended to the existing source data.
+
+Some features included in the original source dataset may have been added, deleted or otherwise modified if errors were discovered while performing these updates.</procdesc>
+        <srcused>HTMC</srcused>
+        <procdate>20220801</procdate>
+      </procstep>
+      <procstep>
+        <procdesc>Version 9.0 - Similar to the initial process step, mine symbols on 7.5- and 15-minute topographic maps for the state of West Virginia (WV) were digitized and appended to the existing source data. Some portions of the West Virginia 1:24,000-scale polygons were supplemented with work done by Aaron Maxwell (Assistant Professor in the Department of Geology and Geography at West Virginia University) and his lab group at the West Virginia View consortium (Maxwell, 2020). They used a previously published version of this dataset for the state of Kentucky to train deep learning models. These were then applied to ~1300 historic 1:24,000-scale topographic map quadrangles in West Virginia to extract the land disturbance extents. These rasters were vectorized into shapefiles and shared with the USGS team. The rasterized vector polygons were smoothed using Esri geoprocessing tools and a 40-meter PAEK generalization. They were simplified further by removing extra vertices within a 1-meter tolerance. The data was then reprojected from the native topographic map datum of NAD 1927 to WGS 1984. The polygons were cleaned up further by removal of raster artifacts by comparing each feature to the symbology on the georeferenced topographic maps. Attribution of the USGS data tables and the capture of point features for these maps used the same process as previous versions of this dataset.
+
+Some features included in the original source dataset may have been added, deleted or otherwise modified if errors were discovered while performing these updates.</procdesc>
+        <srcused>HTMC; Maxwell (2020)</srcused>
+        <procdate>20221101</procdate>
+      </procstep>
+      <procstep>
+        <procdesc>Version 10.0 - Similar to the initial process step, mine symbols on 7.5- and 15-minute topographic maps for the state of Alaska, Hawaii, and the Commonwealth of Puerto Rico were digitized and appended to the existing source data. Alaska map scales of 1:63,360 are included in the 1:62,500-scale datasets. Puerto Rico scales (1:10,000, 1:20,000, and 1:30,000) are included in the 1:24,000-scale datasets.  
+
+Some features included in the original source dataset may have been added, deleted or otherwise modified if errors were discovered while performing these updates.</procdesc>
+        <srcused>HTMC</srcused>
+        <procdate>20230201</procdate>
+      </procstep>
+    </lineage>
+  </dataqual>
+  <spdoinfo>
+    <direct>Vector</direct>
+    <ptvctinf>
+      <sdtsterm>
+        <sdtstype>Entity point</sdtstype>
+        <ptvctcnt>571117</ptvctcnt>
+      </sdtsterm>
+      <sdtsterm>
+        <sdtstype>G-polygon</sdtstype>
+        <ptvctcnt>154573</ptvctcnt>
+      </sdtsterm>
+    </ptvctinf>
+  </spdoinfo>
+  <spref>
+    <horizsys>
+      <geograph>
+        <latres>0.000000001</latres>
+        <longres>0.000000001</longres>
+        <geogunit>Decimal degrees</geogunit>
+      </geograph>
+      <geodetic>
+        <horizdn>D_WGS_1984</horizdn>
+        <ellips>WGS_1984</ellips>
+        <semiaxis>6378137.0</semiaxis>
+        <denflat>298.257223563</denflat>
+      </geodetic>
+    </horizsys>
+  </spref>
+  <eainfo>
+    <detailed>
+      <enttyp>
+        <enttypl>Attribute Table</enttypl>
+        <enttypd>Table containing attribute information associated with the data set.</enttypd>
+        <enttypds>USGS Authors</enttypds>
+      </enttyp>
+      <attr>
+        <attrlabl>OBJECTID</attrlabl>
+        <attrdef>Object identification: an ArcGIS default field that contains an integer value to uniquely identify a row in an attribute table.</attrdef>
+        <attrdefs>Esri</attrdefs>
+        <attrdomv>
+          <udom>sequential integer values</udom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>Shape</attrlabl>
+        <attrdef>An Esri default field that contains the geometry type (point or polygon).</attrdef>
+        <attrdefs>Esri</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>Point</edomv>
+            <edomvd>Geometry type is a point.</edomvd>
+            <edomvds>Esri</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Polygon</edomv>
+            <edomvd>Geometry type is a polygon.</edomvd>
+            <edomvds>Esri</edomvds>
+          </edom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>State</attrlabl>
+        <attrdef>Abbreviated name of state where mine feature is located.</attrdef>
+        <attrdefs>United States Postal Service</attrdefs>
+        <attrdomv>
+          <udom>State name abbreviated using the U.S. Postal Service two-letter codes.</udom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>County</attrlabl>
+        <attrdef>U.S. county name.</attrdef>
+        <attrdefs>Geographic Names Information System (GNIS)</attrdefs>
+        <attrdomv>
+          <udom>Name of the county in which the mine feature is located.</udom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>Ftr_Type</attrlabl>
+        <attrdef>The type of mine symbol (feature) shown on the topographic map. The mine feature was attributed using standard USGS symbol names with two exceptions: "Prospect" was attributed as "Prospect Pit" and "Mine Tunnel" or "Cave Entrance" was attributed as "Adit". Mine feature definitions were derived largely from the American Geological Institute, 1997, Dictionary of mining, mineral, and related terms, 2nd Ed.: American Geological Institute in Cooperation with the Society for Mining, Metallurgy, and Exploration, Inc., Alexandria, VA, 646 p.</attrdef>
+        <attrdefs>American Geological Institute (1997)</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>Adit</edomv>
+            <edomvd>A horizontal or inclined tunnel driven from the surface for exploration, extracting ore or for dewatering a mine; also referred to as a tunnel or prospect tunnel. The symbol is named a "mine tunnel or cave entrance" in the USGS topographic map legend. Direction approximated by the value in Ftr_Azimuth field. The adit direction shown on USGS topographic maps is generally perpendicular to the slope rather than the actual direction of the adit. Any associated descriptive label such as the proper mine name, "Tunnel", "Mine", "Coal Mine" or "Cave" were entered in the Ftr_Name field.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Air Shaft</edomv>
+            <edomvd>A shaft used wholly or mainly for ventilating mines.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Bentonite Pit</edomv>
+            <edomvd>An opening or excavation in the ground for the purpose of extracting bentonite.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Borrow Pit</edomv>
+            <edomvd>An area where materials including soil, clay, sand, or gravel have been excavated for use in construction at another location.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Caliche Pit</edomv>
+            <edomvd>An opening or excavation in the ground for the purpose of extracting caliche.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Chert Pit</edomv>
+            <edomvd>An opening or excavation in the ground for the purpose of extracting chert.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Cinder Pit</edomv>
+            <edomvd>An opening or excavation in the ground for the purpose of extracting cinder.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Clay Pit</edomv>
+            <edomvd>An opening or excavation in the ground for the purpose of extracting clay.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Coal Mine</edomv>
+            <edomvd>A mine working or excavation in the ground for the purpose of extracting coal.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Diggings</edomv>
+            <edomvd>Shallow pits or mine workings where near-surface deposits were mined. In the U.S. the term is commonly applied to placer deposits.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Disturbed Surface</edomv>
+            <edomvd>These are unlabeled polygonal features symbolized with a generic brown/pink disturbed surface symbol (common on photorevised maps).</edomvd>
+            <edomvds>USGS Authors</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Disturbed Surface - Pit</edomv>
+            <edomvd>These are "Pit" labeled polygonal features symbolized with a generic brown/pink disturbed surface symbol (common on photorevised maps).</edomvd>
+            <edomvds>USGS Authors</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Evaporation Pond</edomv>
+            <edomvd>An artificial pond with very large surface areas that are designed to efficiently evaporate water by sunlight and exposure to ambient temperatures.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Glory Hole</edomv>
+            <edomvd>A funnel-shaped vertical pit cut at the bottom of a stope (stepped excavation) or surface mine through which ore is passed to underground workings before being hoisted to the surface.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Gravel Pit</edomv>
+            <edomvd>An opening or excavation in the ground for the purpose of extracting gravel.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Gravel/Borrow Pit - Undifferentiated</edomv>
+            <edomvd>A pit or excavation from which sand, gravel, clay or aggregate are extracted, usually for construction purposes. A feature was given this designation where there was no label associated with a borrow pit symbol or it was only labeled "Pit". The designation was also used if no Ftr_Type domain existed for a descriptive label associated with a borrow pit symbol. In these cases, the descriptive label was entered in the Ftr_Name field. Some examples: Asphalt Pit, Peat Pit, Coal Pit, or Rock Pit.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Hydraulic Mine</edomv>
+            <edomvd>A mine where material is mined using high-pressure jets of water to break up the ore and wash it to the processing site. The method has been typically used in placer gold mines in California.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Iron Pit</edomv>
+            <edomvd>An opening or excavation in the ground for the purpose of extracting iron.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Leach Pond</edomv>
+            <edomvd>An artificial pond that is designed to collect leach solution. The leach solution results when mined ore, typically crushed into small chunks, is heaped on an impermeable plastic and/or clay lined leach pad and irrigated with a leach solution to dissolve valuable metals.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Lignite Pit</edomv>
+            <edomvd>An opening or excavation in the ground for the purpose of extracting lignite.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Marl Pit</edomv>
+            <edomvd>An opening or excavation in the ground for the purpose of extracting marl.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Mill Site</edomv>
+            <edomvd>The site of a mineral processing plant. A plant referred to as a "mill" usually involves crushing and grinding as a part of the process.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Mine</edomv>
+            <edomvd>This generic term was used when a label containing the word "mine" appeared on a map with no corresponding map symbol. A point was put in the center of the label or on the nearest building symbol along with the appropriate standardized remark. For example, a label of "John Doe Mine" appeared on a map with no corresponding symbolization (point or polygon). A point was put in the center of the label, Ftr_Type = "Mine", Ftr_Name = "John Doe Mine", and "Label without symbol. Point placed at center of label and feature type inferred from label" was entered in the Remarks field.</edomvd>
+            <edomvds>USGS Authors</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Mine Dump</edomv>
+            <edomvd>A pile of material excavated from a mine and then transported and dumped in a heap or pile at or near a mine opening or open pit. Also called a waste dump, heap, pile, or spoil pile.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Mine Shaft</edomv>
+            <edomvd>A vertical or inclined excavation used for the purpose of opening, servicing, and accessing an underground mine. It may be equipped with a hoist at the top or collar, which lowers and raises a conveyance for transporting rock, people and mining equipment.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Open Pit Mine</edomv>
+            <edomvd>A mine working or excavation that is open to the surface. Also referred to as an open cut or open cast mine. The USGS topographic map symbol for open pit mine and quarry is the same, so the designation was used only when the symbol was labeled "mine".</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Open Pit Mine or Quarry</edomv>
+            <edomvd>Designation used when the open pit mine/quarry symbol on a topographic map had no distinguishing label.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Ore Stockpile/Storage</edomv>
+            <edomvd>A location where ore materials are stored as piles after being removed from the mine and before being processed. The material is then transported to a process plant or site.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Placer Mine</edomv>
+            <edomvd>A mine where unconsolidated material such as sand, gravel, talus or regolith is mined to extract valuable material.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Prospect Pit</edomv>
+            <edomvd>A shallow pit excavated for the purpose of exposing mineralization and/or extracting sample material. Named a "Prospect" in the USGS topographic map legend.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Quarry</edomv>
+            <edomvd>An open or surface mineral excavation usually for the extraction of stone. It is distinguished from a mine based on geometry (a quarry is open at the top and front) and by the material being extracted. The USGS topographic map symbol for open pit mine and quarry is the same, so the designation was used only when the symbol was labeled "quarry".</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Quarry - Gypsum</edomv>
+            <edomvd>An open or surface mineral working for the purpose of extracting gypsum.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Quarry - Limestone</edomv>
+            <edomvd>An open or surface mineral working for the purpose of extracting limestone.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Quarry - Pumice</edomv>
+            <edomvd>An open or surface mineral working for the purpose of extracting pumice.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Quarry - Rock</edomv>
+            <edomvd>An open or surface mineral working for the purpose of extracting rock.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Salt Evaporator</edomv>
+            <edomvd>An area of ground that is being used to evaporate brine to produce salt.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Sand and Gravel Pit</edomv>
+            <edomvd>An opening or excavation in the ground for the purpose of extracting sand and gravel.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Sand Pit</edomv>
+            <edomvd>An opening or excavation in the ground for the purpose of extracting sand.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Scoria Pit</edomv>
+            <edomvd>An opening or excavation in the ground for the purpose of extracting scoria.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Settling Pond</edomv>
+            <edomvd>A pond, natural or artificial, for recovering solids from watery effluent.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Shale Pit</edomv>
+            <edomvd>An opening or excavation in the ground for the purpose of extracting shale.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Shell Pit</edomv>
+            <edomvd>An opening or excavation in the ground for the purpose of extracting shells.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Silica Mine</edomv>
+            <edomvd>A mine working or excavation in the ground for the purpose of extracting silica.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Slag Pile</edomv>
+            <edomvd>A pile of slag which is waste from the smelting of ore.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Strip Mine</edomv>
+            <edomvd>A surface mine in which ore is exposed by removal of overburden (barren material). Coal, numerous nonmetals, and metallic ore deposits may be mined in this manner. May also be referred to as open cast mines.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Tailings - Dredge</edomv>
+            <edomvd>Sand and gravel that was mined and processed by a dredge. Dredge tailings typically occur as regularly spaced, curved mounds of sand and gravel in streambeds.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Tailings - Mill</edomv>
+            <edomvd>The gangue and other refuse material resulting from the washing, concentration, or treatment of ground ore.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Tailings - Placer</edomv>
+            <edomvd>Undifferentiated placer tailings include mounds and curved rills (material rolled down a slope) of sand and gravel that were mined and processed by placer methods.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Tailings - Pond</edomv>
+            <edomvd>An area closed at the lower end by a constraining wall or dam into which tailings, mineral processing waste, containing a high proportion of water are deposited. The pond is generally impounded with a dam, referred to as a tailings dam. Also known as tailings impoundments.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Tailings - Undifferentiated</edomv>
+            <edomvd>The gangue and other refuse material resulting from the washing, concentration, or other treatment of ground ores. Also called slimes, tails, refuse, and leach residue. Generally differentiated from mine dumps on topographic maps by label only.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Tipple</edomv>
+            <edomvd>Originally the place where the mine cars were tipped and emptied of their coal, and still used in that sense, but more generally applied to the surface structures of a mine, including the preparation plant and loading tracks.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Trench</edomv>
+            <edomvd>A long, narrow surface excavation, usually created by a bulldozer, excavator or backhoe, that exposes rock buried under shallow overburden. Rock exposed in trenches is mapped and sampled as part of the exploration process.</edomvd>
+            <edomvds>American Geological Institute (1997)</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Uranium Mine</edomv>
+            <edomvd>A mine working or excavation in the ground for the purpose of extracting uranium.</edomvd>
+            <edomvds>USGS Authors</edomvds>
+          </edom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>Ftr_Name</attrlabl>
+        <attrdef>The name of the mine feature as labeled on the topographic map. Could also contain descriptive labels associated with some features.</attrdef>
+        <attrdefs>USGS Authors</attrdefs>
+        <attrdomv>
+          <udom>The name of the feature as labeled on the topographic map. This could be a proper name like "Carlin Mine" or "Johnson Shaft" or may contain other descriptive parts of the label depending on the Ftr_Type. For example, "Tunnel", "Pit", "Mine", "Cave", or "Reclaimed". Descriptors were recorded where the map label clarified a symbol (e.g. a "Mine" label was adjacent to an adit symbol). This field was also used for any descriptive labels of features that do not have their own feature type. For example: a gravel/borrow pit symbol with a label of "Slate Pit". The Ftr_Type is "Gravel/Borrow Pit - Undifferentiated" and the Ftr_Name is "Slate Pit".
+When a map label name was surrounded by numerous symbols, the closest major symbol received the name. For example, if a feature label name was surrounded by prospect pit and adit symbols on the map, the name would be applied to the closest adit symbol. In the rare case where more than three proper mine names were within the same polygon, the Ftr_Name was attributed "Jack's Mine; and others - see Remarks" and the Remarks field contains the other names.</udom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>Ftr_Azimuth (points only)</attrlabl>
+        <attrdef>Approximate direction of an adit symbol, measured as degrees of clockwise rotation from a horizontal angle from North.</attrdef>
+        <attrdefs>USGS Authors</attrdefs>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>359</rdommax>
+            <attrunit>degree</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>Topo_Name</attrlabl>
+        <attrdef>The USGS topographic map name.</attrdef>
+        <attrdefs>USGS Authors</attrdefs>
+        <attrdomv>
+          <udom>The name of the USGS topographic map as it appears on the printed map. Quadrangle names are occasionally used in two or more states and thus are non-unique. In addition, some quadrangle map names change through time.</udom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>Topo_Date</attrlabl>
+        <attrdef>The date of the USGS topographic map.</attrdef>
+        <attrdefs>USGS Authors</attrdefs>
+        <attrdomv>
+          <udom>The year of the USGS topographic map as it appears on the printed map. If a map also has a photorevision date, the photorevised year is used for those mine features digitized from symbols which are revised and shown in the pink photorevised color. Where topographic quadrangles have multiple versions, the date reflects the first appearance of a mine symbol on a map. For instance, an adit symbol is shown on a topographic map printed in 1960, 1970, and 1980. The value of "Topo_Date" is 1960. The database does not indicate rare cases when symbols are removed from later versions of a map.</udom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>Topo_Scale</attrlabl>
+        <attrdef>The USGS topographic map scale.</attrdef>
+        <attrdefs>USGS Authors</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>10000</edomv>
+            <edomvd>The representative fraction scale of the source map is 1:10,000.</edomvd>
+            <edomvds>USGS Authors</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>20000</edomv>
+            <edomvd>The representative fraction scale of the source map is 1:20,000.</edomvd>
+            <edomvds>USGS Authors</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>24000</edomv>
+            <edomvd>The representative fraction scale of the source map is 1:24,000.</edomvd>
+            <edomvds>USGS Authors</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>25000</edomv>
+            <edomvd>The representative fraction scale of the source map is 1:25,000.</edomvd>
+            <edomvds>USGS Authors</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>30000</edomv>
+            <edomvd>The representative fraction scale of the source map is 1:30,000.</edomvd>
+            <edomvds>USGS Authors</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>48000</edomv>
+            <edomvd>The representative fraction scale of the source map is 1:48,000.</edomvd>
+            <edomvds>USGS Authors</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>62500</edomv>
+            <edomvd>The representative fraction scale of the source map is 1:62,500.</edomvd>
+            <edomvds>USGS Authors</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>63360</edomv>
+            <edomvd>The representative fraction scale of the source map is 1:63,360.</edomvd>
+            <edomvds>USGS Authors</edomvds>
+          </edom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>CompiledBy</attrlabl>
+        <attrdef>Agency responsible for primary data capture.</attrdef>
+        <attrdefs>USGS Authors</attrdefs>
+        <attrdomv>
+          <udom>The majority of these data were captured by USGS contractor personnel via heads-up digitizing of mine symbols and labels on scanned topographic maps. Point data from 1:24,000-scale maps for the states of California and Nevada were obtained from the California Department of Conservation ("CA Dept Conserv") and the Nevada Bureau of Mines and Geology (NBMG). The obtained data were reviewed and modified to include point and polygon features from older versions of maps, and to conform to the USGS attribute schema.</udom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>Remarks</attrlabl>
+        <attrdef>Additional information pertaining to digitized mine features; standardized when possible.</attrdef>
+        <attrdefs>USGS Authors</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>Feature crosses into and digitized on &lt;Topo_Date&gt; &lt;Topo_Name&gt; map.</edomv>
+            <edomvd>Used when a polygon feature crossed a quadrangle boundary and was digitized from more than one map. For example, the extent of a gravel pit polygon crosses a 1:24,000 quadrangle boundary and is digitized from a 1982 Globe and a 1982 Inspiration map. The quadrangle containing the largest extent of the polygon (1982 Globe map) was entered into the Topo_Date and Topo_Name field and "Feature crosses into and digitized on 1982 Inspiration map" was entered in the Remarks field.</edomvd>
+            <edomvds>USGS Authors</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Feature designated as &lt;Ftr_Type&gt; from feature on 19xx map.</edomv>
+            <edomvd>Denotes where point/polygon features on one map were used to attribute a point/polygon on a different year version of the map. For example, a 1950 map had numerous point symbols labeled as "gravel pits". A 1980 map had an unlabeled polygon that overlaps these point symbols. The unlabeled polygon was assigned the Ftr_Type of "Gravel Pit" and "Feature designated as Gravel Pit from feature on 1950 map" was entered in the Remarks field.</edomvd>
+            <edomvds>USGS Authors</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Inferred &lt;Ftr_Type&gt; from adjacent feature.</edomv>
+            <edomvd>Used when an unlabeled feature (usually generic disturbed surface polygon) was assigned the Ftr_Type of a nearby or adjacent labeled feature.</edomvd>
+            <edomvds>USGS Authors</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Labeled as abandoned.</edomv>
+            <edomvd>Used when a map symbol was labeled "abandoned".</edomvd>
+            <edomvds>USGS Authors</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Labeled as active.</edomv>
+            <edomvd>Used when a map symbol was labeled "active".</edomvd>
+            <edomvds>USGS Authors</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Labeled as inactive.</edomv>
+            <edomvd>Used when a map symbol was labeled "inactive".</edomvd>
+            <edomvds>USGS Authors</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Labeled as &lt;Ftr_Type&gt; on 19xx map.</edomv>
+            <edomvd>Used when the label (not the symbol) of a feature changes on a different year version of the map. For example, a borrow pit symbol on a 1950 map was unlabeled. On the 1980 version of the map, the same symbol was labeled "gravel pit". The Ftr_Type was changed to "Gravel Pit", and "Labeled as Gravel Pit on 1980 map" was entered in the Remarks field.</edomvd>
+            <edomvds>USGS Authors</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Label without symbol. Point placed on building symbol and feature type inferred from label.</edomv>
+            <edomvd>Used when a mine name was adjacent to a generic circle or square building symbol on the map. If more than one building symbol was near the map label, then the remark below was used.</edomvd>
+            <edomvds>USGS Authors</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Label without symbol. Point placed at center of label and feature type inferred from label.</edomv>
+            <edomvd>Used when a label (typically a mine name) had no corresponding map symbol. In these cases, a point was digitized at the center of the label and this remark was entered in the Remarks field.</edomvd>
+            <edomvds>USGS Authors</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Named on 19xx map.</edomv>
+            <edomvd>Used when a label appeared on a later version of a map. For example, a mine shaft symbol on a 1950 map had no label. A 1980 map had the same mine shaft with the label "John Doe Mine". The 1950 feature was attributed "John Doe Mine" in the Ftr_Name field and "Named on 1980 map" was entered in the Remarks field.</edomvd>
+            <edomvds>USGS Authors</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Reference map USGS DRG</edomv>
+            <edomvd>Denotes when the topographic map was not available from the HTMC archive at the time of digitizing. In these cases, a slightly lower resolution digital raster graphic (DRG) version of the map was used. Features digitized from these maps have no attributes in the GDA_ID or ScanID fields; since no HTMC map was used.</edomvd>
+            <edomvds>USGS Authors</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Symbolized as &lt;Ftr_Type&gt;, but labeled &lt;Ftr_Type&gt;.</edomv>
+            <edomvd>Used when a symbolized feature type was labeled as a different feature type. For example, an open pit mine or quarry symbol was labeled as "gravel pit" on the map. The Ftr_Type entered was "Gravel Pit" and "Symbolized as Open Pit Mine or Quarry, but labeled Gravel Pit" was entered in the Remarks field.</edomvd>
+            <edomvds>USGS Authors</edomvds>
+          </edom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>GDA_ID</attrlabl>
+        <attrdef>Geospatial Data Architecture identification number.</attrdef>
+        <attrdefs>USGS Authors</attrdefs>
+        <attrdomv>
+          <udom>Geospatial Data Architecture (GDA) is a USGS National Geospatial Program repository for cell-based or rectangular area map products. The GDA ID is a permanent and unique reference to every product instance.</udom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>ScanID</attrlabl>
+        <attrdef>HTMC map scan identification number.</attrdef>
+        <attrdefs>USGS Authors</attrdefs>
+        <attrdomv>
+          <udom>A unique 6- or 7-digit integer assigned to scanned maps archived at the HTMC. This number changes if a map is re-scanned.</udom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>Shape_Length</attrlabl>
+        <attrdef>An Esri default field that contains the length of a line or perimeter. The value is automatically generated in the units of the feature class.</attrdef>
+        <attrdefs>Esri</attrdefs>
+        <attrdomv>
+          <rdom>
+            <rdommin>0.000349</rdommin>
+            <rdommax>1.748925</rdommax>
+            <attrunit>decimal degrees</attrunit>
+            <attrmres>0.000000001</attrmres>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>Shape_Area</attrlabl>
+        <attrdef>An Esri default field that contains the area of a polygon. The value is automatically generated in units of the feature class.</attrdef>
+        <attrdefs>Esri</attrdefs>
+        <attrdomv>
+          <rdom>
+            <rdommin>0.000000007</rdommin>
+            <rdommax>0.00495266</rdommax>
+            <attrunit>decimal degrees</attrunit>
+            <attrmres>0.000000001</attrmres>
+          </rdom>
+        </attrdomv>
+      </attr>
+    </detailed>
+    <overview>
+      <eaover>The entity and attribute information provided here describes the tabular data associated with the six point and polygon feature classes in the file geodatabase (see "Supplemental Information" for details). The structure of the attribute table was generated by the USGS authors of this dataset. Please review the detailed descriptions that are provided (the individual attribute descriptions) for information on the values that appear as fields/table entries of the dataset.</eaover>
+      <eadetcit>The entity and attribute values were generated by the USGS authors of this dataset. Where possible, consistent terminology was used to describe mine features. Please review the metadata record for additional details and information.</eadetcit>
+    </overview>
+  </eainfo>
+  <distinfo>
+    <distrib>
+      <cntinfo>
+        <cntorgp>
+          <cntorg>U.S. Geological Survey - ScienceBase</cntorg>
+        </cntorgp>
+        <cntaddr>
+          <addrtype>mailing address</addrtype>
+          <address>Denver Federal Center, Building 810, Mail Stop 302</address>
+          <city>Denver</city>
+          <state>CO</state>
+          <postal>80225</postal>
+          <country>United States</country>
+        </cntaddr>
+        <cntvoice>1-888-ASK-USGS (1-888-275-8747)</cntvoice>
+        <cntemail>sciencebase@usgs.gov</cntemail>
+      </cntinfo>
+    </distrib>
+    <distliab>Unless otherwise stated, all data, metadata and related materials are considered to satisfy the quality standards relative to the purpose for which these data were collected. Although these data and associated metadata have been reviewed for accuracy and completeness and approved for release by the U.S. Geological Survey (USGS), no warranty expressed or implied is made regarding the display or utility of these data for other purposes, nor on all computer systems, nor shall the act of distribution constitute any such warranty.</distliab>
+    <stdorder>
+      <digform>
+        <digtinfo>
+          <formname>Esri Geodatabase (GDB); Esri Shapefile (SHP); Esri ArcGIS Online Service Definition (SD); eXtensible Markup Language (XML); Portable Network Graphic (PNG); Text (TXT); compressed (zipped) folder (ZIP)</formname>
+          <filedec>Use a file extraction software such as WinZip, 7zip, Peazip</filedec>
+          <transize>290</transize>
+        </digtinfo>
+        <digtopt>
+          <onlinopt>
+            <computer>
+              <networka>
+                <networkr>https://doi.org/10.5066/F78W3CHG</networkr>
+              </networka>
+            </computer>
+          </onlinopt>
+        </digtopt>
+      </digform>
+      <fees>None. No fees are applicable for obtaining the data set.</fees>
+    </stdorder>
+  </distinfo>
+  <metainfo>
+    <metd>20230524</metd>
+    <metc>
+      <cntinfo>
+        <cntperp>
+          <cntper>John D. Horton</cntper>
+          <cntorg>U.S. Geological Survey</cntorg>
+        </cntperp>
+        <cntpos>Physical Scientist</cntpos>
+        <cntaddr>
+          <addrtype>mailing address</addrtype>
+          <address>PO Box 25046, Mail Stop 973</address>
+          <city>Lakewood</city>
+          <state>CO</state>
+          <postal>80225</postal>
+          <country>USA</country>
+        </cntaddr>
+        <cntvoice>303-236-1921</cntvoice>
+        <cntfax>303-236-1425</cntfax>
+        <cntemail>jhorton@usgs.gov</cntemail>
+      </cntinfo>
+    </metc>
+    <metstdn>FGDC Content Standard for Digital Geospatial Metadata</metstdn>
+    <metstdv>FGDC-STD-001-1998</metstdv>
+  </metainfo>
+</metadata>
