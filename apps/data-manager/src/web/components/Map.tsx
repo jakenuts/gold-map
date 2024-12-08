@@ -1,4 +1,4 @@
-workimport React from 'react';
+import React from 'react';
 import { MapContainer, TileLayer, CircleMarker, Popup } from 'react-leaflet';
 import type { MineralDeposit } from '../../types/MineralDeposit';
 import 'leaflet/dist/leaflet.css';
@@ -27,7 +27,8 @@ export const Map = ({ deposits, center, zoom }: Props) => {
 
   React.useEffect(() => {
     setMounted(true);
-  }, []);
+    console.log('Deposits:', deposits);
+  }, [deposits]);
 
   if (!mounted) {
     return React.createElement('div', null, 'Loading map...');
@@ -47,15 +48,17 @@ export const Map = ({ deposits, center, zoom }: Props) => {
           url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
         }),
         ...deposits.map(deposit => {
-          // Ensure we're using the correct coordinate order [lat, lng] for Leaflet
-          const coordinates: [number, number] = [
-            deposit.location.coordinates[1],  // Latitude
-            deposit.location.coordinates[0]   // Longitude
-          ];
+          if (!deposit.location || !deposit.location.coordinates) {
+            console.warn('Missing location for deposit:', deposit);
+            return null;
+          }
+
+          const [lng, lat] = deposit.location.coordinates;
+          console.log(`Deposit ${deposit.name}: [${lat}, ${lng}]`);
           
           return React.createElement(CircleMarker, {
             key: deposit.id,
-            center: coordinates,
+            center: [lat, lng] as [number, number],
             radius: 8,
             fillColor: getDepositColor(deposit.depositType),
             color: '#000',
@@ -66,11 +69,12 @@ export const Map = ({ deposits, center, zoom }: Props) => {
               children: React.createElement('div', null, [
                 React.createElement('h3', { key: 'title' }, deposit.name),
                 React.createElement('p', { key: 'type' }, `Type: ${deposit.depositType || 'Unknown'}`),
-                React.createElement('p', { key: 'commodities' }, `Commodities: ${deposit.commodities || 'Unknown'}`)
+                React.createElement('p', { key: 'commodities' }, `Commodities: ${deposit.commodities || 'Unknown'}`),
+                React.createElement('p', { key: 'coords' }, `Coordinates: [${lat}, ${lng}]`)
               ])
             })
           });
-        })
+        }).filter(Boolean)
       ]
     })
   );
