@@ -8,7 +8,7 @@ This project processes and organizes California mining site data into a structur
 # Install dependencies
 npm install
 
-# Filter source files to bounding box
+# Filter source files to bounding  box
 npx tsx filter-points.ts
 npx tsx filter-poly.ts
 
@@ -92,6 +92,7 @@ The output follows the standard GeoJSON format:
 - `filter-points.ts`: Filters point features to bounding box
 - `filter-poly.ts`: Filters polygon features to bounding box
 - `merge-geojson.ts`: Merges features and adds organizational properties
+- `export-geojson.ts`: Optional tool for exporting group-specific files
 
 ### Configuration
 - `types.d.ts`: TypeScript type declarations
@@ -139,6 +140,23 @@ if (feature.properties.geometry_type === 'point') {
     }
 }
 ```
+
+## Optional Tools
+
+### export-geojson.ts
+An optional script for exporting groups to separate files:
+```bash
+# Show usage information
+npx tsx export-geojson.ts --help
+
+# Export all groups to separate files
+npx tsx export-geojson.ts
+
+# Export a specific group
+npx tsx export-geojson.ts Mines
+```
+
+Files are exported with prefix 'export-' to avoid conflicts with the main dataset. This tool is provided for cases where working with smaller, group-specific files is preferred, but the main merged file remains the primary data source.
 
 ## Future Improvements
 1. Add metadata for each group (description, typical features, etc.)
