@@ -32,14 +32,7 @@ export declare class USGSClient {
     private baseUrl;
     private defaultBBox;
     constructor();
-    getMineralDeposits(bbox?: string): Promise<{
-        type: "Feature";
-        geometry: {
-            type: "Point";
-            coordinates: [number, number];
-        };
-        properties: Record<string, any>;
-    }[]>;
+    getMineralDeposits(bbox?: string): Promise<USGSFeature[]>;
     private getTestData;
     transformToMineralDeposit(feature: USGSFeature): {
         name: any;

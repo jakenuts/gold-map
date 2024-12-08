@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
-import { AppDataSource } from './config/database';
-import { DataIngestionService } from './services/data-ingestion';
+import { AppDataSource } from './config/database.js';
+import { DataIngestionService } from './services/data-ingestion.js';
 const app = express();
 const port = process.env.PORT || 3001;
 app.use(cors());
@@ -26,10 +26,10 @@ app.get('/api/deposits', async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch deposits' });
     }
 });
-app.get('/api/deposits/bbox/:bbox', async (req, res) => {
+app.get('/api/deposits/bbox/:minLon/:minLat/:maxLon/:maxLat', async (req, res) => {
     try {
-        const { bbox } = req.params;
-        const deposits = await dataIngestionService.getDepositsInBoundingBox(bbox);
+        const { minLon, minLat, maxLon, maxLat } = req.params;
+        const deposits = await dataIngestionService.getDepositsInBoundingBox(Number(minLon), Number(minLat), Number(maxLon), Number(maxLat));
         res.json(deposits);
     }
     catch (error) {

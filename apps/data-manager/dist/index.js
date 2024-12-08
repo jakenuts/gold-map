@@ -1,6 +1,6 @@
 import 'reflect-metadata';
-import { AppDataSource } from './config/database';
-import { DataIngestionService } from './services/data-ingestion';
+import { AppDataSource } from './config/database.js';
+import { DataIngestionService } from './services/data-ingestion.js';
 async function main() {
     try {
         await AppDataSource.initialize();

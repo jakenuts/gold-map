@@ -1,10 +1,11 @@
 import { AppDataSource } from '../config/database.js';
 import { MineralDeposit } from '../entities/MineralDeposit.js';
-import { USGSClient } from './usgs-client.js';
+import { USGSClient, USGSFeature } from './usgs-client.js';
+import { Repository } from 'typeorm';
 
 export class DataIngestionService {
   private usgsClient: USGSClient;
-  private mineralDepositRepository;
+  private mineralDepositRepository: Repository<MineralDeposit>;
 
   constructor() {
     this.usgsClient = new USGSClient();
@@ -21,16 +22,16 @@ export class DataIngestionService {
       console.log('Cleared existing mineral deposits');
 
       // Transform and save new data
-      const deposits = features.map((feature: any) => 
+      const deposits = features.map((feature: USGSFeature) => 
         this.mineralDepositRepository.create(
           this.usgsClient.transformToMineralDeposit(feature)
         )
       );
 
-      await this.mineralDepositRepository.save(deposits);
-      console.log('Successfully saved', deposits.length, 'mineral deposits to database');
+      const savedDeposits = await this.mineralDepositRepository.save(deposits);
+      console.log('Successfully saved', savedDeposits.length, 'mineral deposits to database');
 
-      return deposits;
+      return savedDeposits;
     } catch (error) {
       console.error('Error during data ingestion:', error);
       throw error;

@@ -1,6 +1,7 @@
- import axios from 'axios';
+import axios from 'axios';
 import { z } from 'zod';
 import { config } from 'dotenv';
+import { XMLParser } from 'fast-xml-parser';
 
 config();
 
@@ -19,77 +20,159 @@ const GeoJSONResponse = z.object({
 });
 
 export type USGSFeature = z.infer<typeof GeoJSONFeature>;
+type WFSFeature = {
+  mrds: {
+    'gml:Point'?: {
+      'gml:coordinates'?: string;
+    };
+    dep_name?: string;
+    name?: string;
+    dep_type?: string;
+    commod1?: string;
+    mrds_id?: string;
+    id?: string;
+  };
+};
 
 export class USGSClient {
   private baseUrl: string;
   private defaultBBox: string;
+  private parser: XMLParser;
 
   constructor() {
-    this.baseUrl = process.env.USGS_MRDS_BASE_URL || 'https://mrdata.usgs.gov/mrds/wfs';
+    this.baseUrl = process.env.USGS_MRDS_BASE_URL || 'https://mrdata.usgs.gov/services/wfs/mrds';
     this.defaultBBox = process.env.DEFAULT_BBOX || '-124.407182,40.071180,-122.393331,41.740961';
+    this.parser = new XMLParser({
+      ignoreAttributes: true,
+      parseAttributeValue: true,
+      parseTagValue: true
+    });
+    console.log('USGS Client initialized with:', {
+      baseUrl: this.baseUrl,
+      defaultBBox: this.defaultBBox
+    });
   }
 
-  async getMineralDeposits(bbox: string = this.defaultBBox) {
+  async getMineralDeposits(bbox: string = this.defaultBBox): Promise<USGSFeature[]> {
     try {
       console.log('Fetching data from USGS with bbox:', bbox);
       
       // Format bbox properly
       const [minLon, minLat, maxLon, maxLat] = bbox.split(',').map(Number);
+      console.log('Parsed bbox coordinates:', { minLon, minLat, maxLon, maxLat });
       
-      const response = await axios.get(this.baseUrl, {
-        params: {
-          service: 'WFS',
-          version: '1.0.0',
-          request: 'GetFeature',
-          typeName: 'mrds',
-          bbox: `${minLon},${minLat},${maxLon},${maxLat}`,
-          srsName: 'EPSG:4326',
-          outputFormat: 'application/json',
-          maxFeatures: 1000
-        },
+      const params = new URLSearchParams({
+        service: 'WFS',
+        version: '1.0.0',
+        request: 'GetFeature',
+        typeName: 'mrds',
+        bbox: `${minLon},${minLat},${maxLon},${maxLat}`,
+        srsName: 'EPSG:4326'
+      });
+      
+      const url = `${this.baseUrl}?${params.toString()}`;
+      console.log('Making request to USGS URL:', url);
+      
+      const response = await axios.get(url, {
         headers: {
-          'Accept': 'application/json'
+          'Accept': 'text/xml',
+          'Content-Type': 'text/xml'
         },
-        timeout: 10000 // 10 second timeout
+        timeout: 10000
       });
 
       console.log('USGS response status:', response.status);
       
-      if (!response.data || !response.data.features) {
-        console.log('Invalid response format, using test data');
+      if (!response.data) {
+        console.error('No data received from USGS');
         return this.getTestData();
       }
 
-      console.log(`Received ${response.data.features.length} features from USGS`);
+      // Parse XML to JSON
+      const parsedXml = this.parser.parse(response.data);
+      console.log('Parsed XML response:', JSON.stringify(parsedXml, null, 2));
 
-      // Transform the response to match our expected format
-      const transformedData = {
-        type: 'FeatureCollection',
-        features: response.data.features.map((feature: any) => ({
-          type: 'Feature',
+      // Extract features from WFS response
+      const featureCollection = parsedXml['wfs:FeatureCollection'];
+      if (!featureCollection || !featureCollection['gml:featureMember']) {
+        console.error('No features found in WFS response');
+        return this.getTestData();
+      }
+
+      // Convert features to GeoJSON format
+      let features = Array.isArray(featureCollection['gml:featureMember']) 
+        ? featureCollection['gml:featureMember'] 
+        : [featureCollection['gml:featureMember']];
+
+      console.log(`Found ${features.length} features in WFS response`);
+
+      const geoJsonFeatures = features.map((feature: WFSFeature) => {
+        const mrdsFeature = feature.mrds;
+        if (!mrdsFeature) {
+          console.warn('Invalid feature structure:', feature);
+          return null;
+        }
+
+        // Extract coordinates from GML point
+        const point = mrdsFeature['gml:Point'];
+        const coordinates = point?.['gml:coordinates']?.split(',').map(Number) || null;
+        if (!coordinates || coordinates.length !== 2) {
+          console.warn('Invalid coordinates for feature:', mrdsFeature);
+          return null;
+        }
+
+        return {
+          type: 'Feature' as const,
           geometry: {
-            type: 'Point',
-            coordinates: feature.geometry.coordinates
+            type: 'Point' as const,
+            coordinates: coordinates
           },
           properties: {
-            ...feature.properties,
-            name: feature.properties.name || feature.properties.dep_name || 'Unknown',
-            id: feature.properties.id || feature.properties.mrds_id
+            name: mrdsFeature.dep_name || mrdsFeature.name || 'Unknown',
+            dep_type: mrdsFeature.dep_type || null,
+            commod1: mrdsFeature.commod1 || null,
+            id: mrdsFeature.mrds_id || mrdsFeature.id
           }
-        }))
+        };
+      }).filter((f): f is NonNullable<typeof f> => f !== null);
+
+      if (geoJsonFeatures.length === 0) {
+        console.warn('No valid features found after transformation');
+        return this.getTestData();
+      }
+
+      console.log(`Successfully transformed ${geoJsonFeatures.length} features to GeoJSON`);
+      console.log('Sample transformed feature:', JSON.stringify(geoJsonFeatures[0], null, 2));
+
+      const transformedData = {
+        type: 'FeatureCollection' as const,
+        features: geoJsonFeatures
       };
 
-      const parsed = GeoJSONResponse.parse(transformedData);
-      console.log('Successfully parsed', parsed.features.length, 'features');
-      return parsed.features;
+      try {
+        const parsed = GeoJSONResponse.parse(transformedData);
+        console.log('Successfully validated GeoJSON data');
+        return parsed.features;
+      } catch (parseError) {
+        console.error('Error validating GeoJSON data:', parseError);
+        return this.getTestData();
+      }
     } catch (error) {
-      console.error('Error fetching USGS data:', error);
-      console.log('Falling back to test data');
+      if (axios.isAxiosError(error)) {
+        console.error('Axios error fetching USGS data:', {
+          message: error.message,
+          status: error.response?.status,
+          data: error.response?.data
+        });
+      } else {
+        console.error('Error fetching USGS data:', error);
+      }
       return this.getTestData();
     }
   }
 
   private getTestData(): USGSFeature[] {
+    console.log('Generating test data');
     const testData = {
       type: 'FeatureCollection' as const,
       features: [
@@ -140,9 +223,9 @@ export class USGSClient {
     return parsed.features;
   }
 
-  transformToMineralDeposit(feature: USGSFeature) {
-    return {
-      name: feature.properties.name || feature.properties.dep_name || 'Unknown',
+  public transformToMineralDeposit(feature: USGSFeature) {
+    const transformed = {
+      name: feature.properties.name || 'Unknown',
       depositType: feature.properties.dep_type || null,
       commodities: feature.properties.commod1 || null,
       location: {
@@ -153,5 +236,8 @@ export class USGSClient {
       source: 'USGS',
       sourceId: feature.properties.id?.toString() || null,
     };
+    
+    console.log('Transformed deposit:', transformed);
+    return transformed;
   }
 }

@@ -1,132 +1,157 @@
 # GeoData Manager
 
-A TypeScript-based application for collecting and managing geospatial data from various sources, storing it in PostGIS, and making it available for web mapping applications.
+A full-stack TypeScript application for collecting, managing, and visualizing mineral deposit data from USGS sources using PostGIS for spatial data storage.
 
-## Features
+## Tech Stack
 
-- Fetches mineral deposit data from USGS MRDS service
-- Stores geospatial data in PostGIS database
-- Supports spatial queries using PostGIS
-- Modern TypeScript/Node.js architecture
-- Docker-based local development environment
+### Backend
+- **Node.js** with **Express** for the API server
+- **TypeORM** for database ORM with PostgreSQL
+- **PostGIS** for spatial data handling
+- **Zod** for runtime type validation
+- **TypeScript** for type safety
 
-## Prerequisites
+### Frontend
+- **React** with **TypeScript**
+- **Vite** for development and building
+- **React-Leaflet** for interactive mapping
+- **Axios** for API requests
 
-- Node.js 18+ 
-- Docker and Docker Compose
-- pnpm (recommended) or npm
-
-## Setup
-
-1. Clone the repository and install dependencies:
-```bash
-pnpm install
-```
-
-2. Create a `.env` file (or copy from .env.example):
-```bash
-# Database Configuration
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=postgres
-POSTGRES_DB=geodata
-POSTGRES_HOST=localhost
-POSTGRES_PORT=5432
-
-# USGS Data Source
-USGS_MRDS_BASE_URL=https://mrdata.usgs.gov/services/wfs/mrds
-DEFAULT_BBOX=-124.407182,40.071180,-122.393331,41.740961
-```
-
-3. Start the PostGIS database:
-```bash
-docker-compose up -d
-```
-
-## Usage
-
-### Ingest USGS Data
-
-To ingest data from USGS MRDS with the default bounding box:
-```bash
-pnpm start ingest
-```
-
-To specify a custom bounding box:
-```bash
-pnpm start ingest "-124.407182,40.071180,-122.393331,41.740961"
-```
-
-### Query Data
-
-To query deposits within a bounding box:
-```bash
-pnpm start query <minLng> <minLat> <maxLng> <maxLat>
-```
-
-Example:
-```bash
-pnpm start query -124.407182 40.071180 -122.393331 41.740961
-```
-
-## Development
-
-Start the application in development mode with auto-reload:
-```bash
-pnpm dev
-```
-
-Run type checking:
-```bash
-pnpm typecheck
-```
-
-Format code:
-```bash
-pnpm format
-```
-
-Run linting:
-```bash
-pnpm lint
-```
+### Database
+- **PostgreSQL** with **PostGIS** extension running in Docker
 
 ## Project Structure
 
 ```
-.
-├── src/
-│   ├── config/         # Configuration files
-│   ├── entities/       # TypeORM entities
-│   ├── services/       # Business logic services
-│   └── index.ts        # Application entry point
-├── docker-compose.yml  # Docker configuration
-├── .env               # Environment variables
-└── tsconfig.json      # TypeScript configuration
+src/
+├── config/
+│   └── database.ts         # Database configuration and connection
+├── entities/
+│   └── MineralDeposit.ts   # TypeORM entity for mineral deposits
+├── services/
+│   ├── data-ingestion.ts   # Service for data ingestion and queries
+│   └── usgs-client.ts      # USGS API client implementation
+├── types/
+│   └── MineralDeposit.ts   # TypeScript interfaces
+├── web/
+│   ├── components/
+│   │   └── Map.tsx         # React map component
+│   ├── App.tsx            # Main React application
+│   └── main.tsx           # Frontend entry point
+├── index.ts               # CLI entry point
+└── server.ts             # Express server setup
 ```
 
-## Database Schema
+## Key Components
 
-The main entity is `MineralDeposit` which stores geospatial data with the following structure:
+### MineralDeposit Entity
+```typescript
+@Entity('mineral_deposits')
+export class MineralDeposit {
+    @PrimaryGeneratedColumn('uuid')
+    id!: string;
 
-- `id`: UUID primary key
-- `name`: Deposit name
-- `depositType`: Type of mineral deposit
-- `commodities`: Primary commodities
-- `location`: PostGIS Point geometry (SRID: 4326)
-- `properties`: JSONB field for additional properties
-- `source`: Data source identifier
-- `sourceId`: Original ID from the data source
-- `createdAt`: Timestamp of record creation
-- `updatedAt`: Timestamp of last update
+    @Column({ type: 'varchar', length: 255 })
+    name!: string;
 
-## Contributing
+    @Column({ type: 'geometry', spatialFeatureType: 'Point', srid: 4326 })
+    location!: any;
 
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
+    // Additional fields for deposit information
+}
+```
 
-## License
+### Data Ingestion Service
+Handles data ingestion from USGS and database operations:
+- `ingestUSGSData(bbox?: string)`: Fetches and stores new data
+- `getDepositsInBoundingBox(minLon, minLat, maxLon, maxLat)`: Spatial queries
+- `getAllDeposits()`: Retrieves all stored deposits
 
-ISC
+### USGS Client
+Manages communication with USGS WFS service:
+- Fetches mineral deposit data using WFS protocol
+- Transforms GeoJSON responses to internal format
+- Includes fallback test data
+- Extensive error handling and logging
+
+### Map Component
+React component for visualizing deposits:
+- Uses Leaflet for interactive mapping
+- Displays deposit markers with popups
+- Supports data refresh functionality
+
+## Getting Started
+
+1. **Prerequisites**
+   - Node.js 16+
+   - Docker
+   - pnpm
+
+2. **Installation**
+   ```bash
+   pnpm install
+   ```
+
+3. **Configuration**
+   Create a `.env` file:
+   ```env
+   POSTGRES_USER=postgres
+   POSTGRES_PASSWORD=postgres
+   POSTGRES_DB=geodata
+   POSTGRES_HOST=localhost
+   POSTGRES_PORT=5432
+   USGS_MRDS_BASE_URL=https://mrdata.usgs.gov/services/wfs/mrds
+   DEFAULT_BBOX=-124.407182,40.071180,-122.393331,41.740961
+   ```
+
+4. **Start the Application**
+   ```bash
+   pnpm start
+   ```
+   This command:
+   - Starts PostgreSQL/PostGIS in Docker
+   - Launches the backend server (http://localhost:3001)
+   - Starts the frontend dev server (http://localhost:3002)
+
+## API Endpoints
+
+- `GET /api/deposits`: Get all mineral deposits
+- `GET /api/deposits/bbox/:minLon/:minLat/:maxLon/:maxLat`: Get deposits in bounding box
+- `POST /api/deposits/refresh`: Refresh data from USGS
+
+## Development Notes
+
+### Data Flow
+1. USGS client fetches data using WFS protocol
+2. Data is transformed to internal GeoJSON format
+3. TypeORM saves data to PostGIS
+4. Frontend fetches and displays data on map
+
+### Debugging
+- Check server logs for detailed USGS API interaction
+- Database queries are logged in development
+- Frontend console shows data processing steps
+
+### Common Issues
+- USGS API may have rate limits or timeouts
+- Default to test data if API fails
+- Check PostGIS extension is enabled
+- Verify coordinate systems match (SRID: 4326)
+
+## Extending the Project
+
+### Adding New Data Sources
+1. Create new client service (similar to USGSClient)
+2. Implement data transformation to match MineralDeposit entity
+3. Add new ingestion method to DataIngestionService
+4. Update API endpoints as needed
+
+### Enhancing the Map
+1. Modify Map.tsx for new features
+2. Update styling in styles.css
+3. Add new controls or layers as needed
+
+### Database Modifications
+1. Update MineralDeposit entity
+2. Run TypeORM synchronize
+3. Update related services and API endpoints

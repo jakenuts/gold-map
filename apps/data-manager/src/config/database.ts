@@ -2,7 +2,7 @@ import { DataSource } from 'typeorm';
 import { config } from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
-import { MineralDeposit } from '../entities/MineralDeposit';
+import { MineralDeposit } from '../entities/MineralDeposit.js';
 
 config();
 

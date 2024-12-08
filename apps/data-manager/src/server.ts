@@ -1,7 +1,8 @@
+import 'reflect-metadata';
 import express from 'express';
 import cors from 'cors';
-import { AppDataSource } from './config/database';
-import { DataIngestionService } from './services/data-ingestion';
+import { AppDataSource } from './config/database.js';
+import { DataIngestionService } from './services/data-ingestion.js';
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -16,7 +17,7 @@ AppDataSource.initialize()
   .then(() => {
     console.log('Database connection initialized');
   })
-  .catch((error) => {
+  .catch((error: Error) => {
     console.error('Error initializing database:', error);
   });
 
@@ -31,10 +32,15 @@ app.get('/api/deposits', async (req, res) => {
   }
 });
 
-app.get('/api/deposits/bbox/:bbox', async (req, res) => {
+app.get('/api/deposits/bbox/:minLon/:minLat/:maxLon/:maxLat', async (req, res) => {
   try {
-    const { bbox } = req.params;
-    const deposits = await dataIngestionService.getDepositsInBoundingBox(bbox);
+    const { minLon, minLat, maxLon, maxLat } = req.params;
+    const deposits = await dataIngestionService.getDepositsInBoundingBox(
+      Number(minLon),
+      Number(minLat),
+      Number(maxLon),
+      Number(maxLat)
+    );
     res.json(deposits);
   } catch (error) {
     console.error('Error fetching deposits in bbox:', error);

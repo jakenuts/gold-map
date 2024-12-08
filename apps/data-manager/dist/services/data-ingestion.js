@@ -1,6 +1,6 @@
-import { AppDataSource } from '../config/database';
-import { MineralDeposit } from '../entities/MineralDeposit';
-import { USGSClient } from './usgs-client';
+import { AppDataSource } from '../config/database.js';
+import { MineralDeposit } from '../entities/MineralDeposit.js';
+import { USGSClient } from './usgs-client.js';
 export class DataIngestionService {
     usgsClient;
     mineralDepositRepository;
@@ -16,7 +16,7 @@ export class DataIngestionService {
             await this.mineralDepositRepository.clear();
             console.log('Cleared existing mineral deposits');
             // Transform and save new data
-            const deposits = features.map(feature => this.mineralDepositRepository.create(this.usgsClient.transformToMineralDeposit(feature)));
+            const deposits = features.map((feature) => this.mineralDepositRepository.create(this.usgsClient.transformToMineralDeposit(feature)));
             await this.mineralDepositRepository.save(deposits);
             console.log('Successfully saved', deposits.length, 'mineral deposits to database');
             return deposits;
