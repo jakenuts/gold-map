@@ -21,16 +21,21 @@ const GeoJSONResponse = z.object({
 
 export type USGSFeature = z.infer<typeof GeoJSONFeature>;
 type WFSFeature = {
-  mrds: {
-    'gml:Point'?: {
-      'gml:coordinates'?: string;
+  'ms:mrds': {
+    'gml:boundedBy'?: { 'gml:Box': any };
+    'ms:geometry'?: { 
+      'gml:Point': {
+        'gml:coordinates': string;
+      } 
     };
-    dep_name?: string;
-    name?: string;
-    dep_type?: string;
-    commod1?: string;
-    mrds_id?: string;
-    id?: string;
+    'ms:dep_id'?: number;
+    'ms:site_name'?: string;
+    'ms:dev_stat'?: string;
+    'ms:fips_code'?: string;
+    'ms:huc_code'?: string;
+    'ms:quad_code'?: string;
+    'ms:url'?: string;
+    'ms:code_list'?: string;
   };
 };
 
@@ -107,17 +112,23 @@ export class USGSClient {
       console.log(`Found ${features.length} features in WFS response`);
 
       const geoJsonFeatures = features.map((feature: WFSFeature) => {
-        const mrdsFeature = feature.mrds;
+        const mrdsFeature = feature['ms:mrds'];
         if (!mrdsFeature) {
           console.warn('Invalid feature structure:', feature);
           return null;
         }
 
         // Extract coordinates from GML point
-        const point = mrdsFeature['gml:Point'];
-        const coordinates = point?.['gml:coordinates']?.split(',').map(Number) || null;
-        if (!coordinates || coordinates.length !== 2) {
-          console.warn('Invalid coordinates for feature:', mrdsFeature);
+        const geometry = mrdsFeature['ms:geometry']?.['gml:Point'];
+        if (!geometry || !geometry['gml:coordinates']) {
+          console.warn('Invalid geometry for feature:', mrdsFeature);
+          return null;
+        }
+
+        // Parse coordinates from the string format "-122.450820,41.023180"
+        const [longitude, latitude] = geometry['gml:coordinates'].split(',').map(Number);
+        if (isNaN(longitude) || isNaN(latitude)) {
+          console.warn('Invalid coordinates:', geometry['gml:coordinates']);
           return null;
         }
 
@@ -125,13 +136,17 @@ export class USGSClient {
           type: 'Feature' as const,
           geometry: {
             type: 'Point' as const,
-            coordinates: coordinates
+            coordinates: [longitude, latitude]
           },
           properties: {
-            name: mrdsFeature.dep_name || mrdsFeature.name || 'Unknown',
-            dep_type: mrdsFeature.dep_type || null,
-            commod1: mrdsFeature.commod1 || null,
-            id: mrdsFeature.mrds_id || mrdsFeature.id
+            name: mrdsFeature['ms:site_name'] || 'Unknown',
+            dep_type: mrdsFeature['ms:dev_stat'] || null,
+            commod1: mrdsFeature['ms:code_list']?.trim() || null,
+            id: mrdsFeature['ms:dep_id']?.toString(),
+            url: mrdsFeature['ms:url'],
+            fips_code: mrdsFeature['ms:fips_code'],
+            huc_code: mrdsFeature['ms:huc_code'],
+            quad_code: mrdsFeature['ms:quad_code']
           }
         };
       }).filter((f): f is NonNullable<typeof f> => f !== null);
