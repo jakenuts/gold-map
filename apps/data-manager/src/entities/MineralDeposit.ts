@@ -3,32 +3,32 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 @Entity('mineral_deposits')
 export class MineralDeposit {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ type: 'varchar', length: 255 })
-  name: string;
+  name!: string;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
-  depositType: string;
+  depositType!: string;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
-  commodities: string;
+  commodities!: string;
 
   @Column({ type: 'geometry', spatialFeatureType: 'Point', srid: 4326 })
-  location: any;
+  location!: any;
 
   @Column({ type: 'jsonb', nullable: true })
-  properties: Record<string, any>;
+  properties!: Record<string, any>;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
-  source: string;
+  source!: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
-  sourceId: string;
+  sourceId!: string;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 }

@@ -1,6 +1,6 @@
-import { AppDataSource } from '../config/database';
-import { MineralDeposit } from '../entities/MineralDeposit';
-import { USGSClient } from './usgs-client';
+import { AppDataSource } from '../config/database.js';
+import { MineralDeposit } from '../entities/MineralDeposit.js';
+import { USGSClient } from './usgs-client.js';
 
 export class DataIngestionService {
   private usgsClient: USGSClient;
@@ -21,7 +21,7 @@ export class DataIngestionService {
       console.log('Cleared existing mineral deposits');
 
       // Transform and save new data
-      const deposits = features.map(feature => 
+      const deposits = features.map((feature: any) => 
         this.mineralDepositRepository.create(
           this.usgsClient.transformToMineralDeposit(feature)
         )
@@ -41,9 +41,7 @@ export class DataIngestionService {
     return this.mineralDepositRepository.find();
   }
 
-  async getDepositsInBoundingBox(bbox: string) {
-    const [minLon, minLat, maxLon, maxLat] = bbox.split(',').map(Number);
-    
+  async getDepositsInBoundingBox(minLon: number, minLat: number, maxLon: number, maxLat: number) {
     return this.mineralDepositRepository
       .createQueryBuilder('deposit')
       .where(`ST_Within(deposit.location, ST_MakeEnvelope(:minLon, :minLat, :maxLon, :maxLat, 4326))`, {
