@@ -1,19 +1,20 @@
-import React from 'react';
-import L from 'leaflet';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+workimport React from 'react';
+import { MapContainer, TileLayer, CircleMarker, Popup } from 'react-leaflet';
 import type { MineralDeposit } from '../../types/MineralDeposit';
 import 'leaflet/dist/leaflet.css';
 
-// Fix Leaflet default icon issue
-const DefaultIcon = new L.Icon({
-  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41]
-});
+// Color mapping for different deposit types
+const getDepositColor = (depositType: string | null): string => {
+  const typeColorMap: Record<string, string> = {
+    'Producer': '#FF4500',     // Red-orange for active producers
+    'Occurrence': '#4169E1',   // Royal blue for occurrences
+    'Past Producer': '#9370DB', // Purple for past producers
+    'Prospect': '#32CD32'      // Green for prospects
+  };
+
+  if (!depositType) return '#808080'; // Gray for unknown
+  return typeColorMap[depositType] || '#808080';
+};
 
 interface Props {
   deposits: MineralDeposit[];
@@ -45,11 +46,22 @@ export const Map = ({ deposits, center, zoom }: Props) => {
           attribution: '© OpenStreetMap contributors',
           url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
         }),
-        ...deposits.map(deposit => 
-          React.createElement(Marker, {
+        ...deposits.map(deposit => {
+          // Ensure we're using the correct coordinate order [lat, lng] for Leaflet
+          const coordinates: [number, number] = [
+            deposit.location.coordinates[1],  // Latitude
+            deposit.location.coordinates[0]   // Longitude
+          ];
+          
+          return React.createElement(CircleMarker, {
             key: deposit.id,
-            position: [deposit.location.coordinates[1], deposit.location.coordinates[0]],
-            icon: DefaultIcon,
+            center: coordinates,
+            radius: 8,
+            fillColor: getDepositColor(deposit.depositType),
+            color: '#000',
+            weight: 1,
+            opacity: 1,
+            fillOpacity: 0.8,
             children: React.createElement(Popup, {
               children: React.createElement('div', null, [
                 React.createElement('h3', { key: 'title' }, deposit.name),
@@ -57,8 +69,8 @@ export const Map = ({ deposits, center, zoom }: Props) => {
                 React.createElement('p', { key: 'commodities' }, `Commodities: ${deposit.commodities || 'Unknown'}`)
               ])
             })
-          })
-        )
+          });
+        })
       ]
     })
   );
