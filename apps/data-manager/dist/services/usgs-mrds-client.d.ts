@@ -11,7 +11,9 @@ export declare class USGSMRDSClient extends WFSClient {
             coordinates: number[];
         };
         properties: {
+            depositType: any;
             commodities: any;
+            developmentStatus: any;
         };
         sourceId: any;
     };

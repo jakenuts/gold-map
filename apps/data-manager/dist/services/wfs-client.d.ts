@@ -89,5 +89,6 @@ export declare abstract class WFSClient {
     protected abstract parseWFSXML(xmlData: string): Feature[];
     abstract transformToGeoLocation(feature: Feature): any;
     protected formatBBox(bbox?: string): string;
+    protected getRequestParams(bbox: string, format?: string): Record<string, string>;
     getFeatures(bbox?: string): Promise<Feature[]>;
 }

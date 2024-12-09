@@ -21,6 +21,7 @@ export class WFSClient {
     constructor(baseUrl, typeName) {
         this.baseUrl = baseUrl;
         this.typeName = typeName;
+        // Ensure proper comma formatting in default bbox
         this.defaultBBox = '-124.407182,40.071180,-122.393331,41.740961';
         this.xmlParser = new XMLParser({
             ignoreAttributes: false,
@@ -37,19 +38,27 @@ export class WFSClient {
     formatBBox(bbox) {
         if (!bbox)
             return this.defaultBBox;
-        // Remove any extra whitespace
-        const trimmed = bbox.trim();
-        // If already properly formatted with commas, return as is
-        if (/^-?\d+\.?\d*,-?\d+\.?\d*,-?\d+\.?\d*,-?\d+\.?\d*$/.test(trimmed)) {
-            return trimmed;
-        }
-        // Try to parse space-separated format
-        const parts = trimmed.split(/\s+/);
+        // Remove any extra whitespace and ensure proper comma formatting
+        const parts = bbox.trim().split(/[\s,]+/).filter(Boolean);
         if (parts.length === 4 && parts.every(part => /^-?\d+\.?\d*$/.test(part))) {
             return parts.join(',');
         }
-        console.warn('Invalid bounding box format, using default:', trimmed);
+        console.warn('Invalid bounding box format, using default:', bbox);
         return this.defaultBBox;
+    }
+    getRequestParams(bbox, format) {
+        const params = {
+            service: 'WFS',
+            version: '1.0.0',
+            request: 'GetFeature',
+            typeName: this.typeName,
+            bbox: bbox,
+            srsName: 'EPSG:4326'
+        };
+        if (format) {
+            params.outputFormat = format;
+        }
+        return params;
     }
     async getFeatures(bbox) {
         try {
@@ -58,14 +67,7 @@ export class WFSClient {
             // Try XML first since it's more reliable
             console.log('Attempting XML request...');
             const xmlResponse = await axios.get(this.baseUrl, {
-                params: {
-                    service: 'WFS',
-                    version: '1.0.0',
-                    request: 'GetFeature',
-                    typeName: this.typeName,
-                    bbox: effectiveBBox,
-                    srsName: 'EPSG:4326' // Explicitly request coordinates in WGS84
-                },
+                params: this.getRequestParams(effectiveBBox),
                 headers: {
                     'Accept': 'application/xml'
                 }
@@ -88,15 +90,7 @@ export class WFSClient {
             // If XML fails, try JSON
             console.log('XML parsing failed or empty, attempting JSON request...');
             const jsonResponse = await axios.get(this.baseUrl, {
-                params: {
-                    service: 'WFS',
-                    version: '1.0.0',
-                    request: 'GetFeature',
-                    typeName: this.typeName,
-                    bbox: effectiveBBox,
-                    outputFormat: 'application/json',
-                    srsName: 'EPSG:4326'
-                },
+                params: this.getRequestParams(effectiveBBox, 'application/json'),
                 headers: {
                     'Accept': 'application/json'
                 }

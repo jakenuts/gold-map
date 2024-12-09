@@ -1,8 +1,15 @@
 import { WFSClient } from './wfs-client.js';
 export class USGSDepositClient extends WFSClient {
+    mapFile;
     constructor() {
-        const baseUrl = process.env.USGS_DEPOSIT_BASE_URL || 'https://mrdata.usgs.gov/services/deposit';
+        const baseUrl = process.env.USGS_DEPOSIT_BASE_URL || 'https://mrdata.usgs.gov/cgi-bin/mapserv';
         super(baseUrl, 'points');
+        this.mapFile = '/mnt/mrt/map-files/deposit.map';
+    }
+    getRequestParams(bbox, format) {
+        const params = super.getRequestParams(bbox, format);
+        params.map = this.mapFile;
+        return params;
     }
     parseWFSXML(xmlData) {
         try {
@@ -58,6 +65,24 @@ export class USGSDepositClient extends WFSClient {
                         id: deposit?.['ID']?._text || deposit?.['id']?._text || null,
                         site_type: deposit?.['SITE_TYPE']?._text || deposit?.['site_type']?._text || null,
                         development_status: deposit?.['DEV_STATUS']?._text || deposit?.['dev_status']?._text || null,
+                        // Add any additional properties that match the example you provided
+                        state: deposit?.['STATE']?._text || null,
+                        county: deposit?.['COUNTY']?._text || null,
+                        ftr_type: deposit?.['FTR_TYPE']?._text || null,
+                        ftr_name: deposit?.['FTR_NAME']?._text || null,
+                        ftr_azimut: deposit?.['FTR_AZIMUT']?._text ? parseInt(deposit?.['FTR_AZIMUT']?._text) : null,
+                        topo_name: deposit?.['TOPO_NAME']?._text || null,
+                        topo_date: deposit?.['TOPO_DATE']?._text ? parseInt(deposit?.['TOPO_DATE']?._text) : null,
+                        topo_scale: deposit?.['TOPO_SCALE']?._text || null,
+                        compiledby: deposit?.['COMPILEDBY']?._text || null,
+                        remarks: deposit?.['REMARKS']?._text || null,
+                        gda_id: deposit?.['GDA_ID']?._text ? parseInt(deposit?.['GDA_ID']?._text) : null,
+                        scanid: deposit?.['SCANID']?._text ? parseInt(deposit?.['SCANID']?._text) : null,
+                        original_type: deposit?.['original_type']?._text || null,
+                        category: deposit?.['category']?._text || null,
+                        group: deposit?.['group']?._text || null,
+                        geometry_type: deposit?.['geometry_type']?._text || null,
+                        feature_class: deposit?.['feature_class']?._text || null
                     },
                 };
                 return geoJSONFeature;
