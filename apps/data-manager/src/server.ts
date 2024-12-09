@@ -5,7 +5,7 @@ import { AppDataSource } from './config/database.js';
 import { DataIngestionService } from './services/data-ingestion.js';
 
 const app = express();
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3010;
 
 app.use(cors());
 app.use(express.json());
@@ -22,40 +22,43 @@ AppDataSource.initialize()
   });
 
 // Routes
-app.get('/api/deposits', async (req, res) => {
+app.get('/api/locations', async (req, res) => {
   try {
-    const deposits = await dataIngestionService.getAllDeposits();
-    res.json(deposits);
+    const type = req.query.type as string | undefined;
+    const locations = await dataIngestionService.getAllLocations(type);
+    res.json(locations);
   } catch (error) {
-    console.error('Error fetching deposits:', error);
-    res.status(500).json({ error: 'Failed to fetch deposits' });
+    console.error('Error fetching locations:', error);
+    res.status(500).json({ error: 'Failed to fetch locations' });
   }
 });
 
-app.get('/api/deposits/bbox/:minLon/:minLat/:maxLon/:maxLat', async (req, res) => {
+app.get('/api/locations/bbox/:minLon/:minLat/:maxLon/:maxLat', async (req, res) => {
   try {
     const { minLon, minLat, maxLon, maxLat } = req.params;
-    const deposits = await dataIngestionService.getDepositsInBoundingBox(
+    const type = req.query.type as string | undefined;
+    const locations = await dataIngestionService.getLocationsInBoundingBox(
       Number(minLon),
       Number(minLat),
       Number(maxLon),
-      Number(maxLat)
+      Number(maxLat),
+      type
     );
-    res.json(deposits);
+    res.json(locations);
   } catch (error) {
-    console.error('Error fetching deposits in bbox:', error);
-    res.status(500).json({ error: 'Failed to fetch deposits in bbox' });
+    console.error('Error fetching locations in bbox:', error);
+    res.status(500).json({ error: 'Failed to fetch locations in bbox' });
   }
 });
 
-app.post('/api/deposits/refresh', async (req, res) => {
+app.post('/api/ingest/usgs', async (req, res) => {
   try {
     const bbox = req.query.bbox as string | undefined;
-    const deposits = await dataIngestionService.ingestUSGSData(bbox);
-    res.json(deposits);
+    const locations = await dataIngestionService.ingestUSGSData(bbox);
+    res.json(locations);
   } catch (error) {
-    console.error('Error refreshing deposits:', error);
-    res.status(500).json({ error: 'Failed to refresh deposits' });
+    console.error('Error ingesting USGS data:', error);
+    res.status(500).json({ error: 'Failed to ingest USGS data' });
   }
 });
 

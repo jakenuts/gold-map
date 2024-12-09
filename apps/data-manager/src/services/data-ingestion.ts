@@ -1,15 +1,15 @@
 import { AppDataSource } from '../config/database.js';
-import { MineralDeposit } from '../entities/MineralDeposit.js';
+import { GeoLocation } from '../entities/GeoLocation.js';
 import { USGSClient, USGSFeature } from './usgs-client.js';
 import { Repository } from 'typeorm';
 
 export class DataIngestionService {
   private usgsClient: USGSClient;
-  private mineralDepositRepository: Repository<MineralDeposit>;
+  private geoLocationRepository: Repository<GeoLocation>;
 
   constructor() {
     this.usgsClient = new USGSClient();
-    this.mineralDepositRepository = AppDataSource.getRepository(MineralDeposit);
+    this.geoLocationRepository = AppDataSource.getRepository(GeoLocation);
   }
 
   async ingestUSGSData(bbox?: string) {
@@ -17,40 +17,63 @@ export class DataIngestionService {
       const features = await this.usgsClient.getMineralDeposits(bbox);
       console.log('Fetched', features.length, 'features from USGS');
 
-      // Clear existing data
-      await this.mineralDepositRepository.clear();
-      console.log('Cleared existing mineral deposits');
+      // Clear existing USGS mineral deposit data
+      await this.geoLocationRepository.delete({ 
+        locationType: 'mineral_deposit',
+        source: 'USGS'
+      });
+      console.log('Cleared existing USGS mineral deposits');
 
       // Transform and save new data
-      const deposits = features.map((feature: USGSFeature) => 
-        this.mineralDepositRepository.create(
-          this.usgsClient.transformToMineralDeposit(feature)
-        )
-      );
+      const locations = features.map((feature: USGSFeature) => {
+        const mineralDeposit = this.usgsClient.transformToMineralDeposit(feature);
+        return this.geoLocationRepository.create({
+          name: mineralDeposit.name,
+          locationType: 'mineral_deposit',
+          location: mineralDeposit.location,
+          properties: {
+            ...mineralDeposit.properties,
+            depositType: mineralDeposit.depositType,
+            commodities: mineralDeposit.commodities
+          },
+          source: 'USGS',
+          sourceId: mineralDeposit.sourceId
+        });
+      });
 
-      const savedDeposits = await this.mineralDepositRepository.save(deposits);
-      console.log('Successfully saved', savedDeposits.length, 'mineral deposits to database');
+      const savedLocations = await this.geoLocationRepository.save(locations);
+      console.log('Successfully saved', savedLocations.length, 'locations to database');
 
-      return savedDeposits;
+      return savedLocations;
     } catch (error) {
       console.error('Error during data ingestion:', error);
       throw error;
     }
   }
 
-  async getAllDeposits() {
-    return this.mineralDepositRepository.find();
+  async getAllLocations(type?: string) {
+    if (type) {
+      return this.geoLocationRepository.find({
+        where: { locationType: type }
+      });
+    }
+    return this.geoLocationRepository.find();
   }
 
-  async getDepositsInBoundingBox(minLon: number, minLat: number, maxLon: number, maxLat: number) {
-    return this.mineralDepositRepository
-      .createQueryBuilder('deposit')
-      .where(`ST_Within(deposit.location, ST_MakeEnvelope(:minLon, :minLat, :maxLon, :maxLat, 4326))`, {
+  async getLocationsInBoundingBox(minLon: number, minLat: number, maxLon: number, maxLat: number, type?: string) {
+    const query = this.geoLocationRepository
+      .createQueryBuilder('location')
+      .where(`ST_Within(location.location, ST_MakeEnvelope(:minLon, :minLat, :maxLon, :maxLat, 4326))`, {
         minLon,
         minLat,
         maxLon,
         maxLat
-      })
-      .getMany();
+      });
+
+    if (type) {
+      query.andWhere('location.locationType = :type', { type });
+    }
+
+    return query.getMany();
   }
 }

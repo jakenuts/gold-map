@@ -11,7 +11,8 @@
     "start": "docker compose down && docker compose up -d && concurrently \"pnpm run dev:server\" \"pnpm run dev:web\"",
     "typecheck": "tsc -p tsconfig.node.json --noEmit && tsc -p tsconfig.web.json --noEmit",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
-    "lint": "eslint \"src/**/*.{ts,tsx}\" --fix"
+    "lint": "eslint \"src/**/*.{ts,tsx}\" --fix",
+    "migration:run": "tsx src/run-migrations.ts"
   },
   "keywords": [
     "typescript",

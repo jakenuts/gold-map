@@ -1,32 +1,43 @@
 import React, { useState, useEffect } from 'react';
 import { Map } from './components/Map';
-import type { MineralDeposit } from '../types/MineralDeposit';
+
+interface Location {
+  id: string;
+  name: string;
+  locationType: string;
+  location: {
+    coordinates: [number, number];
+  };
+  properties: Record<string, any>;
+}
 
 const DEFAULT_CENTER: [number, number] = [40.9061, -123.4003];
 const DEFAULT_ZOOM = 8;
+const API_BASE_URL = 'http://localhost:3010';
 
 export default function App() {
-  const [deposits, setDeposits] = useState<MineralDeposit[]>([]);
+  const [locations, setLocations] = useState<Location[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedType, setSelectedType] = useState<string>('mineral_deposit');
 
   useEffect(() => {
-    fetchDeposits();
-  }, []);
+    fetchLocations();
+  }, [selectedType]);
 
-  const fetchDeposits = async () => {
+  const fetchLocations = async () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch('http://localhost:3001/api/deposits');
+      const response = await fetch(`${API_BASE_URL}/api/locations?type=${selectedType}`);
       if (!response.ok) {
-        throw new Error('Failed to fetch deposits');
+        throw new Error('Failed to fetch locations');
       }
       const data = await response.json();
-      setDeposits(data);
+      setLocations(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
-      console.error('Error fetching deposits:', err);
+      console.error('Error fetching locations:', err);
     } finally {
       setLoading(false);
     }
@@ -36,16 +47,16 @@ export default function App() {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch('http://localhost:3001/api/deposits/refresh', {
+      const response = await fetch(`${API_BASE_URL}/api/ingest/usgs`, {
         method: 'POST',
       });
       if (!response.ok) {
-        throw new Error('Failed to refresh deposits');
+        throw new Error('Failed to refresh USGS data');
       }
-      await fetchDeposits();
+      await fetchLocations();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
-      console.error('Error refreshing deposits:', err);
+      console.error('Error refreshing data:', err);
     } finally {
       setLoading(false);
     }
@@ -55,11 +66,21 @@ export default function App() {
     React.createElement('div', { key: 'header', className: 'header' }, [
       React.createElement('h1', { key: 'title' }, 'GeoData Manager'),
       React.createElement('div', { key: 'controls', className: 'controls' }, [
+        React.createElement('select', {
+          key: 'type-select',
+          value: selectedType,
+          onChange: (e: React.ChangeEvent<HTMLSelectElement>) => setSelectedType(e.target.value),
+          disabled: loading
+        }, [
+          React.createElement('option', { key: 'mineral', value: 'mineral_deposit' }, 'Mineral Deposits'),
+          React.createElement('option', { key: 'historical', value: 'historical_site' }, 'Historical Sites'),
+          React.createElement('option', { key: 'geological', value: 'geological_feature' }, 'Geological Features')
+        ]),
         React.createElement('button', {
           key: 'refresh-btn',
           onClick: handleRefreshData,
-          disabled: loading
-        }, loading ? 'Loading...' : 'Refresh Data'),
+          disabled: loading || selectedType !== 'mineral_deposit'
+        }, loading ? 'Loading...' : 'Refresh USGS Data'),
         error && React.createElement('div', {
           key: 'error',
           className: 'error-message'
@@ -69,27 +90,31 @@ export default function App() {
     React.createElement('div', { key: 'content', className: 'content' }, [
       React.createElement('div', { key: 'map', className: 'map-container' },
         React.createElement(Map, {
-          deposits,
+          locations,
           center: DEFAULT_CENTER,
           zoom: DEFAULT_ZOOM
         })
       ),
       React.createElement('div', { key: 'table', className: 'table-container' }, [
-        React.createElement('h2', { key: 'table-title' }, 'Mineral Deposits'),
+        React.createElement('h2', { key: 'table-title' }, 'Locations'),
         React.createElement('table', { key: 'table-content' }, [
           React.createElement('thead', { key: 'thead' },
             React.createElement('tr', null, [
               React.createElement('th', { key: 'name' }, 'Name'),
               React.createElement('th', { key: 'type' }, 'Type'),
-              React.createElement('th', { key: 'commodities' }, 'Commodities')
+              React.createElement('th', { key: 'properties' }, 'Properties')
             ])
           ),
           React.createElement('tbody', { key: 'tbody' },
-            deposits.map(deposit =>
-              React.createElement('tr', { key: deposit.id }, [
-                React.createElement('td', { key: 'name' }, deposit.name),
-                React.createElement('td', { key: 'type' }, deposit.depositType || 'Unknown'),
-                React.createElement('td', { key: 'commodities' }, deposit.commodities || 'Unknown')
+            locations.map(location =>
+              React.createElement('tr', { key: location.id }, [
+                React.createElement('td', { key: 'name' }, location.name),
+                React.createElement('td', { key: 'type' }, location.locationType.replace('_', ' ')),
+                React.createElement('td', { key: 'properties' }, 
+                  Object.entries(location.properties || {})
+                    .map(([key, value]) => `${key}: ${Array.isArray(value) ? value.join(', ') : value}`)
+                    .join('; ')
+                )
               ])
             )
           )
