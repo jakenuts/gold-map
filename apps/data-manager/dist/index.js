@@ -20,15 +20,15 @@ async function main() {
                     console.error('Invalid bounding box parameters. Usage: npm run start query <minLng> <minLat> <maxLng> <maxLat>');
                     process.exit(1);
                 }
-                const deposits = await dataService.getDepositsInBoundingBox(minLng, minLat, maxLng, maxLat);
-                console.log(`Found ${deposits.length} deposits in bounding box`);
-                console.log(JSON.stringify(deposits, null, 2));
+                const locations = await dataService.getLocationsInBoundingBox(minLng, minLat, maxLng, maxLat);
+                console.log(`Found ${locations.length} locations in bounding box`);
+                console.log(JSON.stringify(locations, null, 2));
                 break;
             default:
                 console.log(`
 Available commands:
   ingest [bbox]     - Ingest USGS data (optional bounding box)
-  query <minLng> <minLat> <maxLng> <maxLat> - Query deposits in bounding box
+  query <minLng> <minLat> <maxLng> <maxLat> - Query locations in bounding box
         `);
         }
     }

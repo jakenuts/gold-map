@@ -24,8 +24,9 @@ AppDataSource.initialize()
 // Routes
 app.get('/api/locations', async (req, res) => {
   try {
-    const type = req.query.type as string | undefined;
-    const locations = await dataIngestionService.getAllLocations(type);
+    const category = req.query.category as string | undefined;
+    const subcategory = req.query.subcategory as string | undefined;
+    const locations = await dataIngestionService.getAllLocations(category, subcategory);
     res.json(locations);
   } catch (error) {
     console.error('Error fetching locations:', error);
@@ -36,18 +37,40 @@ app.get('/api/locations', async (req, res) => {
 app.get('/api/locations/bbox/:minLon/:minLat/:maxLon/:maxLat', async (req, res) => {
   try {
     const { minLon, minLat, maxLon, maxLat } = req.params;
-    const type = req.query.type as string | undefined;
+    const category = req.query.category as string | undefined;
+    const subcategory = req.query.subcategory as string | undefined;
     const locations = await dataIngestionService.getLocationsInBoundingBox(
       Number(minLon),
       Number(minLat),
       Number(maxLon),
       Number(maxLat),
-      type
+      category,
+      subcategory
     );
     res.json(locations);
   } catch (error) {
     console.error('Error fetching locations in bbox:', error);
     res.status(500).json({ error: 'Failed to fetch locations in bbox' });
+  }
+});
+
+app.get('/api/categories', async (req, res) => {
+  try {
+    const categories = await dataIngestionService.getCategories();
+    res.json(categories);
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+    res.status(500).json({ error: 'Failed to fetch categories' });
+  }
+});
+
+app.get('/api/sources', async (req, res) => {
+  try {
+    const sources = await dataIngestionService.getDataSources();
+    res.json(sources);
+  } catch (error) {
+    console.error('Error fetching data sources:', error);
+    res.status(500).json({ error: 'Failed to fetch data sources' });
   }
 });
 

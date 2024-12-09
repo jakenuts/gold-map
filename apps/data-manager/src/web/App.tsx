@@ -4,11 +4,21 @@ import { Map } from './components/Map';
 interface Location {
   id: string;
   name: string;
-  locationType: string;
+  category: string;
+  subcategory: string;
   location: {
     coordinates: [number, number];
   };
   properties: Record<string, any>;
+  dataSource: {
+    name: string;
+    description: string;
+  };
+}
+
+interface Category {
+  category: string;
+  subcategories: string[];
 }
 
 const DEFAULT_CENTER: [number, number] = [40.9061, -123.4003];
@@ -17,19 +27,44 @@ const API_BASE_URL = 'http://localhost:3010';
 
 export default function App() {
   const [locations, setLocations] = useState<Location[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedType, setSelectedType] = useState<string>('mineral_deposit');
+  const [selectedCategory, setSelectedCategory] = useState<string>('mineral_deposit');
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string>('');
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   useEffect(() => {
     fetchLocations();
-  }, [selectedType]);
+  }, [selectedCategory, selectedSubcategory]);
+
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/categories`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch categories');
+      }
+      const data = await response.json();
+      setCategories(data);
+    } catch (err) {
+      console.error('Error fetching categories:', err);
+    }
+  };
 
   const fetchLocations = async () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch(`${API_BASE_URL}/api/locations?type=${selectedType}`);
+      const params = new URLSearchParams({
+        category: selectedCategory
+      });
+      if (selectedSubcategory) {
+        params.append('subcategory', selectedSubcategory);
+      }
+      const response = await fetch(`${API_BASE_URL}/api/locations?${params}`);
       if (!response.ok) {
         throw new Error('Failed to fetch locations');
       }
@@ -54,6 +89,7 @@ export default function App() {
         throw new Error('Failed to refresh USGS data');
       }
       await fetchLocations();
+      await fetchCategories();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
       console.error('Error refreshing data:', err);
@@ -62,24 +98,41 @@ export default function App() {
     }
   };
 
+  const currentCategory = categories.find(c => c.category === selectedCategory);
+
   return React.createElement('div', { className: 'app-container' }, [
     React.createElement('div', { key: 'header', className: 'header' }, [
       React.createElement('h1', { key: 'title' }, 'GeoData Manager'),
       React.createElement('div', { key: 'controls', className: 'controls' }, [
         React.createElement('select', {
-          key: 'type-select',
-          value: selectedType,
-          onChange: (e: React.ChangeEvent<HTMLSelectElement>) => setSelectedType(e.target.value),
+          key: 'category-select',
+          value: selectedCategory,
+          onChange: (e: React.ChangeEvent<HTMLSelectElement>) => {
+            setSelectedCategory(e.target.value);
+            setSelectedSubcategory('');
+          },
+          disabled: loading
+        }, categories.map(cat => 
+          React.createElement('option', { 
+            key: cat.category, 
+            value: cat.category 
+          }, cat.category.replace('_', ' '))
+        )),
+        currentCategory && React.createElement('select', {
+          key: 'subcategory-select',
+          value: selectedSubcategory,
+          onChange: (e: React.ChangeEvent<HTMLSelectElement>) => setSelectedSubcategory(e.target.value),
           disabled: loading
         }, [
-          React.createElement('option', { key: 'mineral', value: 'mineral_deposit' }, 'Mineral Deposits'),
-          React.createElement('option', { key: 'historical', value: 'historical_site' }, 'Historical Sites'),
-          React.createElement('option', { key: 'geological', value: 'geological_feature' }, 'Geological Features')
+          React.createElement('option', { key: 'all', value: '' }, 'All Subcategories'),
+          ...currentCategory.subcategories.map(sub => 
+            React.createElement('option', { key: sub, value: sub }, sub)
+          )
         ]),
         React.createElement('button', {
           key: 'refresh-btn',
           onClick: handleRefreshData,
-          disabled: loading || selectedType !== 'mineral_deposit'
+          disabled: loading || selectedCategory !== 'mineral_deposit'
         }, loading ? 'Loading...' : 'Refresh USGS Data'),
         error && React.createElement('div', {
           key: 'error',
@@ -92,7 +145,9 @@ export default function App() {
         React.createElement(Map, {
           locations,
           center: DEFAULT_CENTER,
-          zoom: DEFAULT_ZOOM
+          zoom: DEFAULT_ZOOM,
+          selectedCategory,
+          selectedSubcategory
         })
       ),
       React.createElement('div', { key: 'table', className: 'table-container' }, [
@@ -101,7 +156,9 @@ export default function App() {
           React.createElement('thead', { key: 'thead' },
             React.createElement('tr', null, [
               React.createElement('th', { key: 'name' }, 'Name'),
-              React.createElement('th', { key: 'type' }, 'Type'),
+              React.createElement('th', { key: 'category' }, 'Category'),
+              React.createElement('th', { key: 'subcategory' }, 'Subcategory'),
+              React.createElement('th', { key: 'source' }, 'Source'),
               React.createElement('th', { key: 'properties' }, 'Properties')
             ])
           ),
@@ -109,7 +166,9 @@ export default function App() {
             locations.map(location =>
               React.createElement('tr', { key: location.id }, [
                 React.createElement('td', { key: 'name' }, location.name),
-                React.createElement('td', { key: 'type' }, location.locationType.replace('_', ' ')),
+                React.createElement('td', { key: 'category' }, location.category.replace('_', ' ')),
+                React.createElement('td', { key: 'subcategory' }, location.subcategory),
+                React.createElement('td', { key: 'source' }, location.dataSource.name),
                 React.createElement('td', { key: 'properties' }, 
                   Object.entries(location.properties || {})
                     .map(([key, value]) => `${key}: ${Array.isArray(value) ? value.join(', ') : value}`)

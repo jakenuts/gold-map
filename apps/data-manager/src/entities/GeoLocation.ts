@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { DataSource } from './DataSource.js';
 
 @Entity('geo_locations')
 export class GeoLocation {
@@ -9,7 +10,10 @@ export class GeoLocation {
   name!: string;
 
   @Column({ type: 'varchar', length: 100 })
-  locationType!: string; // 'mineral_deposit', 'historical_site', etc.
+  category!: string; // e.g., 'mineral_deposit', 'historical_site'
+
+  @Column({ type: 'varchar', length: 100 })
+  subcategory!: string; // e.g., 'Producer', 'Occurrence', 'Past Producer'
 
   @Column({ type: 'geometry', spatialFeatureType: 'Point', srid: 4326 })
   location!: any;
@@ -17,8 +21,12 @@ export class GeoLocation {
   @Column({ type: 'jsonb', nullable: true })
   properties!: Record<string, any>;
 
-  @Column({ type: 'varchar', length: 100 })
-  source!: string;
+  @ManyToOne(() => DataSource, (source: DataSource) => source.locations)
+  @JoinColumn({ name: 'dataSourceId' })
+  dataSource!: DataSource;
+
+  @Column({ type: 'uuid' })
+  dataSourceId!: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   sourceId!: string;

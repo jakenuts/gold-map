@@ -1,9 +1,19 @@
-import { MineralDeposit } from '../entities/MineralDeposit.js';
+import { GeoLocation } from '../entities/GeoLocation.js';
+import { DataSource as GeoDataSource } from '../entities/DataSource.js';
 export declare class DataIngestionService {
-    private usgsClient;
-    private mineralDepositRepository;
+    private mrdsClient;
+    private depositClient;
+    private geoLocationRepository;
+    private dataSourceRepository;
     constructor();
-    ingestUSGSData(bbox?: string): Promise<MineralDeposit[]>;
-    getAllDeposits(): Promise<MineralDeposit[]>;
-    getDepositsInBoundingBox(minLon: number, minLat: number, maxLon: number, maxLat: number): Promise<MineralDeposit[]>;
+    private ensureDataSource;
+    ingestUSGSData(bbox?: string): Promise<GeoLocation[]>;
+    private prepareLocations;
+    getLocationsInBoundingBox(minLon: number, minLat: number, maxLon: number, maxLat: number, category?: string, subcategory?: string): Promise<GeoLocation[]>;
+    getAllLocations(category?: string, subcategory?: string): Promise<GeoLocation[]>;
+    getDataSources(): Promise<GeoDataSource[]>;
+    getCategories(): Promise<{
+        category: string;
+        subcategories: string[];
+    }[]>;
 }

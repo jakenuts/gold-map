@@ -3,6 +3,7 @@ import { config } from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { GeoLocation } from '../entities/GeoLocation.js';
+import { DataSource as GeoDataSource } from '../entities/DataSource.js';
 
 config();
 
@@ -18,7 +19,7 @@ export const AppDataSource = new DataSource({
   database: process.env.POSTGRES_DB,
   synchronize: false,
   logging: true,
-  entities: [GeoLocation],
+  entities: [GeoLocation, GeoDataSource],
   subscribers: [],
   migrations: [join(__dirname, '../migrations/*.{ts,js}')],
 });

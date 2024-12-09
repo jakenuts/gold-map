@@ -2,7 +2,8 @@ import { DataSource } from 'typeorm';
 import { config } from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
-import { MineralDeposit } from '../entities/MineralDeposit.js';
+import { GeoLocation } from '../entities/GeoLocation.js';
+import { DataSource as GeoDataSource } from '../entities/DataSource.js';
 config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -13,9 +14,9 @@ export const AppDataSource = new DataSource({
     username: process.env.POSTGRES_USER,
     password: process.env.POSTGRES_PASSWORD,
     database: process.env.POSTGRES_DB,
-    synchronize: true,
+    synchronize: false,
     logging: true,
-    entities: [MineralDeposit],
+    entities: [GeoLocation, GeoDataSource],
     subscribers: [],
     migrations: [join(__dirname, '../migrations/*.{ts,js}')],
 });
