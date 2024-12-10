@@ -7,46 +7,46 @@
 
 ### Service Parameters
 - **Service**: WFS
-- **Versions**: 1.0.0, 1.1.0 (both supported, 1.1.0 recommended)
+- **Version**: 1.1.0 (confirmed working)
 - **TypeName**: mrds
 - **SRS**: EPSG:4326
-
-### Supported Operations
-
-#### GetCapabilities
-- Parameters:
-  - service: WFS (required)
-  - AcceptVersions: 1.0.0, 1.1.0
-  - AcceptFormats: text/xml
-
-#### DescribeFeatureType
-- Parameters:
-  - outputFormat: 
-    - XMLSCHEMA
-    - text/xml; subtype=gml/2.1.2
-    - text/xml; subtype=gml/3.1.1
-
-#### GetFeature
-- Parameters:
-  - resultType: results, hits
-  - outputFormat: text/xml; subtype=gml/3.1.1
-  - bbox: Bounding box for spatial filtering
-  - maxFeatures: Limit number of returned features
 
 ### Request Parameters
 | Parameter | Description | Format | Example |
 |-----------|-------------|---------|---------|
-| bbox | Bounding box for spatial filtering | minLat,minLon,maxLat,maxLon,urn:ogc:def:crs:EPSG::4326 | 40.5,-124.0,41.0,-123.5,urn:ogc:def:crs:EPSG::4326 |
-| maxFeatures | Limit number of returned features | integer | 5 |
-| resultType | Type of result to return | string | "results" or "hits" |
+| bbox | Bounding box for spatial filtering | minLat,minLon,maxLat,maxLon,EPSG:4326 | 40.5,-124.0,41.0,-123.5,EPSG:4326 |
+| maxFeatures | Limit number of returned features | integer | 10 |
+| srsName | Coordinate reference system | string | EPSG:4326 |
 
-### Feature Fields
+### Feature Fields (Verified)
 | Field | Type | Description | Example |
 |-------|------|-------------|---------|
-| @_id | string | Feature ID | "mrds.56411" |
-| dep_id | number | Deposit ID | 10058048 |
-| site_name | string | Name of the site | "Estaca" |
-| dev_stat | string | Development status | "Past Producer" |
+| @_id | string | Feature ID | "mrds.182885" |
+| dep_id | number | Deposit ID | 10187731 |
+| site_name | string | Name of the site | "Liscomb Hill" |
+| dev_stat | string | Development status | "Prospect" |
+| code_list | string | Commodity codes | "BA" |
+| fips_code | string | FIPS location code | "f06023" |
+| huc_code | string | Hydrologic Unit Code | "h18010102" |
+| quad_code | string | Quadrangle code | "q41124NWA2" |
+| url | string | Link to USGS detail page | "https://mrdata.usgs.gov/mrds/show-mrds.php?dep_id=10187731" |
+| geometry | object | GML Point geometry | {"Point": {"pos": "40.832940 -123.956440", "@_srsName": "EPSG:4326"}} |
+| boundedBy | object | Feature bounding box | {"Envelope": {"lowerCorner": "40.832940 -123.956440", "upperCorner": "40.832940 -123.956440", "@_srsName": "EPSG:4326"}} |
+
+### Important Notes
+- WFS 1.1.0 uses lat,lon coordinate order (different from 1.0.0 which uses lon,lat)
+- The service only supports XML/GML output format (GML 3.1.1)
+- Each feature has a unique dep_id that can be used to link to the full USGS record
+- The code_list field contains commodity codes (e.g., "BA")
+- Coordinates are returned in "latitude longitude" order in both geometry and boundedBy fields
+
+### Example Request
+```
+https://mrdata.usgs.gov/services/wfs/mrds?
+  service=WFS&
+  version=1.1.0&
+  request=GetFeature&
+  typeName=mrds&
 | code_list | string | Commodity codes | "CU AU" |
 | fips_code | string | FIPS location code | "fCI" |
 | huc_code | string | Hydrologic Unit Code | null |

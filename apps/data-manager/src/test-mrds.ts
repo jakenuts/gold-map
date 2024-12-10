@@ -1,29 +1,60 @@
 import { WfsEndpoint } from '@camptocamp/ogc-client';
 import { XMLParser } from 'fast-xml-parser';
+import type { BoundingBox, CrsCode } from '@camptocamp/ogc-client';
 import axios from 'axios';
 
 async function testMRDS() {
     const baseUrl = 'https://mrdata.usgs.gov/services/wfs/mrds';
 
     try {
-        // Get capabilities
+        // Define our parameters
+        // BoundingBox type expects [minX,minY,maxX,maxY]
+        const bbox: BoundingBox = [-124.0, 40.5, -123.5, 41.0];
+        const crs: CrsCode = 'EPSG:4326';
+
+        // Create endpoint but don't wait for initialization
+        const endpoint = new WfsEndpoint(baseUrl);
+
+        // Try getting URL immediately
+        const url = endpoint.getFeatureUrl('mrds', {
+            maxFeatures: 10,
+            extent: bbox,
+            extentCrs: crs,
+            outputCrs: crs
+        });
+
+        console.log('\nGenerated URL:', url);
+
+        // For WFS 1.1.0, we need to swap coordinate order in bbox
+        // from [minX,minY,maxX,maxY] to [minY,minX,maxY,maxX]
+        const [minX, minY, maxX, maxY] = bbox;
+        const wfsBbox = `${minY},${minX},${maxY},${maxX}`;
+
+        // Construct URL manually with proper parameter formatting
         const params = new URLSearchParams({
             service: 'WFS',
             version: '1.1.0',
-            request: 'GetCapabilities'
+            request: 'GetFeature',
+            typeName: 'mrds',
+            maxFeatures: '10',
+            srsName: crs
         });
 
-        const url = `${baseUrl}?${params.toString()}`;
-        console.log('\nGetting capabilities from:', url);
+        // Add bbox parameter separately to ensure proper formatting
+        params.append('bbox', `${wfsBbox},${crs}`);
+        
+        const requestUrl = `${baseUrl}?${params.toString()}`;
+        console.log('\nUsing URL:', requestUrl);
 
-        const response = await axios.get(url, {
+        // Make the request
+        console.log('\nFetching features...');
+        const response = await axios.get(requestUrl, {
             headers: {
                 'Accept': 'application/xml'
             }
         });
+
         console.log('Response status:', response.status);
-        
-        const text = response.data;
 
         // Parse XML
         const parser = new XMLParser({
@@ -31,50 +62,32 @@ async function testMRDS() {
             attributeNamePrefix: '@_',
             parseAttributeValue: true,
             textNodeName: '_text',
-            isArray: (name) => ['FeatureType', 'Operation'].indexOf(name) !== -1,
+            isArray: (name) => ['featureMember'].indexOf(name) !== -1,
             removeNSPrefix: true
         });
 
-        const data = parser.parse(text);
+        const data = parser.parse(response.data);
+        const features = data?.FeatureCollection?.featureMember?.map((f: any) => f.mrds) || [];
         
-        // Extract service information
-        const serviceInfo = data?.WFS_Capabilities?.ServiceIdentification || {};
-        console.log('\nService Information:');
-        console.log('Title:', serviceInfo.Title?._text);
-        console.log('Abstract:', serviceInfo.Abstract?._text);
-        console.log('Keywords:', serviceInfo.Keywords?._text);
+        console.log(`\nRetrieved ${features.length} features`);
 
-        // Extract operations
-        const operations = data?.WFS_Capabilities?.OperationsMetadata?.Operation || [];
-        console.log('\nAvailable Operations:');
-        operations.forEach((op: any) => {
-            console.log(`\nOperation: ${op['@_name']}`);
-            if (op.Parameter) {
-                console.log('Parameters:', op.Parameter);
-            }
-        });
-
-        // Extract feature type details
-        const featureTypes = data?.WFS_Capabilities?.FeatureTypeList?.FeatureType || [];
-        console.log('\nFeature Types:');
-        featureTypes.forEach((ft: any) => {
-            console.log(`\nName: ${ft.Name?._text}`);
-            console.log(`Title: ${ft.Title?._text}`);
-            console.log(`Abstract: ${ft.Abstract?._text}`);
-            if (ft.DefaultSRS) console.log(`Default SRS: ${ft.DefaultSRS?._text}`);
-            if (ft.OtherSRS) console.log(`Other SRS: ${ft.OtherSRS?._text}`);
-            if (ft.OutputFormats) console.log('Output Formats:', ft.OutputFormats);
-        });
-
-    } catch (error) {
-        if (axios.isAxiosError(error)) {
-            console.error('Axios error:', {
-                status: error.response?.status,
-                statusText: error.response?.statusText,
-                data: error.response?.data
+        if (features.length > 0) {
+            console.log('\nFirst feature:', JSON.stringify(features[0], null, 2));
+            
+            // Show all available fields from first feature
+            console.log('\nAvailable fields:');
+            Object.keys(features[0]).sort().forEach(key => {
+                const value = features[0][key];
+                console.log(`${key}: ${typeof value} = ${JSON.stringify(value)}`);
             });
         } else {
-            console.error('Error:', error);
+            console.log('\nRaw response:', response.data.substring(0, 1000));
+        }
+
+    } catch (error) {
+        console.error('Error:', error);
+        if (axios.isAxiosError(error)) {
+            console.error('Response data:', error.response?.data);
         }
     }
 }
