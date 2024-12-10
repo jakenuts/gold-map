@@ -1,266 +1,195 @@
-import { WfsEndpoint } from '@camptocamp/ogc-client';
+import { WFSBaseClient, Feature, BoundingBox } from './wfs-base-client';
 import { z } from 'zod';
-import type { Feature as GeoJSONFeature, GeoJsonProperties, Geometry } from 'geojson';
-import { XMLParser } from 'fast-xml-parser';
 
-export const FeatureSchema = z.object({
-  type: z.literal('Feature'),
-  geometry: z.object({
-    type: z.literal('Point'),
-    coordinates: z.tuple([z.number(), z.number()]),
-  }),
-  properties: z.record(z.any()),
+// MRDS-specific feature properties schema
+const MRDSProperties = z.object({
+  name: z.string(),
+  dep_type: z.string().nullable().optional(),
+  commod1: z.string().nullable().optional(),
+  id: z.string().nullable().optional(),
+  site_type: z.string().nullable().optional(),
+  development_status: z.string().nullable().optional(),
+  state: z.string().nullable().optional(),
+  county: z.string().nullable().optional(),
+  ftr_type: z.string().nullable().optional(),
+  ftr_name: z.string().nullable().optional(),
+  ftr_azimut: z.number().nullable().optional(),
+  topo_name: z.string().nullable().optional(),
+  topo_date: z.number().nullable().optional(),
+  topo_scale: z.string().nullable().optional(),
+  compiledby: z.string().nullable().optional(),
+  remarks: z.string().nullable().optional(),
+  gda_id: z.number().nullable().optional(),
+  scanid: z.number().nullable().optional(),
+  original_type: z.string().nullable().optional(),
+  category: z.string().nullable().optional(),
+  group: z.string().nullable().optional(),
+  geometry_type: z.string().nullable().optional(),
+  feature_class: z.string().nullable().optional()
 });
 
-export type Feature = z.infer<typeof FeatureSchema>;
+export type MRDSFeature = Feature & {
+  properties: z.infer<typeof MRDSProperties>;
+};
 
-interface FeatureResponse {
-  features: Array<GeoJSONFeature<Geometry, GeoJsonProperties>>;
-}
-
-export class USGSMRDSClient {
-  private endpoint: WfsEndpoint;
-  private baseUrl: string;
-  private typeName: string;
-  private timeout: number = 60000; // 60 seconds timeout
-  private xmlParser: XMLParser;
-
+export class USGSMRDSClient extends WFSBaseClient {
   constructor() {
-    this.baseUrl = process.env.USGS_MRDS_BASE_URL || 'https://mrdata.usgs.gov/services/wfs/mrds';
-    this.typeName = 'mrds';
-    this.endpoint = new WfsEndpoint(this.baseUrl);
-    this.xmlParser = new XMLParser({
-      ignoreAttributes: false,
-      attributeNamePrefix: '@_',
-      parseAttributeValue: true,
-      textNodeName: '_text',
-      isArray: (name) => ['featureMember', 'coordinates'].indexOf(name) !== -1,
-      trimValues: true
-    });
-    console.log('MRDS Client initialized with:', {
-      baseUrl: this.baseUrl,
-      typeName: this.typeName
+    super({
+      baseUrl: process.env.USGS_MRDS_BASE_URL || 'https://mrdata.usgs.gov/services/wfs/mrds',
+      version: '1.0.0', // Use 1.0.0 for consistent lon,lat order
+      typeName: 'mrds',
+      srsName: 'EPSG:4326',
+      maxFeatures: 5  // Reduced for testing
     });
   }
 
-  private async withTimeout<T>(promise: Promise<T>, timeoutMs: number, operation: string): Promise<T> {
-    let timeoutHandle: NodeJS.Timeout;
-
-    const timeoutPromise = new Promise<never>((_, reject) => {
-      timeoutHandle = setTimeout(() => {
-        reject(new Error(`Operation timed out after ${timeoutMs}ms: ${operation}`));
-      }, timeoutMs);
-    });
-
+  /**
+   * Parse coordinates from MRDS format
+   */
+  private parseCoordinates(coordString: string): [number, number] | null {
     try {
-      const result = await Promise.race([promise, timeoutPromise]);
-      clearTimeout(timeoutHandle!);
-      return result;
+      // Take just the first coordinate pair (they're duplicated)
+      const firstPair = coordString.trim().split(' ')[0];
+      
+      // Find the decimal points
+      const firstDecimal = firstPair.indexOf('.');
+      if (firstDecimal === -1) return null;
+      
+      // Find the second decimal by skipping the first one
+      const secondDecimal = firstPair.indexOf('.', firstDecimal + 1);
+      if (secondDecimal === -1) return null;
+
+      // Extract the numbers
+      const lon = parseFloat(firstPair.substring(0, secondDecimal - 2)); // -2 to handle the digits before the second decimal
+      const lat = parseFloat(firstPair.substring(secondDecimal - 2));
+
+      // Validate the numbers
+      if (isNaN(lon) || isNaN(lat)) {
+        console.log('Failed to parse numbers:', { lon, lat, original: firstPair });
+        return null;
+      }
+
+      // Validate coordinate ranges
+      if (Math.abs(lon) <= 180 && Math.abs(lat) <= 90) {
+        return [lon, lat];
+      }
+
+      console.log('Coordinates out of range:', { lon, lat });
+      return null;
     } catch (error) {
-      clearTimeout(timeoutHandle!);
-      throw error;
+      console.error('Error parsing coordinates:', error);
+      return null;
     }
   }
 
-  public async getFeatures(bbox?: string): Promise<Feature[]> {
+  /**
+   * Get MRDS features as parsed objects
+   */
+  public async getMRDSFeatures(bbox?: BoundingBox): Promise<MRDSFeature[]> {
     try {
-      // Try JSON first
-      const jsonParams = new URLSearchParams({
-        service: 'WFS',
-        version: '1.0.0',
-        request: 'GetFeature',
-        typeName: this.typeName,
-        srsName: 'EPSG:4326',
-        outputFormat: 'application/json'
-      });
-
-      if (bbox) {
-        // Format bbox with proper commas
-        const formattedBbox = bbox.split(',').map(n => parseFloat(n).toFixed(6)).join(',');
-        jsonParams.append('bbox', formattedBbox);
-      }
-
-      const jsonUrl = `${this.baseUrl}?${jsonParams.toString()}`;
-      console.log('MRDS: Trying JSON URL:', jsonUrl);
-
-      try {
-        console.log('MRDS: Sending JSON request...');
-        const jsonResponse = await this.withTimeout(
-          fetch(jsonUrl),
-          this.timeout,
-          'WFS GetFeature JSON request'
-        );
-        
-        console.log('MRDS: JSON response status:', jsonResponse.status);
-        const responseText = await jsonResponse.text();
-        console.log('MRDS: JSON response text:', responseText.substring(0, 500) + '...');
-
-        if (jsonResponse.ok) {
-          try {
-            const data = JSON.parse(responseText) as FeatureResponse;
-            if (data.features && Array.isArray(data.features)) {
-              console.log(`MRDS: Received ${data.features.length} JSON features`);
-              const features = data.features.map(feature => ({
-                type: 'Feature' as const,
-                geometry: feature.geometry,
-                properties: feature.properties || {}
-              }));
-
-              return features.filter((feature): feature is Feature => 
-                FeatureSchema.safeParse(feature).success
-              );
-            }
-          } catch (parseError) {
-            console.error('MRDS: Error parsing JSON:', parseError);
-          }
-        }
-      } catch (error) {
-        console.log('MRDS: JSON request failed:', error);
-      }
-
-      // If JSON fails, try XML
-      const xmlParams = new URLSearchParams({
-        service: 'WFS',
-        version: '1.0.0',
-        request: 'GetFeature',
-        typeName: this.typeName,
-        srsName: 'EPSG:4326'
-      });
-
-      if (bbox) {
-        // Format bbox with proper commas
-        const formattedBbox = bbox.split(',').map(n => parseFloat(n).toFixed(6)).join(',');
-        xmlParams.append('bbox', formattedBbox);
-      }
-
-      const xmlUrl = `${this.baseUrl}?${xmlParams.toString()}`;
-      console.log('MRDS: Trying XML URL:', xmlUrl);
-
-      console.log('MRDS: Sending XML request...');
-      const xmlResponse = await this.withTimeout(
-        fetch(xmlUrl),
-        this.timeout,
-        'WFS GetFeature XML request'
-      );
+      const xmlData = await super.getFeatures(bbox);
+      const features: MRDSFeature[] = [];
+      const featureRegex = /<gml:featureMember>([\s\S]*?)<\/gml:featureMember>/g;
+      const fieldRegex = /<ms:(\w+)>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/ms:\w+>/g;
       
-      console.log('MRDS: XML response status:', xmlResponse.status);
-      const xmlText = await xmlResponse.text();
-      console.log('MRDS: XML response text:', xmlText.substring(0, 500) + '...');
+      let featureMatch;
+      while ((featureMatch = featureRegex.exec(xmlData)) !== null) {
+        const featureXml = featureMatch[1];
+        let coordinates: [number, number] | null = null;
+        const rawProps: Record<string, any> = {};
 
-      if (!xmlResponse.ok) {
-        throw new Error(`WFS request failed: ${xmlResponse.status} ${xmlResponse.statusText}\n${xmlText}`);
+        // Extract coordinates
+        const coordMatch = /<gml:coordinates>(.*?)<\/gml:coordinates>/.exec(featureXml);
+        if (coordMatch) {
+          coordinates = this.parseCoordinates(coordMatch[1]);
+        }
+
+        // Extract field values
+        let fieldMatch;
+        while ((fieldMatch = fieldRegex.exec(featureXml)) !== null) {
+          const [_, fieldName, value] = fieldMatch;
+          rawProps[fieldName] = value || null;
+        }
+
+        // Skip features without coordinates
+        if (!coordinates) {
+          console.log('No valid coordinates found in feature:', {
+            id: rawProps.dep_id || 'unknown',
+            name: rawProps.site_name || 'Unknown'
+          });
+          continue;
+        }
+
+        // Map raw properties to schema properties
+        const properties = {
+          name: rawProps.site_name || 'Unknown',
+          dep_type: rawProps.dep_type || null,
+          commod1: rawProps.code_list?.trim() || null,
+          id: rawProps.dep_id || null,
+          site_type: rawProps.site_type || null,
+          development_status: rawProps.dev_stat || null,
+          state: rawProps.state || null,
+          county: rawProps.county || null,
+          ftr_type: rawProps.ftr_type || null,
+          ftr_name: rawProps.ftr_name || null,
+          ftr_azimut: rawProps.ftr_azimut ? parseInt(rawProps.ftr_azimut) : null,
+          topo_name: rawProps.topo_name || null,
+          topo_date: rawProps.topo_date ? parseInt(rawProps.topo_date) : null,
+          topo_scale: rawProps.topo_scale || null,
+          compiledby: rawProps.compiledby || null,
+          remarks: rawProps.remarks || null,
+          gda_id: rawProps.gda_id ? parseInt(rawProps.gda_id) : null,
+          scanid: rawProps.scanid ? parseInt(rawProps.scanid) : null,
+          original_type: rawProps.original_type || null,
+          category: rawProps.category || null,
+          group: rawProps.group || null,
+          geometry_type: rawProps.geometry_type || null,
+          feature_class: rawProps.feature_class || null
+        };
+
+        // Validate properties against schema
+        const validationResult = MRDSProperties.safeParse(properties);
+        if (!validationResult.success) {
+          console.error('Invalid MRDS properties:', validationResult.error);
+          continue;
+        }
+
+        features.push({
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates
+          },
+          properties: validationResult.data
+        });
       }
 
-      const features = this.parseWFSXML(xmlText);
-      console.log(`MRDS: Parsed ${features.length} features from XML`);
+      console.log(`Found ${features.length} valid MRDS features`);
       return features;
 
     } catch (error) {
-      console.error('MRDS: Error fetching features:', error);
-      throw error;
-    }
-  }
-
-  private parseWFSXML(xmlData: string): Feature[] {
-    try {
-      console.log('MRDS: Parsing XML response...');
-      const parsed = this.xmlParser.parse(xmlData);
-      console.log('MRDS: Parsed XML structure:', JSON.stringify(parsed, null, 2).substring(0, 500) + '...');
-
-      const featureMembers = parsed?.['wfs:FeatureCollection']?.['gml:featureMember'] || 
-                            parsed?.['FeatureCollection']?.['featureMember'] || [];
-                            
-      const featureArray = Array.isArray(featureMembers) ? featureMembers : [featureMembers];
-      console.log(`MRDS: Found ${featureArray.length} features in XML`);
-
-      return featureArray
-        .map((feature: any) => {
-          const mrds = feature?.['mrds-high'] || feature?.['ms:mrds-high'] || 
-                      feature?.['mrds'] || feature?.['ms:mrds'];
-          if (!mrds) {
-            console.log('MRDS: No mrds data found in feature');
-            return null;
-          }
-
-          // Try to get coordinates from various possible paths
-          let coordinates: [number, number] | null = null;
-
-          // Try gml:Point/gml:coordinates
-          const pointCoords = mrds?.['gml:Point']?.['gml:coordinates']?._text ||
-                            mrds?.['Point']?.['coordinates']?._text;
-          if (pointCoords) {
-            const parts = pointCoords.trim().split(/[,\s]+/).map(Number);
-            if (parts.length === 2 && !parts.some(isNaN)) {
-              coordinates = [parts[0], parts[1]];
-            }
-          }
-
-          // Try direct LAT/LONG fields if Point coordinates not found
-          if (!coordinates) {
-            const lat = parseFloat(mrds?.['LAT']?._text || mrds?.['lat']?._text);
-            const lon = parseFloat(mrds?.['LONG']?._text || mrds?.['long']?._text);
-            if (!isNaN(lat) && !isNaN(lon)) {
-              coordinates = [lon, lat];
-            }
-          }
-
-          if (!coordinates) {
-            console.log('MRDS: No valid coordinates found in feature');
-            return null;
-          }
-
-          const geoJSONFeature: Feature = {
-            type: 'Feature',
-            geometry: {
-              type: 'Point',
-              coordinates: coordinates,
-            },
-            properties: {
-              name: mrds?.['NAME']?._text || mrds?.['name']?._text || 'Unknown',
-              dep_type: mrds?.['DEP_TYPE']?._text || mrds?.['dep_type']?._text || null,
-              commod1: mrds?.['COMMOD1']?._text || mrds?.['commod1']?._text || null,
-              id: mrds?.['ID']?._text || mrds?.['id']?._text || null,
-              site_type: mrds?.['SITE_TYPE']?._text || mrds?.['site_type']?._text || null,
-              development_status: mrds?.['DEV_STATUS']?._text || mrds?.['dev_status']?._text || null,
-              state: mrds?.['STATE']?._text || null,
-              county: mrds?.['COUNTY']?._text || null,
-            },
-          };
-
-          return geoJSONFeature;
-        })
-        .filter((feature): feature is Feature => feature !== null);
-    } catch (error) {
-      console.error('MRDS: Error parsing XML:', error);
+      console.error('Error parsing MRDS XML:', error);
       return [];
     }
   }
 
-  public transformToGeoLocation(feature: Feature) {
+  /**
+   * Transform MRDS feature to GeoLocation format
+   */
+  public transformToGeoLocation(feature: MRDSFeature) {
     const { geometry, properties } = feature;
 
-    // Extract common properties
-    const name = properties.name || 'Unknown Deposit';
-    const siteType = properties.site_type || null;
-    const depositType = properties.dep_type || null;
-    const commodities = properties.commod1 || null;
-
-    // Create point geometry in PostGIS format
-    const [longitude, latitude] = geometry.coordinates;
-    const location = {
-      type: 'Point',
-      coordinates: [longitude, latitude],
-    };
-
-    // Return transformed data matching GeoLocation schema
     return {
-      name,
+      name: properties.name,
       category: 'mineral_deposit',
-      subcategory: siteType || depositType || 'unknown',
-      location,
+      subcategory: properties.site_type || properties.dep_type || 'unknown',
+      location: {
+        type: 'Point',
+        coordinates: geometry.coordinates,
+      },
       properties: {
-        depositType,
-        commodities,
+        depositType: properties.dep_type,
+        commodities: properties.commod1,
         developmentStatus: properties.development_status,
         ...properties,
       },

@@ -47,49 +47,29 @@ https://mrdata.usgs.gov/services/wfs/mrds?
   version=1.1.0&
   request=GetFeature&
   typeName=mrds&
-| code_list | string | Commodity codes | "CU AU" |
-| fips_code | string | FIPS location code | "fCI" |
-| huc_code | string | Hydrologic Unit Code | null |
-| quad_code | string | Quadrangle code | null |
-| url | string | Link to USGS detail page | "https://mrdata.usgs.gov/mrds/show-mrds.php?dep_id=10058048" |
-| geometry | object | GML Point geometry | {"Point": {"pos": "-26.387770 -70.302320", "@_srsName": "EPSG:4326"}} |
-
-### Notes
-- The service only supports XML/GML output formats (no GeoJSON support)
-- Coordinates are returned in latitude,longitude order in WFS 1.1.0
-- Some fields (huc_code, quad_code) may be empty depending on the location
-- The bbox parameter must include the CRS URN suffix for WFS 1.1.0
-- Each feature has a unique dep_id that can be used to link to the full USGS record
-- The code_list field contains space-separated commodity codes (e.g., "CU AU" for Copper and Gold)
-
-### Example Requests
-
-#### Get Features
-```
-https://mrdata.usgs.gov/services/wfs/mrds?
-  service=WFS&
-  version=1.1.0&
-  request=GetFeature&
-  typeName=mrds&
   srsName=EPSG:4326&
-  maxFeatures=5&
-  bbox=40.5,-124.0,41.0,-123.5,urn:ogc:def:crs:EPSG::4326
-```
-
-#### Get Feature Count
-```
-https://mrdata.usgs.gov/services/wfs/mrds?
-  service=WFS&
-  version=1.1.0&
-  request=GetFeature&
-  typeName=mrds&
-  resultType=hits
+  maxFeatures=10&
+  bbox=40.5,-124.0,41.0,-123.5,EPSG:4326
 ```
 
 ### Implementation Notes
-- When implementing a client, always handle the XML response format (GML 3.1.1)
-- Consider implementing coordinate order conversion since the service uses lat,lon but GeoJSON uses lon,lat
-- The dep_id field is useful for deduplication and linking to more detailed information
-- The code_list field can be parsed to identify the commodities present at each site
-- Use resultType=hits to get feature count before fetching actual features
-- Both WFS 1.0.0 and 1.1.0 are supported, but 1.1.0 is recommended for better coordinate handling
+1. Coordinate Order:
+   - WFS 1.1.0 expects bbox in lat,lon order
+   - Response geometry is also in lat,lon order
+   - Convert as needed for GeoJSON (which uses lon,lat)
+
+2. Response Format:
+   - Content-Type: text/xml; subtype=gml/3.1.1; charset=UTF-8
+   - GML 3.1.1 format with namespace prefixes
+   - Point geometries use gml:pos element for coordinates
+
+3. Using ogc-client:
+   - BoundingBox type expects [minX,minY,maxX,maxY]
+   - Need to transform coordinates for WFS 1.1.0 requests
+   - Client initialization (isReady) may be slow/unreliable
+   - Manual URL construction might be more reliable
+
+4. Error Handling:
+   - Check for empty FeatureCollection
+   - Validate coordinate values and order
+   - Handle both XML parsing and GML interpretation
