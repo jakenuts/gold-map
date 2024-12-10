@@ -44,50 +44,48 @@ export class USGSMRDSClient extends WFSBaseClient {
   }
 
   /**
-   * Parse coordinates from MRDS format
+   * Parse bbox string into BoundingBox object
    */
-  private parseCoordinates(coordString: string): [number, number] | null {
+  private parseBBox(bbox: string): BoundingBox | undefined {
     try {
-      // Take just the first coordinate pair (they're duplicated)
-      const firstPair = coordString.trim().split(' ')[0];
-      
-      // Find the decimal points
-      const firstDecimal = firstPair.indexOf('.');
-      if (firstDecimal === -1) return null;
-      
-      // Find the second decimal by skipping the first one
-      const secondDecimal = firstPair.indexOf('.', firstDecimal + 1);
-      if (secondDecimal === -1) return null;
-
-      // Extract the numbers
-      const lon = parseFloat(firstPair.substring(0, secondDecimal - 2)); // -2 to handle the digits before the second decimal
-      const lat = parseFloat(firstPair.substring(secondDecimal - 2));
-
-      // Validate the numbers
-      if (isNaN(lon) || isNaN(lat)) {
-        console.log('Failed to parse numbers:', { lon, lat, original: firstPair });
-        return null;
+      const [minLon, minLat, maxLon, maxLat] = bbox.split(',').map(Number);
+      if (
+        !isNaN(minLon) && !isNaN(minLat) && !isNaN(maxLon) && !isNaN(maxLat) &&
+        Math.abs(minLon) <= 180 && Math.abs(maxLon) <= 180 &&
+        Math.abs(minLat) <= 90 && Math.abs(maxLat) <= 90 &&
+        minLon <= maxLon && minLat <= maxLat
+      ) {
+        return { minLon, minLat, maxLon, maxLat };
       }
-
-      // Validate coordinate ranges
-      if (Math.abs(lon) <= 180 && Math.abs(lat) <= 90) {
-        return [lon, lat];
-      }
-
-      console.log('Coordinates out of range:', { lon, lat });
-      return null;
+      console.error('Invalid bbox values:', { minLon, minLat, maxLon, maxLat });
+      return undefined;
     } catch (error) {
-      console.error('Error parsing coordinates:', error);
-      return null;
+      console.error('Error parsing bbox string:', error);
+      return undefined;
     }
+  }
+
+  /**
+   * Get raw XML response from WFS
+   */
+  public async getFeatures(bbox?: BoundingBox, additionalParams: Record<string, string> = {}): Promise<string> {
+    return super.getFeatures(bbox, additionalParams);
   }
 
   /**
    * Get MRDS features as parsed objects
    */
-  public async getMRDSFeatures(bbox?: BoundingBox): Promise<MRDSFeature[]> {
+  public async getMRDSFeatures(bbox?: string | BoundingBox): Promise<MRDSFeature[]> {
     try {
-      const xmlData = await super.getFeatures(bbox);
+      // Convert string bbox to object if needed
+      let bboxObj: BoundingBox | undefined;
+      if (typeof bbox === 'string') {
+        bboxObj = this.parseBBox(bbox);
+      } else {
+        bboxObj = bbox;
+      }
+
+      const xmlData = await this.getFeatures(bboxObj);
       const features: MRDSFeature[] = [];
       const featureRegex = /<gml:featureMember>([\s\S]*?)<\/gml:featureMember>/g;
       const fieldRegex = /<ms:(\w+)>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/ms:\w+>/g;
@@ -170,6 +168,45 @@ export class USGSMRDSClient extends WFSBaseClient {
     } catch (error) {
       console.error('Error parsing MRDS XML:', error);
       return [];
+    }
+  }
+
+  /**
+   * Parse coordinates from MRDS format
+   */
+  private parseCoordinates(coordString: string): [number, number] | null {
+    try {
+      // Take just the first coordinate pair (they're duplicated)
+      const firstPair = coordString.trim().split(' ')[0];
+      
+      // Find the decimal points
+      const firstDecimal = firstPair.indexOf('.');
+      if (firstDecimal === -1) return null;
+      
+      // Find the second decimal by skipping the first one
+      const secondDecimal = firstPair.indexOf('.', firstDecimal + 1);
+      if (secondDecimal === -1) return null;
+
+      // Extract the numbers
+      const lon = parseFloat(firstPair.substring(0, secondDecimal - 2)); // -2 to handle the digits before the second decimal
+      const lat = parseFloat(firstPair.substring(secondDecimal - 2));
+
+      // Validate the numbers
+      if (isNaN(lon) || isNaN(lat)) {
+        console.log('Failed to parse numbers:', { lon, lat, original: firstPair });
+        return null;
+      }
+
+      // Validate coordinate ranges
+      if (Math.abs(lon) <= 180 && Math.abs(lat) <= 90) {
+        return [lon, lat];
+      }
+
+      console.log('Coordinates out of range:', { lon, lat });
+      return null;
+    } catch (error) {
+      console.error('Error parsing coordinates:', error);
+      return null;
     }
   }
 

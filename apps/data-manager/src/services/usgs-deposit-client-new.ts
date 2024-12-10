@@ -14,10 +14,6 @@ export const FeatureSchema = z.object({
 
 export type Feature = z.infer<typeof FeatureSchema>;
 
-interface FeatureResponse {
-  features: Array<GeoJSONFeature<Geometry, GeoJsonProperties>>;
-}
-
 export class USGSDepositClient {
   private endpoint: WfsEndpoint;
   private baseUrl: string;
@@ -64,62 +60,8 @@ export class USGSDepositClient {
 
   public async getFeatures(bbox?: string): Promise<Feature[]> {
     try {
-      // Try JSON first
-      const jsonParams = new URLSearchParams({
-        service: 'WFS',
-        version: '1.0.0',
-        request: 'GetFeature',
-        typeName: this.typeName,
-        srsName: 'EPSG:4326',
-        outputFormat: 'application/json'
-      });
-
-      if (bbox) {
-        // Format bbox with proper commas
-        const formattedBbox = bbox.split(',').map(n => parseFloat(n).toFixed(6)).join(',');
-        jsonParams.append('bbox', formattedBbox);
-      }
-
-      const jsonUrl = `${this.baseUrl}?${jsonParams.toString()}`;
-      console.log('Deposit: Trying JSON URL:', jsonUrl);
-
-      try {
-        console.log('Deposit: Sending JSON request...');
-        const jsonResponse = await this.withTimeout(
-          fetch(jsonUrl),
-          this.timeout,
-          'WFS GetFeature JSON request'
-        );
-        
-        console.log('Deposit: JSON response status:', jsonResponse.status);
-        const responseText = await jsonResponse.text();
-        console.log('Deposit: JSON response text:', responseText.substring(0, 500) + '...');
-
-        if (jsonResponse.ok) {
-          try {
-            const data = JSON.parse(responseText) as FeatureResponse;
-            if (data.features && Array.isArray(data.features)) {
-              console.log(`Deposit: Received ${data.features.length} JSON features`);
-              const features = data.features.map(feature => ({
-                type: 'Feature' as const,
-                geometry: feature.geometry,
-                properties: feature.properties || {}
-              }));
-
-              return features.filter((feature): feature is Feature => 
-                FeatureSchema.safeParse(feature).success
-              );
-            }
-          } catch (parseError) {
-            console.error('Deposit: Error parsing JSON:', parseError);
-          }
-        }
-      } catch (error) {
-        console.log('Deposit: JSON request failed:', error);
-      }
-
-      // If JSON fails, try XML
-      const xmlParams = new URLSearchParams({
+      // Use XML format directly
+      const params = new URLSearchParams({
         service: 'WFS',
         version: '1.0.0',
         request: 'GetFeature',
@@ -130,25 +72,23 @@ export class USGSDepositClient {
       if (bbox) {
         // Format bbox with proper commas
         const formattedBbox = bbox.split(',').map(n => parseFloat(n).toFixed(6)).join(',');
-        xmlParams.append('bbox', formattedBbox);
+        params.append('bbox', formattedBbox);
       }
 
-      const xmlUrl = `${this.baseUrl}?${xmlParams.toString()}`;
-      console.log('Deposit: Trying XML URL:', xmlUrl);
+      const url = `${this.baseUrl}?${params.toString()}`;
+      console.log('Deposit: Making request:', url);
 
-      console.log('Deposit: Sending XML request...');
-      const xmlResponse = await this.withTimeout(
-        fetch(xmlUrl),
+      const response = await this.withTimeout(
+        fetch(url),
         this.timeout,
-        'WFS GetFeature XML request'
+        'WFS GetFeature request'
       );
       
-      console.log('Deposit: XML response status:', xmlResponse.status);
-      const xmlText = await xmlResponse.text();
-      console.log('Deposit: XML response text:', xmlText.substring(0, 500) + '...');
+      console.log('Deposit: Response status:', response.status);
+      const xmlText = await response.text();
 
-      if (!xmlResponse.ok) {
-        throw new Error(`WFS request failed: ${xmlResponse.status} ${xmlResponse.statusText}\n${xmlText}`);
+      if (!response.ok) {
+        throw new Error(`WFS request failed: ${response.status} ${response.statusText}\n${xmlText}`);
       }
 
       const features = this.parseWFSXML(xmlText);
@@ -165,7 +105,6 @@ export class USGSDepositClient {
     try {
       console.log('Deposit: Parsing XML response...');
       const parsed = this.xmlParser.parse(xmlData);
-      console.log('Deposit: Parsed XML structure:', JSON.stringify(parsed, null, 2).substring(0, 500) + '...');
 
       const featureMembers = parsed?.['wfs:FeatureCollection']?.['gml:featureMember'] || 
                             parsed?.['FeatureCollection']?.['featureMember'] || [];
