@@ -1,10 +1,9 @@
 import { AppDataSource } from '../config/database.js';
 import { GeoLocation } from '../entities/GeoLocation.js';
 import { DataSource as GeoDataSource } from '../entities/DataSource.js';
-import { USGSMRDSClient } from './usgs-mrds-client.js';
-import { USGSDepositClient } from './usgs-deposit-client.js';
+import { USGSMRDSClient, Feature } from './usgs-mrds-client-new.js';
+import { USGSDepositClient } from './usgs-deposit-client-new.js';
 import { Repository } from 'typeorm';
-import { Feature } from './wfs-client.js';
 
 export class DataIngestionService {
   private mrdsClient: USGSMRDSClient;

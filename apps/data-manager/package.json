@@ -8,6 +8,7 @@
     "build:web": "vite build",
     "dev:web": "vite",
     "dev:server": "tsx watch src/server.ts",
+    "db:start": "docker compose up -d",
     "start": "docker compose down && docker compose up -d && concurrently \"pnpm run dev:server\" \"pnpm run dev:web\"",
     "typecheck": "tsc -p tsconfig.node.json --noEmit && tsc -p tsconfig.web.json --noEmit",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
@@ -23,6 +24,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@camptocamp/ogc-client": "^1.2.0",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/geojson": "^7946.0.15",

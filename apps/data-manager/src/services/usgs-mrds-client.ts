@@ -3,11 +3,9 @@ import { WFSClient, Feature } from './wfs-client.js';
 export class USGSMRDSClient extends WFSClient {
   constructor() {
     // Use the correct URL from the capabilities document
-    const baseUrl = process.env.USGS_MRDS_BASE_URL || 'https://mrdata.usgs.gov/cgi-bin/mapserv';
-    // Add map parameter to base URL
-    const fullUrl = `${baseUrl}?map=/mnt/mrt/map-files/mrds.map&`;
-    // Use the correct feature type from the capabilities document
-    super(fullUrl, 'mrds-high');
+    const baseUrl = process.env.USGS_MRDS_BASE_URL || 'https://mrdata.usgs.gov/services/wfs/mrds';
+     // Use the correct feature type from the capabilities document
+    super(baseUrl, 'mrds');
   }
 
   private parseCoordinates(coordString: string): [number, number] | null {

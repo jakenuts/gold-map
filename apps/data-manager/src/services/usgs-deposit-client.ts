@@ -3,9 +3,9 @@ import { WFSClient, Feature } from './wfs-client.js';
 export class USGSDepositClient extends WFSClient {
   constructor() {
     // Use the correct URL from the capabilities document
-    const baseUrl = process.env.USGS_DEPOSIT_BASE_URL || 'https://mrdata.usgs.gov/cgi-bin/mapserv?map=/mnt/mrt/map-files/deposit.map';
+    const baseUrl = process.env.USGS_DEPOSIT_BASE_URL || 'https://mrdata.usgs.gov/services/wfs/deposit';
     // 'points' is the correct feature type for point data
-    super(baseUrl, 'points');
+    super(baseUrl, 'deposit');
   }
 
   private parseCoordinates(coordString: string): [number, number] | null {
