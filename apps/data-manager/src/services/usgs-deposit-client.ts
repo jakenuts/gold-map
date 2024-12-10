@@ -1,68 +1,151 @@
-import axios from 'axios';
 import { WFSClient, Feature } from './wfs-client.js';
 
 export class USGSDepositClient extends WFSClient {
-  private mapFile: string;
-
   constructor() {
-    const baseUrl = process.env.USGS_DEPOSIT_BASE_URL || 'https://mrdata.usgs.gov/cgi-bin/mapserv';
+    // Use the correct URL from the capabilities document
+    const baseUrl = process.env.USGS_DEPOSIT_BASE_URL || 'https://mrdata.usgs.gov/cgi-bin/mapserv?map=/mnt/mrt/map-files/deposit.map';
+    // 'points' is the correct feature type for point data
     super(baseUrl, 'points');
-    this.mapFile = '/mnt/mrt/map-files/deposit.map';
   }
 
-  protected getRequestParams(bbox: string, format?: string) {
-    const params = super.getRequestParams(bbox, format);
-    params.map = this.mapFile;
-    return params;
+  private parseCoordinates(coordString: string): [number, number] | null {
+    try {
+      // Handle various coordinate string formats:
+      // "lon,lat" or "lat,lon" or "lon lat" or "lat lon"
+      const parts = coordString.trim().split(/[,\s]+/).map(Number);
+      
+      if (parts.length !== 2 || parts.some(isNaN)) {
+        return null;
+      }
+
+      const [x, y] = parts;
+      
+      // Validate coordinate ranges
+      if (Math.abs(x) <= 180 && Math.abs(y) <= 90) {
+        // Assume x is longitude, y is latitude
+        return [x, y];
+      } else if (Math.abs(x) <= 90 && Math.abs(y) <= 180) {
+        // Assume x is latitude, y is longitude
+        return [y, x];
+      }
+      
+      return null;
+    } catch (error) {
+      console.error('Error parsing coordinates:', error);
+      return null;
+    }
+  }
+
+  private extractCoordinates(feature: any): [number, number] | null {
+    try {
+      // Try different possible paths to coordinates
+      const deposit = feature?.['points'] || feature?.['ms:points'] || 
+                     feature?.['deposit'] || feature?.['ms:deposit'];
+
+      if (!deposit) {
+        return null;
+      }
+
+      // 1. Try gml:Point/gml:coordinates
+      const pointGeom = deposit?.['gml:Point'] || deposit?.['Point'];
+      const pointCoords = pointGeom?.['gml:coordinates']?._text || 
+                         pointGeom?.['coordinates']?._text;
+      if (pointCoords) {
+        const coords = this.parseCoordinates(pointCoords);
+        if (coords) return coords;
+      }
+
+      // 2. Try geometry/Point/coordinates
+      const geomPoint = deposit?.['geometry']?.['Point'] || 
+                       deposit?.['gml:geometry']?.['Point'] ||
+                       deposit?.['geometry']?.['gml:Point'];
+      const geomCoords = geomPoint?.['coordinates']?._text || 
+                        geomPoint?.['gml:coordinates']?._text;
+      if (geomCoords) {
+        const coords = this.parseCoordinates(geomCoords);
+        if (coords) return coords;
+      }
+
+      // 3. Try direct LAT/LONG fields with various possible paths and casings
+      const possibleLatFields = ['LAT', 'lat', 'LATITUDE', 'latitude'];
+      const possibleLonFields = ['LONG', 'long', 'LON', 'lon', 'LONGITUDE', 'longitude'];
+      
+      let lat: number | null = null;
+      let lon: number | null = null;
+
+      // Find latitude
+      for (const field of possibleLatFields) {
+        const value = parseFloat(deposit[field]?._text);
+        if (!isNaN(value) && Math.abs(value) <= 90) {
+          lat = value;
+          break;
+        }
+      }
+
+      // Find longitude
+      for (const field of possibleLonFields) {
+        const value = parseFloat(deposit[field]?._text);
+        if (!isNaN(value) && Math.abs(value) <= 180) {
+          lon = value;
+          break;
+        }
+      }
+
+      if (lat !== null && lon !== null) {
+        return [lon, lat];
+      }
+
+      // 4. Try msGMLOutput paths
+      const msOutput = feature?.['msGMLOutput']?.['deposit_layer'] || 
+                      feature?.['msGMLOutput']?.['ms:deposit_layer'] ||
+                      feature?.['msGMLOutput']?.['points_layer'] ||
+                      feature?.['msGMLOutput']?.['ms:points_layer'];
+      if (msOutput) {
+        const lat = parseFloat(msOutput['ms:LAT']?._text || msOutput['LAT']?._text);
+        const lon = parseFloat(msOutput['ms:LONG']?._text || msOutput['LONG']?._text);
+        
+        if (!isNaN(lat) && !isNaN(lon) && Math.abs(lat) <= 90 && Math.abs(lon) <= 180) {
+          return [lon, lat];
+        }
+      }
+
+      console.log('No valid coordinates found in feature:', {
+        id: deposit?.['ID']?._text || 'unknown',
+        name: deposit?.['NAME']?._text || 'unknown'
+      });
+      return null;
+
+    } catch (error) {
+      console.error('Error extracting coordinates:', error);
+      return null;
+    }
   }
 
   protected parseWFSXML(xmlData: string): Feature[] {
     try {
       console.log('Parsing Deposit XML response...');
       const parsed = this.xmlParser.parse(xmlData);
-      console.log('Parsed Deposit structure:', JSON.stringify(parsed, null, 2).substring(0, 500) + '...');
+      console.log('Parsed Deposit structure:', JSON.stringify(parsed, null, 2));
 
       // Handle both namespace prefixed and non-prefixed paths
-      const featureMembers = parsed?.['FeatureCollection']?.['featureMember'] || 
-                            parsed?.['wfs:FeatureCollection']?.['gml:featureMember'] || [];
+      const featureMembers = parsed?.['wfs:FeatureCollection']?.['gml:featureMember'] || 
+                            parsed?.['FeatureCollection']?.['featureMember'] || [];
                             
       const featureArray = Array.isArray(featureMembers) ? featureMembers : [featureMembers];
       console.log(`Found ${featureArray.length} Deposit features in XML`);
 
       return featureArray
         .map((feature: any) => {
-          // Try different possible paths to the points data
-          const deposit = feature?.['points'] || feature?.['ms:points'] || feature?.['deposit:points'];
-          if (!deposit) {
-            console.log('No deposit data found in feature:', feature);
+          const coordinates = this.extractCoordinates(feature);
+          if (!coordinates) {
             return null;
           }
 
-          // Try to get coordinates from geometry
-          let coordinates: [number, number] | null = null;
-
-          const geometry = deposit?.['geometry'] || deposit?.['gml:geometry'];
-          const point = geometry?.['Point'] || geometry?.['gml:Point'];
-          const coords = point?.['coordinates']?._text || point?.['gml:coordinates']?._text;
-          
-          if (coords) {
-            const [lon, lat] = coords.split(',').map(Number);
-            if (!isNaN(lat) && !isNaN(lon)) {
-              coordinates = [lon, lat];
-            }
-          }
-
-          // If no coordinates from geometry, try direct coordinate fields
-          if (!coordinates) {
-            const lat = parseFloat(deposit?.['LAT']?._text || deposit?.['lat']?._text || '');
-            const lon = parseFloat(deposit?.['LONG']?._text || deposit?.['long']?._text || '');
-            if (!isNaN(lat) && !isNaN(lon)) {
-              coordinates = [lon, lat];
-            }
-          }
-          
-          if (!coordinates) {
-            console.log('Invalid or missing coordinates in feature');
+          // Try different possible paths to the deposit data
+          const deposit = feature?.['points'] || feature?.['ms:points'] || 
+                         feature?.['deposit'] || feature?.['ms:deposit'];
+          if (!deposit) {
+            console.log('No deposit data found in feature:', feature);
             return null;
           }
 
@@ -79,7 +162,6 @@ export class USGSDepositClient extends WFSClient {
               id: deposit?.['ID']?._text || deposit?.['id']?._text || null,
               site_type: deposit?.['SITE_TYPE']?._text || deposit?.['site_type']?._text || null,
               development_status: deposit?.['DEV_STATUS']?._text || deposit?.['dev_status']?._text || null,
-              // Add any additional properties that match the example you provided
               state: deposit?.['STATE']?._text || null,
               county: deposit?.['COUNTY']?._text || null,
               ftr_type: deposit?.['FTR_TYPE']?._text || null,

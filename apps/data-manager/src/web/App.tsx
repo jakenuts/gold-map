@@ -21,17 +21,33 @@ interface Category {
   subcategories: string[];
 }
 
+interface IngestResponse {
+  success: boolean;
+  message: string;
+  stats: {
+    totalLocations: number;
+    sources: string[];
+    categories: string[];
+    bbox?: string;
+  };
+}
+
 const DEFAULT_CENTER: [number, number] = [40.9061, -123.4003];
 const DEFAULT_ZOOM = 8;
 const API_BASE_URL = 'http://localhost:3010';
+
+// Default bounding box for the area of interest
+const DEFAULT_BBOX = '-124.407182,40.071180,-122.393331,41.740961';
 
 export default function App() {
   const [locations, setLocations] = useState<Location[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('mineral_deposit');
   const [selectedSubcategory, setSelectedSubcategory] = useState<string>('');
+  const [lastRefreshStats, setLastRefreshStats] = useState<IngestResponse['stats'] | null>(null);
 
   useEffect(() => {
     fetchCategories();
@@ -45,12 +61,14 @@ export default function App() {
     try {
       const response = await fetch(`${API_BASE_URL}/api/categories`);
       if (!response.ok) {
-        throw new Error('Failed to fetch categories');
+        const errorData = await response.json();
+        throw new Error(errorData.details || 'Failed to fetch categories');
       }
       const data = await response.json();
       setCategories(data);
     } catch (err) {
       console.error('Error fetching categories:', err);
+      setError(err instanceof Error ? err.message : 'Failed to fetch categories');
     }
   };
 
@@ -66,7 +84,8 @@ export default function App() {
       }
       const response = await fetch(`${API_BASE_URL}/api/locations?${params}`);
       if (!response.ok) {
-        throw new Error('Failed to fetch locations');
+        const errorData = await response.json();
+        throw new Error(errorData.details || 'Failed to fetch locations');
       }
       const data = await response.json();
       setLocations(data);
@@ -80,25 +99,44 @@ export default function App() {
 
   const handleRefreshData = async () => {
     try {
-      setLoading(true);
+      setRefreshing(true);
       setError(null);
-      const response = await fetch(`${API_BASE_URL}/api/ingest/usgs`, {
+      const params = new URLSearchParams({
+        bbox: DEFAULT_BBOX
+      });
+      const response = await fetch(`${API_BASE_URL}/api/ingest/usgs?${params}`, {
         method: 'POST',
       });
       if (!response.ok) {
-        throw new Error('Failed to refresh USGS data');
+        const errorData = await response.json();
+        throw new Error(errorData.details || 'Failed to refresh USGS data');
       }
+      const data: IngestResponse = await response.json();
+      setLastRefreshStats(data.stats);
       await fetchLocations();
       await fetchCategories();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
       console.error('Error refreshing data:', err);
     } finally {
-      setLoading(false);
+      setRefreshing(false);
     }
   };
 
   const currentCategory = categories.find(c => c.category === selectedCategory);
+
+  const renderRefreshStats = () => {
+    if (!lastRefreshStats) return null;
+    return React.createElement('div', { 
+      key: 'refresh-stats',
+      className: 'refresh-stats'
+    }, [
+      React.createElement('h3', { key: 'stats-title' }, 'Last Refresh Results:'),
+      React.createElement('p', { key: 'total' }, `Total Locations: ${lastRefreshStats.totalLocations}`),
+      React.createElement('p', { key: 'sources' }, `Sources: ${lastRefreshStats.sources.join(', ')}`),
+      React.createElement('p', { key: 'categories' }, `Categories: ${lastRefreshStats.categories.join(', ')}`)
+    ]);
+  };
 
   return React.createElement('div', { className: 'app-container' }, [
     React.createElement('div', { key: 'header', className: 'header' }, [
@@ -111,7 +149,7 @@ export default function App() {
             setSelectedCategory(e.target.value);
             setSelectedSubcategory('');
           },
-          disabled: loading
+          disabled: loading || refreshing
         }, categories.map(cat => 
           React.createElement('option', { 
             key: cat.category, 
@@ -122,7 +160,7 @@ export default function App() {
           key: 'subcategory-select',
           value: selectedSubcategory,
           onChange: (e: React.ChangeEvent<HTMLSelectElement>) => setSelectedSubcategory(e.target.value),
-          disabled: loading
+          disabled: loading || refreshing
         }, [
           React.createElement('option', { key: 'all', value: '' }, 'All Subcategories'),
           ...currentCategory.subcategories.map(sub => 
@@ -132,8 +170,9 @@ export default function App() {
         React.createElement('button', {
           key: 'refresh-btn',
           onClick: handleRefreshData,
-          disabled: loading || selectedCategory !== 'mineral_deposit'
-        }, loading ? 'Loading...' : 'Refresh USGS Data'),
+          disabled: loading || refreshing || selectedCategory !== 'mineral_deposit',
+          className: refreshing ? 'loading' : ''
+        }, refreshing ? 'Refreshing USGS Data...' : 'Refresh USGS Data'),
         error && React.createElement('div', {
           key: 'error',
           className: 'error-message'
@@ -150,33 +189,39 @@ export default function App() {
           selectedSubcategory
         })
       ),
-      React.createElement('div', { key: 'table', className: 'table-container' }, [
-        React.createElement('h2', { key: 'table-title' }, 'Locations'),
-        React.createElement('table', { key: 'table-content' }, [
-          React.createElement('thead', { key: 'thead' },
-            React.createElement('tr', null, [
-              React.createElement('th', { key: 'name' }, 'Name'),
-              React.createElement('th', { key: 'category' }, 'Category'),
-              React.createElement('th', { key: 'subcategory' }, 'Subcategory'),
-              React.createElement('th', { key: 'source' }, 'Source'),
-              React.createElement('th', { key: 'properties' }, 'Properties')
-            ])
+      React.createElement('div', { key: 'sidebar', className: 'sidebar' }, [
+        renderRefreshStats(),
+        React.createElement('div', { key: 'table', className: 'table-container' }, [
+          React.createElement('h2', { key: 'table-title' }, 
+            loading ? 'Loading Locations...' : `Locations (${locations.length})`
           ),
-          React.createElement('tbody', { key: 'tbody' },
-            locations.map(location =>
-              React.createElement('tr', { key: location.id }, [
-                React.createElement('td', { key: 'name' }, location.name),
-                React.createElement('td', { key: 'category' }, location.category.replace('_', ' ')),
-                React.createElement('td', { key: 'subcategory' }, location.subcategory),
-                React.createElement('td', { key: 'source' }, location.dataSource.name),
-                React.createElement('td', { key: 'properties' }, 
-                  Object.entries(location.properties || {})
-                    .map(([key, value]) => `${key}: ${Array.isArray(value) ? value.join(', ') : value}`)
-                    .join('; ')
-                )
+          React.createElement('table', { key: 'table-content' }, [
+            React.createElement('thead', { key: 'thead' },
+              React.createElement('tr', null, [
+                React.createElement('th', { key: 'name' }, 'Name'),
+                React.createElement('th', { key: 'category' }, 'Category'),
+                React.createElement('th', { key: 'subcategory' }, 'Subcategory'),
+                React.createElement('th', { key: 'source' }, 'Source'),
+                React.createElement('th', { key: 'properties' }, 'Properties')
               ])
+            ),
+            React.createElement('tbody', { key: 'tbody' },
+              locations.map(location =>
+                React.createElement('tr', { key: location.id }, [
+                  React.createElement('td', { key: 'name' }, location.name),
+                  React.createElement('td', { key: 'category' }, location.category.replace('_', ' ')),
+                  React.createElement('td', { key: 'subcategory' }, location.subcategory),
+                  React.createElement('td', { key: 'source' }, location.dataSource.name),
+                  React.createElement('td', { key: 'properties' }, 
+                    Object.entries(location.properties || {})
+                      .filter(([key]) => !['id', 'name', 'location'].includes(key))
+                      .map(([key, value]) => `${key}: ${Array.isArray(value) ? value.join(', ') : value}`)
+                      .join('; ')
+                  )
+                ])
+              )
             )
-          )
+          ])
         ])
       ])
     ])

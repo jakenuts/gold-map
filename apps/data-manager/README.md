@@ -86,6 +86,32 @@ To add a new data source:
 4. Update the Map component's color scheme and popup rendering if needed
 5. Update API endpoints as needed
 
+### Recent Changes and Improvements
+
+#### Data Ingestion
+- Added support for multiple USGS data sources (MRDS and Deposit services)
+- Improved bounding box validation and formatting
+- Enhanced error handling and logging for data ingestion
+- Added proper coordinate parsing and validation
+
+#### WFS Client Improvements
+- Added robust XML and JSON response handling
+- Improved error reporting with detailed logging
+- Added support for different coordinate formats and namespaces
+- Enhanced feature extraction with fallback options
+
+#### API Enhancements
+- Added better validation for bounding box parameters
+- Improved error responses with detailed messages
+- Added support for multiple data source ingestion
+- Enhanced response format with detailed statistics
+
+#### Data Transformation
+- Added support for different coordinate systems
+- Improved property mapping for different data sources
+- Enhanced data validation before storage
+- Added support for source-specific metadata
+
 ### Migration Notes
 - Database migrations are used instead of schema sync
 - Run migrations after pulling new changes: `pnpm typeorm migration:run`

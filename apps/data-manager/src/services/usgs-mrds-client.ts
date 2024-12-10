@@ -2,15 +2,131 @@ import { WFSClient, Feature } from './wfs-client.js';
 
 export class USGSMRDSClient extends WFSClient {
   constructor() {
-    const baseUrl = process.env.USGS_MRDS_BASE_URL || 'https://mrdata.usgs.gov/services/wfs/mrds';
-    super(baseUrl, 'mrds');
+    // Use the correct URL from the capabilities document
+    const baseUrl = process.env.USGS_MRDS_BASE_URL || 'https://mrdata.usgs.gov/cgi-bin/mapserv';
+    // Add map parameter to base URL
+    const fullUrl = `${baseUrl}?map=/mnt/mrt/map-files/mrds.map&`;
+    // Use the correct feature type from the capabilities document
+    super(fullUrl, 'mrds-high');
+  }
+
+  private parseCoordinates(coordString: string): [number, number] | null {
+    try {
+      // Handle various coordinate string formats:
+      // "lon,lat" or "lat,lon" or "lon lat" or "lat lon"
+      const parts = coordString.trim().split(/[,\s]+/).map(Number);
+      
+      if (parts.length !== 2 || parts.some(isNaN)) {
+        return null;
+      }
+
+      const [x, y] = parts;
+      
+      // Validate coordinate ranges
+      if (Math.abs(x) <= 180 && Math.abs(y) <= 90) {
+        // Assume x is longitude, y is latitude
+        return [x, y];
+      } else if (Math.abs(x) <= 90 && Math.abs(y) <= 180) {
+        // Assume x is latitude, y is longitude
+        return [y, x];
+      }
+      
+      return null;
+    } catch (error) {
+      console.error('Error parsing coordinates:', error);
+      return null;
+    }
+  }
+
+  private extractCoordinates(feature: any): [number, number] | null {
+    try {
+      // Try different possible paths to coordinates
+      const mrds = feature?.['mrds-high'] || feature?.['ms:mrds-high'] || 
+                  feature?.['mrds'] || feature?.['ms:mrds'];
+
+      if (!mrds) {
+        console.log('No MRDS data found in feature:', feature);
+        return null;
+      }
+
+      // 1. Try gml:Point/gml:coordinates
+      const pointGeom = mrds?.['gml:Point'] || mrds?.['Point'];
+      const pointCoords = pointGeom?.['gml:coordinates']?._text || 
+                         pointGeom?.['coordinates']?._text;
+      if (pointCoords) {
+        const coords = this.parseCoordinates(pointCoords);
+        if (coords) return coords;
+      }
+
+      // 2. Try geometry/Point/coordinates
+      const geomPoint = mrds?.['geometry']?.['Point'] || 
+                       mrds?.['gml:geometry']?.['Point'] ||
+                       mrds?.['geometry']?.['gml:Point'];
+      const geomCoords = geomPoint?.['coordinates']?._text || 
+                        geomPoint?.['gml:coordinates']?._text;
+      if (geomCoords) {
+        const coords = this.parseCoordinates(geomCoords);
+        if (coords) return coords;
+      }
+
+      // 3. Try direct LAT/LONG fields with various possible paths and casings
+      const possibleLatFields = ['LAT', 'lat', 'LATITUDE', 'latitude'];
+      const possibleLonFields = ['LONG', 'long', 'LON', 'lon', 'LONGITUDE', 'longitude'];
+      
+      let lat: number | null = null;
+      let lon: number | null = null;
+
+      // Find latitude
+      for (const field of possibleLatFields) {
+        const value = parseFloat(mrds[field]?._text);
+        if (!isNaN(value) && Math.abs(value) <= 90) {
+          lat = value;
+          break;
+        }
+      }
+
+      // Find longitude
+      for (const field of possibleLonFields) {
+        const value = parseFloat(mrds[field]?._text);
+        if (!isNaN(value) && Math.abs(value) <= 180) {
+          lon = value;
+          break;
+        }
+      }
+
+      if (lat !== null && lon !== null) {
+        return [lon, lat];
+      }
+
+      // 4. Try msGMLOutput paths
+      const msOutput = feature?.['msGMLOutput']?.['mrds_layer'] || 
+                      feature?.['msGMLOutput']?.['ms:mrds_layer'];
+      if (msOutput) {
+        const lat = parseFloat(msOutput['ms:LAT']?._text || msOutput['LAT']?._text);
+        const lon = parseFloat(msOutput['ms:LONG']?._text || msOutput['LONG']?._text);
+        
+        if (!isNaN(lat) && !isNaN(lon) && Math.abs(lat) <= 90 && Math.abs(lon) <= 180) {
+          return [lon, lat];
+        }
+      }
+
+      console.log('No valid coordinates found in feature:', {
+        id: mrds?.['ID']?._text || 'unknown',
+        name: mrds?.['NAME']?._text || 'unknown'
+      });
+      return null;
+
+    } catch (error) {
+      console.error('Error extracting coordinates:', error);
+      return null;
+    }
   }
 
   protected parseWFSXML(xmlData: string): Feature[] {
     try {
       console.log('Parsing MRDS XML response...');
       const parsed = this.xmlParser.parse(xmlData);
-      console.log('Parsed MRDS structure:', JSON.stringify(parsed, null, 2).substring(0, 500) + '...');
+      console.log('Parsed MRDS structure:', JSON.stringify(parsed, null, 2));
 
       // Handle both namespace prefixed and non-prefixed paths
       const featureMembers = parsed?.['wfs:FeatureCollection']?.['gml:featureMember'] || 
@@ -21,45 +137,16 @@ export class USGSMRDSClient extends WFSClient {
 
       return featureArray
         .map((feature: any) => {
-          // Try different possible paths to the mrds data
-          const mrds = feature?.['ms:mrds'] || feature?.['mrds'] || feature?.['mrds:mrds'];
-          if (!mrds) {
-            console.log('No mrds data found in feature:', feature);
+          const coordinates = this.extractCoordinates(feature);
+          if (!coordinates) {
             return null;
           }
 
-          // Try to get coordinates from geometry
-          let coordinates: [number, number] | null = null;
-
-          // First try the gml:coordinates field
-          const geometry = mrds?.['gml:boundedBy']?.['gml:Box'];
-          if (geometry?.['gml:coordinates']?._text) {
-            const coordParts = geometry['gml:coordinates']._text.trim().split(/\s+/);
-            if (coordParts.length === 2) {
-              const [coord1, coord2] = coordParts;
-              const [lon1, lat1] = coord1.split(',').map(Number);
-              const [lon2, lat2] = coord2.split(',').map(Number);
-              if (!isNaN(lon1) && !isNaN(lat1) && !isNaN(lon2) && !isNaN(lat2)) {
-                // Use the first coordinate pair
-                coordinates = [lon1, lat1];
-              }
-            }
-          }
-
-          // If no coordinates from geometry, try direct coordinate fields
-          if (!coordinates) {
-            const lat = parseFloat(mrds?.['LAT']?._text || mrds?.['lat']?._text || '');
-            const lon = parseFloat(mrds?.['LONG']?._text || mrds?.['long']?._text || '');
-            if (!isNaN(lat) && !isNaN(lon)) {
-              coordinates = [lon, lat];
-            }
-          }
-          
-          if (!coordinates) {
-            console.log('Invalid or missing coordinates in feature:', {
-              id: mrds?.['ID']?._text || 'unknown',
-              name: mrds?.['NAME']?._text || 'unknown'
-            });
+          // Try different possible paths to the mrds data
+          const mrds = feature?.['mrds-high'] || feature?.['ms:mrds-high'] || 
+                      feature?.['mrds'] || feature?.['ms:mrds'];
+          if (!mrds) {
+            console.log('No mrds data found in feature:', feature);
             return null;
           }
 
@@ -76,7 +163,6 @@ export class USGSMRDSClient extends WFSClient {
               id: mrds?.['ID']?._text || mrds?.['id']?._text || null,
               site_type: mrds?.['SITE_TYPE']?._text || mrds?.['site_type']?._text || null,
               development_status: mrds?.['DEV_STATUS']?._text || mrds?.['dev_status']?._text || null,
-              // Add any additional properties that match the example
               state: mrds?.['STATE']?._text || null,
               county: mrds?.['COUNTY']?._text || null,
               ftr_type: mrds?.['FTR_TYPE']?._text || null,

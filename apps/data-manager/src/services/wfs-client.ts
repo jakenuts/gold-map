@@ -18,6 +18,20 @@ export const GeoJSONFeatureCollection = z.object({
 
 export type Feature = z.infer<typeof GeoJSONFeature>;
 
+interface BoundingBox {
+  minLon: number;
+  minLat: number;
+  maxLon: number;
+  maxLat: number;
+}
+
+const DEFAULT_BBOX: BoundingBox = {
+  minLon: -124.407182,
+  minLat: 40.071180,
+  maxLon: -122.393331,
+  maxLat: 41.740961
+};
+
 export abstract class WFSClient {
   protected baseUrl: string;
   protected defaultBBox: string;
@@ -27,19 +41,28 @@ export abstract class WFSClient {
   constructor(baseUrl: string, typeName: string) {
     this.baseUrl = baseUrl;
     this.typeName = typeName;
-    // Ensure proper comma formatting in default bbox
-    this.defaultBBox = '-124.407182,40.071180,-122.393331,41.740961';
+    
+    // Initialize default bounding box with proper formatting
+    this.defaultBBox = [
+      DEFAULT_BBOX.minLon.toFixed(6),
+      DEFAULT_BBOX.minLat.toFixed(6),
+      DEFAULT_BBOX.maxLon.toFixed(6),
+      DEFAULT_BBOX.maxLat.toFixed(6)
+    ].join(',');
+    
     this.xmlParser = new XMLParser({
       ignoreAttributes: false,
       attributeNamePrefix: '@_',
       parseAttributeValue: true,
       textNodeName: '_text',
-      isArray: (name) => ['featureMember', 'coordinates'].indexOf(name) !== -1
+      isArray: (name) => ['featureMember', 'coordinates'].indexOf(name) !== -1,
+      trimValues: true
     });
 
     console.log(`WFS Client initialized for ${typeName} with:`, {
       baseUrl: this.baseUrl,
       defaultBBox: this.defaultBBox,
+      typeName: this.typeName
     });
   }
 
@@ -48,15 +71,61 @@ export abstract class WFSClient {
 
   protected formatBBox(bbox?: string): string {
     if (!bbox) return this.defaultBBox;
-    
-    // Remove any extra whitespace and ensure proper comma formatting
-    const parts = bbox.trim().split(/[\s,]+/).filter(Boolean);
-    if (parts.length === 4 && parts.every(part => /^-?\d+\.?\d*$/.test(part))) {
-      return parts.join(',');
+
+    try {
+      // First clean the input string and ensure proper comma separation
+      const cleanBBox = decodeURIComponent(bbox).trim().replace(/[\s]+/g, ',');
+      console.log('Cleaned bbox:', cleanBBox);
+      
+      // Split on commas and filter out empty strings
+      const coordinates = cleanBBox
+        .split(',')
+        .map(str => str.trim())
+        .filter(str => str.length > 0)
+        .map(Number);
+
+      console.log('Parsed coordinates:', coordinates);
+
+      // Validate we have exactly 4 valid numbers
+      if (coordinates.length !== 4 || coordinates.some(isNaN)) {
+        console.warn('Invalid bounding box format, using default. Expected 4 numbers, got:', bbox);
+        return this.defaultBBox;
+      }
+
+      const [minLon, minLat, maxLon, maxLat] = coordinates;
+      
+      // Check longitude range (-180 to 180)
+      if (minLon < -180 || minLon > 180 || maxLon < -180 || maxLon > 180) {
+        console.warn('Invalid longitude values in bounding box, using default:', bbox);
+        return this.defaultBBox;
+      }
+
+      // Check latitude range (-90 to 90)
+      if (minLat < -90 || minLat > 90 || maxLat < -90 || maxLat > 90) {
+        console.warn('Invalid latitude values in bounding box, using default:', bbox);
+        return this.defaultBBox;
+      }
+
+      // Check that min is less than max
+      if (minLon > maxLon || minLat > maxLat) {
+        console.warn('Invalid bounding box: min values greater than max values:', bbox);
+        return this.defaultBBox;
+      }
+
+      // Format with consistent precision and comma separation
+      const formattedBBox = [
+        minLon.toFixed(6),
+        minLat.toFixed(6),
+        maxLon.toFixed(6),
+        maxLat.toFixed(6)
+      ].join(',');
+
+      console.log('Formatted bbox:', formattedBBox);
+      return formattedBBox;
+    } catch (error) {
+      console.error('Error formatting bounding box:', error);
+      return this.defaultBBox;
     }
-    
-    console.warn('Invalid bounding box format, using default:', bbox);
-    return this.defaultBBox;
   }
 
   protected getRequestParams(bbox: string, format?: string) {
@@ -73,6 +142,7 @@ export abstract class WFSClient {
       params.outputFormat = format;
     }
 
+    console.log(`Request params for ${this.typeName}:`, params);
     return params;
   }
 
@@ -81,10 +151,26 @@ export abstract class WFSClient {
       const effectiveBBox = this.formatBBox(bbox);
       console.log(`Fetching ${this.typeName} data with bbox:`, effectiveBBox);
       
+      // Build the URL with parameters
+      const url = new URL(this.baseUrl);
+      const params = this.getRequestParams(effectiveBBox);
+      
+      // Add parameters to URL
+      Object.entries(params).forEach(([key, value]) => {
+        // Don't encode commas in bbox
+        if (key === 'bbox') {
+          url.searchParams.append(key, value);
+        } else {
+          url.searchParams.append(key, encodeURIComponent(value));
+        }
+      });
+
+      const requestUrl = url.toString();
+      console.log('Full request URL:', requestUrl);
+
       // Try XML first since it's more reliable
       console.log('Attempting XML request...');
-      const xmlResponse = await axios.get(this.baseUrl, {
-        params: this.getRequestParams(effectiveBBox),
+      const xmlResponse = await axios.get(requestUrl, {
         headers: {
           'Accept': 'application/xml'
         }
@@ -92,12 +178,14 @@ export abstract class WFSClient {
 
       if (typeof xmlResponse.data === 'string') {
         console.log('XML response received, parsing...');
-        console.log('Raw XML response:', xmlResponse.data.substring(0, 1000) + '...'); // Log first 1000 chars of XML
+        console.log('Raw XML response:', xmlResponse.data);
         
         // Check for service exceptions
         if (xmlResponse.data.includes('ServiceExceptionReport')) {
-          console.error('WFS service returned an exception:', xmlResponse.data);
-          throw new Error(`WFS service error for ${this.typeName}`);
+          const errorMatch = xmlResponse.data.match(/<ServiceException[^>]*>([\s\S]*?)<\/ServiceException>/);
+          const errorMessage = errorMatch ? errorMatch[1].trim() : 'Unknown WFS service error';
+          console.error('WFS service returned an exception:', errorMessage);
+          throw new Error(`WFS service error for ${this.typeName}: ${errorMessage}`);
         }
         
         const features = this.parseWFSXML(xmlResponse.data);
@@ -110,8 +198,10 @@ export abstract class WFSClient {
 
       // If XML fails, try JSON
       console.log('XML parsing failed or empty, attempting JSON request...');
-      const jsonResponse = await axios.get(this.baseUrl, {
-        params: this.getRequestParams(effectiveBBox, 'application/json'),
+      url.searchParams.set('outputFormat', 'application/json');
+      console.log('JSON request URL:', url.toString());
+
+      const jsonResponse = await axios.get(url.toString(), {
         headers: {
           'Accept': 'application/json'
         }

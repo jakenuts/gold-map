@@ -45,6 +45,8 @@ export class DataIngestionService {
 
   async ingestUSGSData(bbox?: string) {
     try {
+      console.log('Starting USGS data ingestion with bbox:', bbox || 'default');
+
       // Ensure both data sources exist
       const mrdsSource = await this.ensureDataSource(
         'USGS-MRDS',
@@ -55,35 +57,70 @@ export class DataIngestionService {
       const depositSource = await this.ensureDataSource(
         'USGS-Deposit',
         'USGS Mineral Deposit Database',
-        'https://mrdata.usgs.gov/services/deposit'
+        'https://mrdata.usgs.gov/services/wfs/deposit'
       );
 
       console.log('Data sources configured:', {
-        mrds: mrdsSource.id,
-        deposit: depositSource.id
+        mrds: { id: mrdsSource.id, url: mrdsSource.url },
+        deposit: { id: depositSource.id, url: depositSource.url }
       });
 
       // Fetch data from both sources sequentially for better error handling
       console.log('Fetching MRDS data...');
       let mrdsFeatures: Feature[] = [];
+      let mrdsError: Error | null = null;
       try {
         mrdsFeatures = await this.mrdsClient.getFeatures(bbox);
         console.log(`Successfully fetched ${mrdsFeatures.length} MRDS features`);
+        
+        // Log sample coordinates for debugging
+        if (mrdsFeatures.length > 0) {
+          console.log('Sample MRDS coordinates:', 
+            mrdsFeatures.slice(0, 3).map(f => ({
+              coordinates: f.geometry.coordinates,
+              name: f.properties.name
+            }))
+          );
+        }
       } catch (error) {
+        mrdsError = error instanceof Error ? error : new Error('Unknown error fetching MRDS data');
         console.error('Error fetching MRDS data:', error);
+        if (error instanceof Error) {
+          console.error('Error details:', error.message);
+          console.error('Stack trace:', error.stack);
+        }
       }
 
       console.log('Fetching Deposit data...');
       let depositFeatures: Feature[] = [];
+      let depositError: Error | null = null;
       try {
         depositFeatures = await this.depositClient.getFeatures(bbox);
         console.log(`Successfully fetched ${depositFeatures.length} Deposit features`);
+        
+        // Log sample coordinates for debugging
+        if (depositFeatures.length > 0) {
+          console.log('Sample Deposit coordinates:', 
+            depositFeatures.slice(0, 3).map(f => ({
+              coordinates: f.geometry.coordinates,
+              name: f.properties.name
+            }))
+          );
+        }
       } catch (error) {
+        depositError = error instanceof Error ? error : new Error('Unknown error fetching Deposit data');
         console.error('Error fetching Deposit data:', error);
+        if (error instanceof Error) {
+          console.error('Error details:', error.message);
+          console.error('Stack trace:', error.stack);
+        }
       }
 
       if (mrdsFeatures.length === 0 && depositFeatures.length === 0) {
-        throw new Error('No features retrieved from either USGS source');
+        const errors = [];
+        if (mrdsError) errors.push(`MRDS: ${mrdsError.message}`);
+        if (depositError) errors.push(`Deposit: ${depositError.message}`);
+        throw new Error(`No features retrieved from either USGS source. Errors: ${errors.join('; ')}`);
       }
 
       // Clear existing data for both sources
@@ -96,10 +133,15 @@ export class DataIngestionService {
 
       // Transform and prepare locations for both sources
       console.log('Transforming features...');
-      const locations = [
-        ...this.prepareLocations(mrdsFeatures, this.mrdsClient, mrdsSource.id),
-        ...this.prepareLocations(depositFeatures, this.depositClient, depositSource.id)
-      ];
+      const mrdsLocations = this.prepareLocations(mrdsFeatures, this.mrdsClient, mrdsSource.id);
+      const depositLocations = this.prepareLocations(depositFeatures, this.depositClient, depositSource.id);
+      
+      console.log('Transformed locations count:', {
+        mrds: mrdsLocations.length,
+        deposit: depositLocations.length
+      });
+
+      const locations = [...mrdsLocations, ...depositLocations];
 
       if (locations.length === 0) {
         throw new Error('No valid locations after transformation');
@@ -111,13 +153,23 @@ export class DataIngestionService {
       
       console.log('Successfully saved locations:', {
         total: savedLocations.length,
-        mrds: mrdsFeatures.length,
-        deposit: depositFeatures.length
+        mrds: mrdsLocations.length,
+        deposit: depositLocations.length,
+        sampleCoordinates: savedLocations.slice(0, 3).map(loc => ({
+          name: loc.name,
+          coordinates: loc.location.coordinates,
+          category: loc.category,
+          source: loc.dataSourceId
+        }))
       });
 
       return savedLocations;
     } catch (error) {
       console.error('Error during data ingestion:', error);
+      if (error instanceof Error) {
+        console.error('Error details:', error.message);
+        console.error('Stack trace:', error.stack);
+      }
       throw error;
     }
   }
@@ -126,14 +178,29 @@ export class DataIngestionService {
     features: Feature[],
     client: USGSMRDSClient | USGSDepositClient,
     dataSourceId: string
-  ) {
-    return features.map(feature => {
-      const transformed = client.transformToGeoLocation(feature);
-      return this.geoLocationRepository.create({
-        ...transformed,
-        dataSourceId
-      });
-    });
+  ): GeoLocation[] {
+    const validLocations: GeoLocation[] = [];
+
+    for (const feature of features) {
+      try {
+        const transformed = client.transformToGeoLocation(feature);
+        const location = this.geoLocationRepository.create({
+          ...transformed,
+          dataSourceId
+        });
+        validLocations.push(location);
+      } catch (error) {
+        console.error('Error transforming feature:', {
+          error,
+          feature: {
+            coordinates: feature.geometry.coordinates,
+            properties: feature.properties
+          }
+        });
+      }
+    }
+
+    return validLocations;
   }
 
   async getLocationsInBoundingBox(minLon: number, minLat: number, maxLon: number, maxLat: number, category?: string, subcategory?: string) {
