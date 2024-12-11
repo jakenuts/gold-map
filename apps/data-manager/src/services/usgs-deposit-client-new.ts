@@ -1,206 +1,229 @@
-import { WfsEndpoint } from '@camptocamp/ogc-client';
+import { WFSBaseClient, Feature as BaseFeature, BoundingBox } from './wfs-base-client.js';
 import { z } from 'zod';
-import type { Feature as GeoJSONFeature, GeoJsonProperties, Geometry } from 'geojson';
-import { XMLParser } from 'fast-xml-parser';
 
-export const FeatureSchema = z.object({
-  type: z.literal('Feature'),
-  geometry: z.object({
-    type: z.literal('Point'),
-    coordinates: z.tuple([z.number(), z.number()]),
-  }),
-  properties: z.record(z.any()),
+// Deposit-specific feature properties schema
+const DepositProperties = z.object({
+  name: z.string(),
+  deposit_type: z.string().nullable().optional(),
+  commodities: z.string().nullable().optional(),
+  id: z.string().nullable().optional(),
+  site_type: z.string().nullable().optional(),
+  development_status: z.string().nullable().optional(),
+  state: z.string().nullable().optional(),
+  county: z.string().nullable().optional(),
+  reference: z.string().nullable().optional(),
+  reference_detail: z.string().nullable().optional(),
+  remarks: z.string().nullable().optional(),
+  doi: z.string().nullable().optional()
 });
 
-export type Feature = z.infer<typeof FeatureSchema>;
+export type DepositFeature = BaseFeature & {
+  properties: z.infer<typeof DepositProperties>;
+};
 
-export class USGSDepositClient {
-  private endpoint: WfsEndpoint;
-  private baseUrl: string;
-  private typeName: string;
-  private timeout: number = 60000; // 60 seconds timeout
-  private xmlParser: XMLParser;
+// Re-export base Feature type
+export type Feature = BaseFeature;
 
+export class USGSDepositClient extends WFSBaseClient {
   constructor() {
-    this.baseUrl = process.env.USGS_DEPOSIT_BASE_URL || 'https://mrdata.usgs.gov/services/wfs/deposit';
-    this.typeName = 'points';  // Changed from 'deposit' to 'points'
-    this.endpoint = new WfsEndpoint(this.baseUrl);
-    this.xmlParser = new XMLParser({
-      ignoreAttributes: false,
-      attributeNamePrefix: '@_',
-      parseAttributeValue: true,
-      textNodeName: '_text',
-      isArray: (name) => ['featureMember', 'coordinates'].indexOf(name) !== -1,
-      trimValues: true
-    });
-    console.log('Deposit Client initialized with:', {
-      baseUrl: this.baseUrl,
-      typeName: this.typeName
+    super({
+      baseUrl: process.env.USGS_DEPOSIT_BASE_URL || 'https://mrdata.usgs.gov/services/wfs/deposit',
+      version: '1.0.0', // Use 1.0.0 for consistent lon,lat order
+      typeName: 'points',
+      srsName: 'EPSG:4326',
+      maxFeatures: 10000  // Reduced for testing
     });
   }
 
-  private async withTimeout<T>(promise: Promise<T>, timeoutMs: number, operation: string): Promise<T> {
-    let timeoutHandle: NodeJS.Timeout;
-
-    const timeoutPromise = new Promise<never>((_, reject) => {
-      timeoutHandle = setTimeout(() => {
-        reject(new Error(`Operation timed out after ${timeoutMs}ms: ${operation}`));
-      }, timeoutMs);
-    });
-
+  /**
+   * Parse bbox string into BoundingBox object
+   */
+  private parseBBox(bbox: string): BoundingBox | undefined {
     try {
-      const result = await Promise.race([promise, timeoutPromise]);
-      clearTimeout(timeoutHandle!);
-      return result;
+      const [minLon, minLat, maxLon, maxLat] = bbox.split(',').map(Number);
+      if (
+        !isNaN(minLon) && !isNaN(minLat) && !isNaN(maxLon) && !isNaN(maxLat) &&
+        Math.abs(minLon) <= 180 && Math.abs(maxLon) <= 180 &&
+        Math.abs(minLat) <= 90 && Math.abs(maxLat) <= 90 &&
+        minLon <= maxLon && minLat <= maxLat
+      ) {
+        return { minLon, minLat, maxLon, maxLat };
+      }
+      console.error('Invalid bbox values:', { minLon, minLat, maxLon, maxLat });
+      return undefined;
     } catch (error) {
-      clearTimeout(timeoutHandle!);
-      throw error;
+      console.error('Error parsing bbox string:', error);
+      return undefined;
     }
   }
 
-  public async getFeatures(bbox?: string): Promise<Feature[]> {
+  /**
+   * Get raw XML response from WFS
+   */
+  public async getFeatures(bbox?: BoundingBox, additionalParams: Record<string, string> = {}): Promise<string> {
+    return super.getFeatures(bbox, additionalParams);
+  }
+
+  /**
+   * Get Deposit features as parsed objects
+   */
+  public async getDepositFeatures(bbox?: string | BoundingBox): Promise<DepositFeature[]> {
     try {
-      // Use XML format directly
-      const params = new URLSearchParams({
-        service: 'WFS',
-        version: '1.0.0',
-        request: 'GetFeature',
-        typeName: this.typeName,
-        srsName: 'EPSG:4326'
-      });
-
-      if (bbox) {
-        // Format bbox with proper commas
-        const formattedBbox = bbox.split(',').map(n => parseFloat(n).toFixed(6)).join(',');
-        params.append('bbox', formattedBbox);
+      // Convert string bbox to object if needed
+      let bboxObj: BoundingBox | undefined;
+      if (typeof bbox === 'string') {
+        bboxObj = this.parseBBox(bbox);
+      } else {
+        bboxObj = bbox;
       }
 
-      const url = `${this.baseUrl}?${params.toString()}`;
-      console.log('Deposit: Making request:', url);
-
-      const response = await this.withTimeout(
-        fetch(url),
-        this.timeout,
-        'WFS GetFeature request'
-      );
+      const xmlData = await this.getFeatures(bboxObj);
+      const features: DepositFeature[] = [];
+      const featureRegex = /<gml:featureMember>([\s\S]*?)<\/gml:featureMember>/g;
+      const fieldRegex = /<(?:ms:)?(\w+)>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/(?:ms:)?\w+>/g;
       
-      console.log('Deposit: Response status:', response.status);
-      const xmlText = await response.text();
+      let featureMatch;
+      while ((featureMatch = featureRegex.exec(xmlData)) !== null) {
+        const featureXml = featureMatch[1];
+        console.log('\nProcessing feature XML:', featureXml);
 
-      if (!response.ok) {
-        throw new Error(`WFS request failed: ${response.status} ${response.statusText}\n${xmlText}`);
+        let coordinates: [number, number] | null = null;
+        const rawProps: Record<string, any> = {};
+
+        // Extract coordinates
+        const coordMatch = /<gml:coordinates>(.*?)<\/gml:coordinates>/.exec(featureXml);
+        if (coordMatch) {
+          coordinates = this.parseCoordinates(coordMatch[1]);
+          console.log('Found coordinates from gml:coordinates:', coordMatch[1], '=>', coordinates);
+        }
+
+        // Try gml:pos if coordinates not found
+        if (!coordinates) {
+          const posMatch = /<gml:pos>(.*?)<\/gml:pos>/.exec(featureXml);
+          if (posMatch) {
+            const [lon, lat] = posMatch[1].trim().split(/\s+/).map(Number);
+            if (!isNaN(lon) && !isNaN(lat)) {
+              coordinates = [lon, lat];
+              console.log('Found coordinates from gml:pos:', posMatch[1], '=>', coordinates);
+            }
+          }
+        }
+
+        // Extract field values
+        let fieldMatch;
+        while ((fieldMatch = fieldRegex.exec(featureXml)) !== null) {
+          const [_, fieldName, value] = fieldMatch;
+          if (value && value.trim()) {
+            rawProps[fieldName.toLowerCase()] = value.trim();
+            console.log(`Found field ${fieldName}:`, value.trim());
+          }
+        }
+
+        // Skip features without coordinates
+        if (!coordinates) {
+          console.log('No valid coordinates found in feature:', {
+            id: rawProps.id || 'unknown',
+            name: rawProps.name || 'Unknown'
+          });
+          continue;
+        }
+
+        // Map raw properties to schema properties
+        const properties = {
+          name: rawProps.name || rawProps.site_name || 'Unknown',
+          deposit_type: rawProps.deposit_type || rawProps.dep_type || null,
+          commodities: rawProps.commodities || rawProps.commodity || null,
+          id: rawProps.id || rawProps.dep_id || null,
+          site_type: rawProps.site_type || null,
+          development_status: rawProps.development_status || rawProps.dev_status || null,
+          state: rawProps.state || null,
+          county: rawProps.county || null,
+          reference: rawProps.reference || rawProps.ref_id || null,
+          reference_detail: rawProps.reference_detail || rawProps.ref_detail || null,
+          remarks: rawProps.remarks || null,
+          doi: rawProps.doi || null
+        };
+
+        console.log('Mapped properties:', properties);
+
+        // Validate properties against schema
+        const validationResult = DepositProperties.safeParse(properties);
+        if (!validationResult.success) {
+          console.error('Invalid Deposit properties:', validationResult.error);
+          continue;
+        }
+
+        features.push({
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates
+          },
+          properties: validationResult.data
+        });
       }
 
-      const features = this.parseWFSXML(xmlText);
-      console.log(`Deposit: Parsed ${features.length} features from XML`);
+      console.log(`Found ${features.length} valid Deposit features`);
       return features;
 
     } catch (error) {
-      console.error('Deposit: Error fetching features:', error);
-      throw error;
-    }
-  }
-
-  private parseWFSXML(xmlData: string): Feature[] {
-    try {
-      console.log('Deposit: Parsing XML response...');
-      const parsed = this.xmlParser.parse(xmlData);
-
-      const featureMembers = parsed?.['wfs:FeatureCollection']?.['gml:featureMember'] || 
-                            parsed?.['FeatureCollection']?.['featureMember'] || [];
-                            
-      const featureArray = Array.isArray(featureMembers) ? featureMembers : [featureMembers];
-      console.log(`Deposit: Found ${featureArray.length} features in XML`);
-
-      return featureArray
-        .map((feature: any) => {
-          const deposit = feature?.['points'] || feature?.['ms:points'] || 
-                         feature?.['deposit'] || feature?.['ms:deposit'];
-          if (!deposit) {
-            console.log('Deposit: No deposit data found in feature');
-            return null;
-          }
-
-          // Try to get coordinates from various possible paths
-          let coordinates: [number, number] | null = null;
-
-          // Try gml:Point/gml:coordinates
-          const pointCoords = deposit?.['gml:Point']?.['gml:coordinates']?._text ||
-                            deposit?.['Point']?.['coordinates']?._text;
-          if (pointCoords) {
-            const parts = pointCoords.trim().split(/[,\s]+/).map(Number);
-            if (parts.length === 2 && !parts.some(isNaN)) {
-              coordinates = [parts[0], parts[1]];
-            }
-          }
-
-          // Try direct LAT/LONG fields if Point coordinates not found
-          if (!coordinates) {
-            const lat = parseFloat(deposit?.['LAT']?._text || deposit?.['lat']?._text);
-            const lon = parseFloat(deposit?.['LONG']?._text || deposit?.['long']?._text);
-            if (!isNaN(lat) && !isNaN(lon)) {
-              coordinates = [lon, lat];
-            }
-          }
-
-          if (!coordinates) {
-            console.log('Deposit: No valid coordinates found in feature');
-            return null;
-          }
-
-          const geoJSONFeature: Feature = {
-            type: 'Feature',
-            geometry: {
-              type: 'Point',
-              coordinates: coordinates,
-            },
-            properties: {
-              name: deposit?.['NAME']?._text || deposit?.['name']?._text || 'Unknown',
-              deposit_type: deposit?.['DEPOSIT_TYPE']?._text || deposit?.['deposit_type']?._text || null,
-              commodities: deposit?.['COMMODITIES']?._text || deposit?.['commodities']?._text || null,
-              id: deposit?.['ID']?._text || deposit?.['id']?._text || null,
-              site_type: deposit?.['SITE_TYPE']?._text || deposit?.['site_type']?._text || null,
-              development_status: deposit?.['DEV_STATUS']?._text || deposit?.['dev_status']?._text || null,
-              state: deposit?.['STATE']?._text || null,
-              county: deposit?.['COUNTY']?._text || null,
-            },
-          };
-
-          return geoJSONFeature;
-        })
-        .filter((feature): feature is Feature => feature !== null);
-    } catch (error) {
-      console.error('Deposit: Error parsing XML:', error);
+      console.error('Error parsing Deposit XML:', error);
       return [];
     }
   }
 
-  public transformToGeoLocation(feature: Feature) {
+  /**
+   * Parse coordinates from Deposit format
+   */
+  private parseCoordinates(coordString: string): [number, number] | null {
+    try {
+      // Take just the first coordinate pair (they're duplicated)
+      const firstPair = coordString.trim().split(' ')[0];
+      
+      // Split on comma or space
+      const [lon, lat] = firstPair.split(/[,\s]+/).map(Number);
+
+      // Validate the numbers
+      if (isNaN(lon) || isNaN(lat)) {
+        console.log('Failed to parse numbers:', { lon, lat, original: firstPair });
+        return null;
+      }
+
+      // Validate coordinate ranges
+      if (Math.abs(lon) <= 180 && Math.abs(lat) <= 90) {
+        return [lon, lat];
+      }
+
+      console.log('Coordinates out of range:', { lon, lat });
+      return null;
+    } catch (error) {
+      console.error('Error parsing coordinates:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Transform Deposit feature to GeoLocation format
+   */
+  public transformToGeoLocation(feature: DepositFeature) {
     const { geometry, properties } = feature;
 
-    // Extract common properties
-    const name = properties.name || 'Unknown Deposit';
-    const siteType = properties.site_type || null;
-    const depositType = properties.deposit_type || null;
-    const commodities = properties.commodities || null;
-
-    // Create point geometry in PostGIS format
-    const [longitude, latitude] = geometry.coordinates;
-    const location = {
-      type: 'Point',
-      coordinates: [longitude, latitude],
-    };
-
-    // Return transformed data matching GeoLocation schema
     return {
-      name,
+      name: properties.name,
       category: 'deposit',
-      subcategory: siteType || depositType || 'unknown',
-      location,
+      subcategory: properties.site_type || properties.deposit_type || 'unknown',
+      location: {
+        type: 'Point',
+        coordinates: geometry.coordinates,
+      },
       properties: {
-        depositType,
-        commodities,
+        depositType: properties.deposit_type,
+        commodities: properties.commodities,
         developmentStatus: properties.development_status,
+        reference: properties.reference,
+        referenceDetail: properties.reference_detail,
+        remarks: properties.remarks,
+        doi: properties.doi,
         ...properties,
       },
       sourceId: properties.id?.toString() || null,

@@ -1,9 +1,23 @@
 import { AppDataSource } from '../config/database.js';
 import { GeoLocation } from '../entities/GeoLocation.js';
 import { DataSource as GeoDataSource } from '../entities/DataSource.js';
-import { USGSMRDSClient, Feature } from './usgs-mrds-client-new.js';
+import { USGSMRDSClient, MRDSFeature } from './usgs-mrds-client-new.js';
 import { USGSDepositClient } from './usgs-deposit-client-new.js';
-import { Repository } from 'typeorm';
+import { Repository, QueryRunner } from 'typeorm';
+import { Feature } from './wfs-base-client.js';
+
+interface LocationData {
+  name: string;
+  category: string;
+  subcategory: string;
+  location: {
+    type: 'Point';
+    coordinates: [number, number];
+  };
+  properties: Record<string, any>;
+  dataSourceId: string;
+  sourceId?: string;
+}
 
 export class DataIngestionService {
   private mrdsClient: USGSMRDSClient;
@@ -42,9 +56,21 @@ export class DataIngestionService {
     return dataSource;
   }
 
-  async ingestUSGSData(bbox?: string) {
+  async ingestUSGSData(bbox?: string): Promise<GeoLocation[]> {
+    let queryRunner: QueryRunner | null = null;
     try {
       console.log('Starting USGS data ingestion with bbox:', bbox || 'default');
+
+      // Parse bbox string into object if provided
+      let bboxObj: { minLon: number; minLat: number; maxLon: number; maxLat: number; } | undefined;
+      if (bbox) {
+        const [minLon, minLat, maxLon, maxLat] = bbox.split(',').map(Number);
+        if (!isNaN(minLon) && !isNaN(minLat) && !isNaN(maxLon) && !isNaN(maxLat)) {
+          bboxObj = { minLon, minLat, maxLon, maxLat };
+        } else {
+          console.warn('Invalid bbox format, using default');
+        }
+      }
 
       // Ensure both data sources exist
       const mrdsSource = await this.ensureDataSource(
@@ -66,10 +92,10 @@ export class DataIngestionService {
 
       // Fetch data from both sources sequentially for better error handling
       console.log('Fetching MRDS data...');
-      let mrdsFeatures: Feature[] = [];
+      let mrdsFeatures: MRDSFeature[] = [];
       let mrdsError: Error | null = null;
       try {
-        mrdsFeatures = await this.mrdsClient.getFeatures(bbox);
+        mrdsFeatures = await this.mrdsClient.getMRDSFeatures(bboxObj);
         console.log(`Successfully fetched ${mrdsFeatures.length} MRDS features`);
         
         // Log sample coordinates for debugging
@@ -122,12 +148,15 @@ export class DataIngestionService {
         throw new Error(`No features retrieved from either USGS source. Errors: ${errors.join('; ')}`);
       }
 
+      // Start transaction
+      queryRunner = AppDataSource.createQueryRunner();
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+
       // Clear existing data for both sources
       console.log('Clearing existing USGS data...');
-      await Promise.all([
-        this.geoLocationRepository.delete({ dataSourceId: mrdsSource.id }),
-        this.geoLocationRepository.delete({ dataSourceId: depositSource.id })
-      ]);
+      await queryRunner.manager.delete(GeoLocation, { dataSourceId: mrdsSource.id });
+      await queryRunner.manager.delete(GeoLocation, { dataSourceId: depositSource.id });
       console.log('Cleared existing USGS data');
 
       // Transform and prepare locations for both sources
@@ -146,15 +175,47 @@ export class DataIngestionService {
         throw new Error('No valid locations after transformation');
       }
 
-      // Save all locations
+      // Save all locations using raw SQL
       console.log('Saving locations to database...');
-      const savedLocations = await this.geoLocationRepository.save(locations);
+      const values = locations.map(location => {
+        const [lon, lat] = location.location.coordinates;
+        return `(
+          '${location.name.replace(/'/g, "''")}',
+          '${location.category}',
+          '${location.subcategory}',
+          '${location.category}',
+          ST_SetSRID(ST_MakePoint(${lon}, ${lat}), 4326),
+          '${JSON.stringify(location.properties).replace(/'/g, "''")}',
+          '${location.dataSourceId}',
+          ${location.sourceId ? `'${location.sourceId}'` : 'NULL'}
+        )`;
+      }).join(',\n');
+
+      const insertQuery = `
+        INSERT INTO geo_locations (
+          name,
+          category,
+          subcategory,
+          "locationType",
+          location,
+          properties,
+          "dataSourceId",
+          "sourceId"
+        )
+        VALUES ${values}
+        RETURNING *;
+      `;
+
+      const savedLocations = await queryRunner.query(insertQuery);
+
+      // Commit transaction
+      await queryRunner.commitTransaction();
       
       console.log('Successfully saved locations:', {
         total: savedLocations.length,
         mrds: mrdsLocations.length,
         deposit: depositLocations.length,
-        sampleCoordinates: savedLocations.slice(0, 3).map(loc => ({
+        sampleCoordinates: savedLocations.slice(0, 3).map((loc: GeoLocation) => ({
           name: loc.name,
           coordinates: loc.location.coordinates,
           category: loc.category,
@@ -164,12 +225,22 @@ export class DataIngestionService {
 
       return savedLocations;
     } catch (error) {
+      // Rollback transaction on error
+      if (queryRunner?.isTransactionActive) {
+        await queryRunner.rollbackTransaction();
+      }
+
       console.error('Error during data ingestion:', error);
       if (error instanceof Error) {
         console.error('Error details:', error.message);
         console.error('Stack trace:', error.stack);
       }
       throw error;
+    } finally {
+      // Release query runner
+      if (queryRunner) {
+        await queryRunner.release();
+      }
     }
   }
 
@@ -177,16 +248,28 @@ export class DataIngestionService {
     features: Feature[],
     client: USGSMRDSClient | USGSDepositClient,
     dataSourceId: string
-  ): GeoLocation[] {
-    const validLocations: GeoLocation[] = [];
+  ): LocationData[] {
+    const validLocations: LocationData[] = [];
 
     for (const feature of features) {
       try {
-        const transformed = client.transformToGeoLocation(feature);
-        const location = this.geoLocationRepository.create({
-          ...transformed,
-          dataSourceId
-        });
+        // Type assertion since we know the client will handle its own feature type
+        const transformed = client.transformToGeoLocation(feature as any);
+
+        // Create location object (PostGIS function will be added during save)
+        const location: LocationData = {
+          name: transformed.name,
+          category: transformed.category,
+          subcategory: transformed.subcategory,
+          location: {
+            type: 'Point',
+            coordinates: transformed.location.coordinates as [number, number]
+          },
+          properties: transformed.properties,
+          dataSourceId,
+          sourceId: transformed.sourceId || undefined
+        };
+
         validLocations.push(location);
       } catch (error) {
         console.error('Error transforming feature:', {

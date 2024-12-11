@@ -1,4 +1,4 @@
-import { WFSBaseClient, Feature, BoundingBox } from './wfs-base-client';
+import { WFSBaseClient, Feature as BaseFeature, BoundingBox } from './wfs-base-client.js';
 import { z } from 'zod';
 
 // MRDS-specific feature properties schema
@@ -28,9 +28,12 @@ const MRDSProperties = z.object({
   feature_class: z.string().nullable().optional()
 });
 
-export type MRDSFeature = Feature & {
+export type MRDSFeature = BaseFeature & {
   properties: z.infer<typeof MRDSProperties>;
 };
+
+// Re-export base Feature type
+export type Feature = BaseFeature;
 
 export class USGSMRDSClient extends WFSBaseClient {
   constructor() {
@@ -39,7 +42,7 @@ export class USGSMRDSClient extends WFSBaseClient {
       version: '1.0.0', // Use 1.0.0 for consistent lon,lat order
       typeName: 'mrds',
       srsName: 'EPSG:4326',
-      maxFeatures: 5  // Reduced for testing
+      maxFeatures: 10000  // Reduced for testing
     });
   }
 

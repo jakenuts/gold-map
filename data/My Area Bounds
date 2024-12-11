@@ -5,3 +5,30 @@ South 	40°04′16.246″N
 
 East	122°23′35.993″W
 West	124°24′25.857″W
+
+https://mrdata.usgs.gov/services/wfs/mrds
+
+
+?service=WFS&
+request=GetFeature&
+typeName=mrds&
+bbox=-124.407182,40.071180,-122.393331,41.740961&
+outputFormat=application/json
+
+https://mrdata.usgs.gov/services/wfs/mrds?SERVICE=WMS&REQUEST=GetFeature&typeName=mrds&bbox=-124.407182,40.071180,-122.393331,41.740961&outputFormat=application/json
+
+
+Invalid feature structure: {
+[0]   'ms:mrds': {
+[0]     'gml:boundedBy': { 'gml:Box': [Object] },
+[0]     'ms:geometry': { 'gml:Point': [Object] },
+[0]     'ms:dep_id': 60001029,
+[0]     'ms:site_name': 'Salmon River District',
+[0]     'ms:dev_stat': 'Past Producer',
+[0]     'ms:fips_code': 'f06093',
+[0]     'ms:huc_code': 'h18010210',
+[0]     'ms:quad_code': 'q42124SWG1',
+[0]     'ms:url': 'https://mrdata.usgs.gov/mrds/show-mrds.php?dep_id=60001029',
+[0]     'ms:code_list': 'AU'
+[0]   }
+[0] }

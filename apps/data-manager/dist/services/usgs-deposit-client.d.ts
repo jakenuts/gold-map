@@ -1,8 +1,8 @@
 import { WFSClient, Feature } from './wfs-client.js';
 export declare class USGSDepositClient extends WFSClient {
-    private mapFile;
     constructor();
-    protected getRequestParams(bbox: string, format?: string): Record<string, string>;
+    private parseCoordinates;
+    private extractCoordinates;
     protected parseWFSXML(xmlData: string): Feature[];
     transformToGeoLocation(feature: Feature): {
         name: any;
