@@ -76,8 +76,6 @@ export class WFSBaseClient {
 
   /**
    * Format bounding box based on WFS version
-   * WFS 1.0.0: minx,miny,maxx,maxy
-   * WFS 1.1.0: miny,minx,maxy,maxx
    */
   protected formatBBox(bbox?: BoundingBox): string {
     let effectiveBox = bbox || this.defaultBBox;
@@ -88,18 +86,7 @@ export class WFSBaseClient {
       effectiveBox = this.defaultBBox;
     }
 
-    // Format based on WFS version
-    if (this.version === '1.1.0') {
-      // lat,lon order for 1.1.0
-      return [
-        effectiveBox.minLat.toFixed(6),
-        effectiveBox.minLon.toFixed(6),
-        effectiveBox.maxLat.toFixed(6),
-        effectiveBox.maxLon.toFixed(6)
-      ].join(',');
-    }
-
-    // lon,lat order for 1.0.0
+    // Always use lon,lat order for 1.0.0
     return [
       effectiveBox.minLon.toFixed(6),
       effectiveBox.minLat.toFixed(6),
@@ -183,12 +170,15 @@ export class WFSBaseClient {
 
       const response = await axios.get(url.toString(), {
         headers: {
-          'Accept': 'application/xml'
+          'Accept': 'application/xml',
+          'Connection': 'keep-alive'
         },
-        timeout: 30000, // 30 second timeout
-        maxContentLength: 50 * 1024 * 1024, // 50MB max response size
-        decompress: true, // Handle gzip responses
-        validateStatus: (status) => status < 500 // Only reject on server errors
+        timeout: 60000, // Increased to 60 second timeout
+        maxContentLength: 100 * 1024 * 1024, // Increased to 100MB max response size
+        decompress: true,
+        validateStatus: (status) => status < 500,
+        httpAgent: new (await import('http')).Agent({ keepAlive: true }),
+        httpsAgent: new (await import('https')).Agent({ keepAlive: true })
       });
 
       if (typeof response.data === 'string') {

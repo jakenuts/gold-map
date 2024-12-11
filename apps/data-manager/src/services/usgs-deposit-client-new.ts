@@ -28,40 +28,35 @@ export class USGSDepositClient extends WFSBaseClient {
   constructor() {
     super({
       baseUrl: process.env.USGS_DEPOSIT_BASE_URL || 'https://mrdata.usgs.gov/services/wfs/deposit',
-      version: '1.0.0', // Use 1.0.0 for consistent lon,lat order
+      version: '1.0.0',  // Back to 1.0.0 which we know works
       typeName: 'points',
-      srsName: 'EPSG:4326',
-      maxFeatures: 10000  // Reduced for testing
+      srsName: 'EPSG:4267',
+      maxFeatures: 50000
     });
   }
 
-  /**
-   * Parse bbox string into BoundingBox object
-   */
-  private parseBBox(bbox: string): BoundingBox | undefined {
-    try {
-      const [minLon, minLat, maxLon, maxLat] = bbox.split(',').map(Number);
-      if (
-        !isNaN(minLon) && !isNaN(minLat) && !isNaN(maxLon) && !isNaN(maxLat) &&
-        Math.abs(minLon) <= 180 && Math.abs(maxLon) <= 180 &&
-        Math.abs(minLat) <= 90 && Math.abs(maxLat) <= 90 &&
-        minLon <= maxLon && minLat <= maxLat
-      ) {
-        return { minLon, minLat, maxLon, maxLat };
-      }
-      console.error('Invalid bbox values:', { minLon, minLat, maxLon, maxLat });
-      return undefined;
-    } catch (error) {
-      console.error('Error parsing bbox string:', error);
-      return undefined;
-    }
-  }
-
+  /*
+  <DefaultSRS>urn:ogc:def:crs:EPSG::4267</DefaultSRS>
+  <OtherSRS>urn:ogc:def:crs:EPSG::4269</OtherSRS>
+  <OtherSRS>urn:ogc:def:crs:EPSG::4326</OtherSRS>
+  <OtherSRS>urn:ogc:def:crs:EPSG::3857</OtherSRS>
+  <OtherSRS>urn:ogc:def:crs:EPSG::900913</OtherSRS>
+  <OtherSRS>urn:ogc:def:crs:EPSG::102113</OtherSRS>
+  */
   /**
    * Get raw XML response from WFS
    */
   public async getFeatures(bbox?: BoundingBox, additionalParams: Record<string, string> = {}): Promise<string> {
-    return super.getFeatures(bbox, additionalParams);
+    // Add debug logging
+    if (bbox) {
+      console.log('Raw bbox values:', bbox);
+    }
+    const result = await super.getFeatures(bbox, additionalParams);
+    
+    // Log the raw response for debugging
+    console.log('Raw XML response:', result.substring(0, 500) + '...');
+    
+    return result;
   }
 
   /**
@@ -72,9 +67,16 @@ export class USGSDepositClient extends WFSBaseClient {
       // Convert string bbox to object if needed
       let bboxObj: BoundingBox | undefined;
       if (typeof bbox === 'string') {
-        bboxObj = this.parseBBox(bbox);
-      } else {
-        bboxObj = bbox;
+        const [minLon, minLat, maxLon, maxLat] = bbox.split(',').map(Number);
+        bboxObj = { minLon, minLat, maxLon, maxLat };
+      } else if (bbox) {
+        // Expand the bounding box slightly to ensure we don't miss features on the edges
+        bboxObj = {
+          minLon: bbox.minLon - 0.01,
+          minLat: bbox.minLat - 0.01,
+          maxLon: bbox.maxLon + 0.01,
+          maxLat: bbox.maxLat + 0.01
+        };
       }
 
       const xmlData = await this.getFeatures(bboxObj);
@@ -182,7 +184,7 @@ export class USGSDepositClient extends WFSBaseClient {
       
       // Split on comma or space
       const [lon, lat] = firstPair.split(/[,\s]+/).map(Number);
-
+      
       // Validate the numbers
       if (isNaN(lon) || isNaN(lat)) {
         console.log('Failed to parse numbers:', { lon, lat, original: firstPair });

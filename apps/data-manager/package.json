@@ -15,7 +15,7 @@
     "lint": "eslint \"src/**/*.{ts,tsx}\" --fix",
     "migration:run": "tsx src/run-migrations.ts",
     "test-mrds": "tsx src/test-mrds-new.ts",
-    "test-deposit": "tsx src/test-deposit-new.ts"
+    "test-deposit": "tsx src/test-deposit-new.ts"    
   },
   "keywords": [
     "typescript",
