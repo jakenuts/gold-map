@@ -18,11 +18,11 @@ async function testDepositClient() {
         
         // Get features
         console.log('\nFetching Deposit features...');
-        const allFeatures = await client.getDepositFeatures(/*searchBBox*/);
+        const allFeatures = await client.getDepositFeatures(searchBBox);
         console.log(`\nRetrieved ${allFeatures.length} total features in search area`);
 
         return;
-        
+
         // Define our target area
         const targetBBox: BoundingBox = {
             minLon: -124.4072,  // West: 124°24′25.857″W
