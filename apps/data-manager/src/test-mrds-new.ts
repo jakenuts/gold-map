@@ -14,6 +14,7 @@ async function testMRDSClient() {
             maxLon: -123.5,
             maxLat: 41.0
         };
+       
         console.log('Using bbox:', bbox);
         
         // Get features
