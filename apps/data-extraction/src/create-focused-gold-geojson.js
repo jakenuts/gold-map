@@ -7,8 +7,37 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Define input and output paths
-const inputPath = path.join(__dirname, '..', 'extracted', 'northern_california_gold_sites.json');
+const inputPath = path.join(__dirname, '..', 'extracted', 'northern_california_sites.json');
 const outputPath = path.join(__dirname, '..', 'extracted', 'northern_california_gold_focused.geojson');
+
+// Helper function to check if a site is gold-related
+const isGoldSite = (site) => {
+    // Check primary commodities
+    const hasGoldCommodity = site.commodities?.some(c => 
+        c.name?.toLowerCase() === 'gold' || 
+        c.code?.toLowerCase() === 'au'
+    );
+    if (hasGoldCommodity) return true;
+
+    // Check comments for gold mentions
+    const comments = site.metadata?.comments || [];
+    const hasGoldInComments = comments.some(c => 
+        c.text?.toLowerCase().includes('gold') ||
+        c.text?.toLowerCase().includes('au ')
+    );
+    if (hasGoldInComments) return true;
+
+    // Check deposit description
+    if (site.deposit?.description?.toLowerCase().includes('gold')) return true;
+
+    // Check geology description
+    if (site.geology?.description?.toLowerCase().includes('gold')) return true;
+
+    // Check remarks
+    if (site.remarks?.toLowerCase().includes('gold')) return true;
+
+    return false;
+};
 
 // Helper function to clean and format text
 const cleanText = (text) => {
@@ -50,6 +79,95 @@ const getNestedValue = (obj, path) => {
     }
 };
 
+// Helper function to extract elevation from text
+const extractElevation = (text) => {
+    if (!text) return null;
+    const elevationMatch = text.match(/(\d+(?:,\d+)?)\s*(?:ft|feet|foot)/i);
+    return elevationMatch ? elevationMatch[1].replace(',', '') + ' ft' : null;
+};
+
+// Helper function to process rocks information
+const processRocks = (rocks) => {
+    if (!Array.isArray(rocks)) return '';
+    return rocks
+        .map(rock => {
+            const name = rock.name || '';
+            const type = rock.type !== 'Host' ? rock.type : '';
+            const desc = rock.description ? ` (${rock.description})` : '';
+            return [name, type, desc].filter(Boolean).join(' ').trim();
+        })
+        .filter(Boolean)
+        .join('; ');
+};
+
+// Helper function to process workings information
+const processWorkings = (workings) => {
+    if (!Array.isArray(workings)) return [];
+    return workings.map(working => {
+        const type = working.type || 'Unknown type';
+        const dimensions = working.dimensions || {};
+        const details = [];
+        
+        if (dimensions.depth?.value) {
+            details.push(`depth: ${dimensions.depth.value}${dimensions.depth.units || 'm'}`);
+        }
+        if (dimensions.length?.value) {
+            details.push(`length: ${dimensions.length.value}${dimensions.length.units || 'm'}`);
+        }
+        
+        return details.length > 0 ? `${type} (${details.join(', ')})` : type;
+    });
+};
+
+// Helper function to process physiography information
+const processPhysiography = (site) => {
+    const result = {};
+    
+    // Get physiography section data
+    const physiography = site.location?.physiography;
+    if (physiography) {
+        if (physiography.elevation) {
+            result.elevation = `${physiography.elevation} ft`;
+        }
+        
+        // Include terrain information
+        result.terrain = [
+            physiography.division,
+            physiography.province,
+            physiography.section
+        ].filter(Boolean).join(', ');
+    }
+
+    // If no elevation in physiography, look in comments
+    if (!result.elevation && site.metadata?.comments) {
+        for (const comment of site.metadata.comments) {
+            const elevationFromComment = extractElevation(comment.text);
+            if (elevationFromComment) {
+                result.elevation = elevationFromComment;
+                break;
+            }
+        }
+    }
+
+    // Look for elevation in remarks
+    if (!result.elevation) {
+        const elevationFromRemarks = extractElevation(site.remarks);
+        if (elevationFromRemarks) {
+            result.elevation = elevationFromRemarks;
+        }
+    }
+
+    // Look for elevation in geological description
+    if (!result.elevation && site.geology?.description) {
+        const elevationFromGeology = extractElevation(site.geology.description);
+        if (elevationFromGeology) {
+            result.elevation = elevationFromGeology;
+        }
+    }
+
+    return result;
+};
+
 // Helper function to process comments by category
 const processCategorizedComments = (site) => {
     const categorized = {
@@ -83,13 +201,9 @@ const processCategorizedComments = (site) => {
     }
 
     // Process rocks information
-    if (Array.isArray(site.geology?.rocks)) {
-        const rocks = site.geology.rocks
-            .filter(rock => rock.description || rock.name)
-            .map(rock => `${rock.name}${rock.description ? `: ${rock.description}` : ''}`);
-        if (rocks.length > 0) {
-            categorized.geology.push(`Host rocks: ${rocks.join('; ')}`);
-        }
+    const rocksInfo = processRocks(site.geology?.rocks);
+    if (rocksInfo) {
+        categorized.geology.push(`Host rocks: ${rocksInfo}`);
     }
 
     // Add deposit descriptions
@@ -98,14 +212,9 @@ const processCategorizedComments = (site) => {
     }
 
     // Process workings information
-    if (Array.isArray(site.workings)) {
-        site.workings.forEach(working => {
-            const type = working.type ? `${working.type} workings` : 'Workings';
-            const depth = working.dimensions?.depth?.value 
-                ? ` (depth: ${working.dimensions.depth.value}${working.dimensions.depth.units || 'm'})`
-                : '';
-            categorized.workings.push(`${type}${depth}`);
-        });
+    const workingsInfo = processWorkings(site.workings);
+    if (workingsInfo.length > 0) {
+        categorized.workings.push(...workingsInfo);
     }
 
     return categorized;
@@ -121,10 +230,15 @@ fs.readFile(inputPath, 'utf8', (err, data) => {
     try {
         const sites = JSON.parse(data);
         
+        // Filter for gold-related sites first
+        const goldSites = sites.filter(isGoldSite);
+
+        console.log(`\nFiltered ${sites.length} total sites down to ${goldSites.length} gold-related sites`);
+        
         // Convert to GeoJSON
         const geojson = {
             "type": "FeatureCollection",
-            "features": sites.map(site => {
+            "features": goldSites.map(site => {
                 // Extract coordinates from the correct nested structure
                 const longitude = parseFloat(getNestedValue(site, 'location.coordinates.longitude') || '0');
                 const latitude = parseFloat(getNestedValue(site, 'location.coordinates.latitude') || '0');
@@ -134,10 +248,8 @@ fs.readFile(inputPath, 'utf8', (err, data) => {
                     ? site.commodities.map(c => c.name).join(', ')
                     : '';
 
-                // Get elevation if available
-                const elevation = getNestedValue(site, 'location.physiography.elevation')
-                    ? `${getNestedValue(site, 'location.physiography.elevation')} ft`
-                    : '';
+                // Process physiography information
+                const physiography = processPhysiography(site);
 
                 // Process all comments
                 const comments = processCategorizedComments(site);
@@ -163,16 +275,33 @@ fs.readFile(inputPath, 'utf8', (err, data) => {
                         "development_status": cleanText(site.development_status),
                         
                         // Geology information
-                        "host_rocks": processArray(getNestedValue(site, 'geology.rocks'), 'type'),
+                        "host_rocks": processRocks(site.geology?.rocks),
                         "rock_age": processArray(getNestedValue(site, 'geology.ages'), 'name'),
+                        "alteration_types": processArray(getNestedValue(site, 'geology.alteration'), 'type'),
+                        "structural_features": processArray(getNestedValue(site, 'geology.structure'), 'type'),
+                        
+                        // Location context
+                        "county": getNestedValue(site, 'location.administrative.county'),
+                        "district": district || '',
+                        "elevation": physiography.elevation || '',
+                        "terrain": physiography.terrain || '',
+                        
+                        // Commodities
+                        "commodities": commodities,
+                        "primary_commodity": commodities.includes('Gold') ? 'Gold' : commodities.split(',')[0],
+                        
+                        // Production information
+                        "production_size": expandProductionSize(getNestedValue(site, 'deposit.size')),
+                        "production_years": cleanText(getNestedValue(site, 'deposit.productionYears')),
+                        
                         // Detailed descriptions
-                        "deposit_description": comments.deposit.join(' '),
-                        "geological_description": comments.geology.join(' '),
-                        "location_details": comments.location.join(' '),
-                        "workings_description": comments.workings.join(' '),
-                        "production_details": comments.production.join(' '),
-                        "development_details": comments.development.join(' '),
-                        "other_details": comments.other.join(' '),
+                        "deposit_description": joinTexts(comments.deposit),
+                        "geological_description": joinTexts(comments.geology),
+                        "location_details": joinTexts(comments.location),
+                        "workings_description": joinTexts(comments.workings),
+                        "production_details": joinTexts(comments.production),
+                        "development_details": joinTexts(comments.development),
+                        "other_details": joinTexts(comments.other),
                         
                         // Mining details
                         "operation_type": cleanText(site.operation_type),
@@ -189,22 +318,39 @@ fs.readFile(inputPath, 'utf8', (err, data) => {
         };
 
         // Write GeoJSON to file with proper JSON formatting
-        const jsonString = JSON.stringify(geojson, null, 2);
+        const jsonString = JSON.stringify(geojson, null, 2)
+            .replace(/\}\s*\{/g, '},\n{')  // Add commas between objects
+            .replace(/"\s*\}/g, '"\n}')    // Format closing braces
+            .replace(/\[\s*\{/g, '[\n{');  // Format opening brackets
 
         fs.writeFile(outputPath, jsonString, 'utf8', (writeErr) => {
             if (writeErr) {
                 console.error('Error writing file:', writeErr);
                 return;
             }
+            
+            // Count sites by primary commodity
+            const commodityStats = geojson.features.reduce((acc, feature) => {
+                const commodity = feature.properties.primary_commodity;
+                acc[commodity] = (acc[commodity] || 0) + 1;
+                return acc;
+            }, {});
+
             console.log('\nGeoJSON Conversion Results:');
             console.log('-------------------------');
             console.log(`Total features converted: ${geojson.features.length}`);
             console.log(`New GeoJSON file created: ${path.basename(outputPath)}`);
+            
+            console.log('\nCommodity Statistics:');
+            Object.entries(commodityStats).sort((a, b) => b[1] - a[1]).forEach(([commodity, count]) => {
+                console.log(`- ${commodity}: ${count} sites (${((count/geojson.features.length)*100).toFixed(2)}%)`);
+            });
+
             console.log('\nIncluded properties for each feature:');
             console.log('- Site identification (ID, name with district)');
             console.log('- Deposit information (type, status, development)');
             console.log('- Geological details (host rocks, age, alteration, structure)');
-            console.log('- Location context (county, district, elevation)');
+            console.log('- Location context (county, district, elevation, terrain)');
             console.log('- Commodity information');
             console.log('- Production information (size, years)');
             console.log('- Detailed descriptions:');
@@ -215,15 +361,23 @@ fs.readFile(inputPath, 'utf8', (err, data) => {
             console.log('  * Production history');
             console.log('  * Other relevant details');
             
-            // Log a sample feature for verification
+            // Find the most detailed Black Bear site for the example
             if (geojson.features.length > 0) {
-                console.log('\nSample feature (Black Bear site):');
-                const blackBearSite = geojson.features.find(f => 
-                    f.properties.id === '10034372' || 
-                    f.properties.name.includes('Black Bear')
+                console.log('\nSample feature (Black Bear site with most details):');
+                const blackBearSites = geojson.features.filter(f => 
+                    f.properties.name.toLowerCase().includes('black bear')
                 );
-                if (blackBearSite) {
-                    console.log(JSON.stringify(blackBearSite, null, 2));
+                
+                // Sort by amount of description content
+                const mostDetailed = blackBearSites.sort((a, b) => {
+                    const getDescriptionLength = (props) => 
+                        (props.deposit_description + props.geological_description + 
+                         props.workings_description + props.production_details).length;
+                    return getDescriptionLength(b.properties) - getDescriptionLength(a.properties);
+                })[0];
+
+                if (mostDetailed) {
+                    console.log(JSON.stringify(mostDetailed, null, 2));
                 }
             }
         });
