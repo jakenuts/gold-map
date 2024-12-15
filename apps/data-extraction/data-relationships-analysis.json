@@ -1,0 +1,756 @@
+{
+  "directlyRelated": [
+    {
+      "file": "Ages.txt",
+      "linkingFields": [
+        "DEP_ID"
+      ],
+      "numFields": 19,
+      "sampleData": {
+        "i": "1",
+        "dep_id": "\"10000160\"",
+        "rock_line": "",
+        "age_line": "1",
+        "age_tp": "\"Mineralization\"",
+        "chron_age": "",
+        "plus_minus": "",
+        "method": "\"\"",
+        "media": "\"\"",
+        "age_young_ba": "\"\"",
+        "age_young_cd": "1610",
+        "age_young": "\"Eocene\"",
+        "age_old_ba": "\"\"",
+        "age_old_cd": "",
+        "age_old": "\"\"",
+        "inserted_by": "\"MRDS migration\"",
+        "insert_date": "\"22-FEB-2005 00:00:00\"",
+        "updated_by": "\"ARDF Migration\"",
+        "update_date": "\"11-NOV-2005 18:27:13\""
+      }
+    },
+    {
+      "file": "Alteration.txt",
+      "linkingFields": [
+        "DEP_ID"
+      ],
+      "numFields": 10,
+      "sampleData": {
+        "i": "1",
+        "dep_id": "\"10046769\"",
+        "line": "1",
+        "alt_type": "\"L\"",
+        "alterat": "\"\"",
+        "alterat_text": "\"Oxidation Due To Supergene Alteration; Strong Propylitization; Local Argillization And Silicification\"",
+        "inserted_by": "\"MRDS migration\"",
+        "insert_date": "\"29-OCT-2002 09:07:14\"",
+        "updated_by": "\"\"",
+        "update_date": "\"\""
+      }
+    },
+    {
+      "file": "Analytical_data.txt",
+      "linkingFields": [
+        "DEP_ID"
+      ],
+      "numFields": 8,
+      "sampleData": {
+        "i": "1",
+        "dep_id": "\"10012781\"",
+        "line": "1",
+        "anl_data": "\"SIEVE ANALYSIS,PERCENT PASSING AFTER CRUSHING TO LIN. MAX SIZE:  LINE-100, .5 IN -97.6, NO. 4-60.0, NO. 8-38.7, NO. 50-17.3, NO. 200-5.9, LIQUID LIMIT 20.8, PLASTICITY INDEX - NP.\"",
+        "inserted_by": "\"MRDS migration\"",
+        "insert_date": "\"29-OCT-02\"",
+        "updated_by": "\"USGS\"",
+        "update_date": "\"29-OCT-02\""
+      }
+    },
+    {
+      "file": "Comments.txt",
+      "linkingFields": [
+        "DEP_ID"
+      ],
+      "numFields": 9,
+      "sampleData": {
+        "i": "1",
+        "dep_id": "\"10096792\"",
+        "line": "1",
+        "ctg": "\"Deposit\"",
+        "cmt_txt": "\"MINERALIZED ZONES 1-50 FT. WIDE ALONG CREST AND FLANKS OF LARGE NW-STRIKING, GENTLY SE PLUNGING, ISOCLINAL, ANTICLINAL FOLD IN INTERLAYERED BIOTITE-PLAGIOCLASE AND HORNBLENDE-PLAGIOCLASE GNEISS.  POTENTIAL ORE BODIES ON MINOR FOLDS ON LARGER FOLD LIMBS, PARALLEL TO AXIS OF LARGE ANTICLINE.  SOME ORE ZONES FOLLOW BRECCIATED FAULT ZONES.  DISSEMINATED AND LOCALLY MASSIVE PYRRHOTITE AND PYRITE BODIES CONTAINING CHALCOPYRITE AND SPHALERITE WITH SMALL AMOUNTS OF BORNITE, CHALCOCITE, MALACHITE, AZURITE, AND GALENA ARE PARALLEL TO FOLIATION OF GNEISS, STRIKING N 25 DEGREES-50 DEGREES W.  QUARTZ IS DOMINANT GANGUE MINERAL, AND FORMS VEINS AND LENSES.  MASSIVE SULFIDE BODIES ARE UP TO 50 FT. LONG AND 15 FT. THICK.  IF MINERALIZATION BETWEEN AREA 3 NORTH OF SUMDUM GLACIER AND AREAS 4 AND 5 SOUTH OF THE GLACIER IS CONTINUOUS, THE DEPOSIT WOULD HAVE A STRIKE LENGTH OF 10,000 FT., WITH 1,000 FT. OF DOWN-DIP MINERALIZATION EXPOSED.\"",
+        "inserted_by": "\"MRDS migration\"",
+        "insert_date": "\"29-OCT-02\"",
+        "updated_by": "\"\"",
+        "update_date": "\"\""
+      }
+    },
+    {
+      "file": "Commodity.txt",
+      "linkingFields": [
+        "DEP_ID"
+      ],
+      "numFields": 12,
+      "sampleData": {
+        "i": "1",
+        "dep_id": "\"10059633\"",
+        "line": "1",
+        "commod": "\"Copper\"",
+        "code": "\"CU\"",
+        "commod_tp": "\"Metallic\"",
+        "commod_group": "\"Copper\"",
+        "import": "\"Primary\"",
+        "inserted_by": "\"MRDS migration\"",
+        "insert_date": "\"29-OCT-2002 09:00:24\"",
+        "updated_by": "\"USGS\"",
+        "update_date": "\"29-OCT-2002 09:00:54\""
+      }
+    },
+    {
+      "file": "Conc_proc.txt",
+      "linkingFields": [
+        "DEP_ID"
+      ],
+      "numFields": 9,
+      "sampleData": {
+        "i": "1",
+        "dep_id": "\"10046431\"",
+        "line": "1",
+        "conc_proc": "\"\"",
+        "conc_proc_text": "\"Oxidation\"",
+        "inserted_by": "\"MRDS migration\"",
+        "insert_date": "\"29-OCT-02\"",
+        "updated_by": "\"\"",
+        "update_date": "\"\""
+      }
+    },
+    {
+      "file": "Coords.txt",
+      "linkingFields": [
+        "DEP_ID"
+      ],
+      "numFields": 17,
+      "sampleData": {
+        "i": "1",
+        "dep_id": "\"10024317\"",
+        "line": "1",
+        "lat_dec": "-16.91667",
+        "lon_dec": "30.81667",
+        "datum": "\"NAD27\"",
+        "wgs84_lat": "-16.91376",
+        "wgs84_lon": "30.818",
+        "pnt_ref": "\"\"",
+        "loc_prec": "\"\"",
+        "rel_pos": "\"CLAIM; 1 KM\"",
+        "elev": "1524",
+        "elev_u": "\"m\"",
+        "inserted_by": "\"MRDS migration\"",
+        "insert_date": "\"29-OCT-2002 09:03:56\"",
+        "updated_by": "\"\"",
+        "update_date": "\"\""
+      }
+    },
+    {
+      "file": "Deposits.txt",
+      "linkingFields": [
+        "DEP_ID"
+      ],
+      "numFields": 30,
+      "sampleData": {
+        "i": "1",
+        "dep_id": "\"10139767\"",
+        "rec_tp": "\"Site\"",
+        "dev_st": "\"Occurrence\"",
+        "dep_tp": "\"\"",
+        "plant_tp": "\"\"",
+        "plant_ident": "\"\"",
+        "oper_tp": "\"Underground\"",
+        "min_meth": "\"Unknown\"",
+        "mill_meth": "\"\"",
+        "yfp_ba": "\"\"",
+        "yr_fst_prd": "",
+        "ylp_ba": "\"\"",
+        "yr_lst_prd": "",
+        "disc_meth": "\"\"",
+        "dy_ba": "\"\"",
+        "disc_yr": "",
+        "prod_yrs": "\"\"",
+        "discr": "\"\"",
+        "mas_id": "\"0060570183\"",
+        "mrds_id": "\"C011035\"",
+        "sig": "\"N\"",
+        "prod_size": "\"\"",
+        "site_commod_type": "\"M\"",
+        "deposit_size": "\"S\"",
+        "min_area_name": "\"\"",
+        "inserted_by": "\"MAS migration\"",
+        "insert_date": "\"12-MAR-2002 00:00:00\"",
+        "updated_by": "\"USGS\"",
+        "update_date": "\"28-APR-2003 13:40:09\""
+      }
+    },
+    {
+      "file": "Districts.txt",
+      "linkingFields": [
+        "DEP_ID"
+      ],
+      "numFields": 8,
+      "sampleData": {
+        "i": "1",
+        "dep_id": "\"10181911\"",
+        "line": "1",
+        "district": "\"Sudbury\"",
+        "inserted_by": "\"MAS migration\"",
+        "insert_date": "\"29-OCT-02\"",
+        "updated_by": "\"USGS\"",
+        "update_date": "\"03-OCT-02\""
+      }
+    },
+    {
+      "file": "Dups.txt",
+      "linkingFields": [
+        "DEP_ID"
+      ],
+      "numFields": 5,
+      "sampleData": {
+        "i": "1",
+        "dep_id": "\"10227114\"",
+        "dep_id_dup": "\"10091853\"",
+        "rel_type": "\"\"",
+        "notes": "\"\""
+      }
+    },
+    {
+      "file": "Groupings.txt",
+      "linkingFields": [
+        "DEP_ID"
+      ],
+      "numFields": 8,
+      "sampleData": {
+        "i": "1",
+        "dep_id": "\"10054426\"",
+        "rec": "1",
+        "group_name": "\"pslocprob\"",
+        "inserted_by": "\"pschrube\"",
+        "insert_date": "\"06-JUN-08\"",
+        "updated_by": "\"\"",
+        "update_date": "\"\""
+      }
+    },
+    {
+      "file": "Holdings.txt",
+      "linkingFields": [
+        "DEP_ID"
+      ],
+      "numFields": 8,
+      "sampleData": {
+        "i": "1",
+        "dep_id": "\"10279636\"",
+        "line": "1",
+        "holding_tp": "\"Unknown\"",
+        "inserted_by": "\"MAS migration\"",
+        "insert_date": "\"29-OCT-2002 09:04:56\"",
+        "updated_by": "\"\"",
+        "update_date": "\"\""
+      }
+    },
+    {
+      "file": "Land_status.txt",
+      "linkingFields": [
+        "DEP_ID"
+      ],
+      "numFields": 9,
+      "sampleData": {
+        "i": "1",
+        "dep_id": "\"10042160\"",
+        "line": "1",
+        "land_st": "\"Private\"",
+        "admin_area": "\"\"",
+        "inserted_by": "\"MRDS migration\"",
+        "insert_date": "\"29-OCT-2002 09:05:47\"",
+        "updated_by": "\"USGS\"",
+        "update_date": "\"03-OCT-2002 07:55:21\""
+      }
+    },
+    {
+      "file": "Location.txt",
+      "linkingFields": [
+        "DEP_ID"
+      ],
+      "numFields": 12,
+      "sampleData": {
+        "i": "1",
+        "dep_id": "\"10061340\"",
+        "line": "1",
+        "region": "\"CR\"",
+        "country": "\"Cuba\"",
+        "state_prov": "\"Granma\"",
+        "county": "\"\"",
+        "lu_code": "11053",
+        "inserted_by": "\"MRDS migration\"",
+        "insert_date": "\"29-OCT-02\"",
+        "updated_by": "\"USGS\"",
+        "update_date": "\"03-OCT-02\""
+      }
+    },
+    {
+      "file": "Materials.txt",
+      "linkingFields": [
+        "DEP_ID"
+      ],
+      "numFields": 9,
+      "sampleData": {
+        "i": "1",
+        "dep_id": "\"10046287\"",
+        "rec": "6",
+        "ore_gangue": "\"Ore\"",
+        "material": "\"Galena\"",
+        "inserted_by": "\"MRDS migration\"",
+        "insert_date": "\"29-OCT-02\"",
+        "updated_by": "\"\"",
+        "update_date": "\"\""
+      }
+    },
+    {
+      "file": "Model.txt",
+      "linkingFields": [
+        "DEP_ID"
+      ],
+      "numFields": 12,
+      "sampleData": {
+        "i": "1",
+        "dep_id": "\"10000154\"",
+        "rec": "1",
+        "model_name": "\"Polymetallic veins\"",
+        "mod_cd": "85",
+        "usgs_num": "\"22c\"",
+        "bc_num": "\"\"",
+        "mk3_num": "\"46\"",
+        "inserted_by": "\"MRDS migration\"",
+        "insert_date": "\"12-MAR-2002 00:00:00\"",
+        "updated_by": "\"ARDF migration\"",
+        "update_date": "\"22-MAY-2008 16:15:00\""
+      }
+    },
+    {
+      "file": "MRDS.txt",
+      "linkingFields": [
+        "DEP_ID"
+      ],
+      "numFields": 8,
+      "sampleData": {
+        "i": "1",
+        "dep_id": "10000013",
+        "name": "\"Moonshine Prospect\"",
+        "dev_stat": "\"Occurrence\"",
+        "url": "\"https://mrdata.usgs.gov/mrds/show-mrds.php?dep_id=10000013\"",
+        "code_list": "\" AU CU \"",
+        "longitude": "-132.05371",
+        "latitude": "55.14445"
+      }
+    },
+    {
+      "file": "Names.txt",
+      "linkingFields": [
+        "DEP_ID"
+      ],
+      "numFields": 9,
+      "sampleData": {
+        "i": "1",
+        "dep_id": "\"10021666\"",
+        "line": "2",
+        "name": "\"Rewat Rawat Hills\"",
+        "status": "\"Previous\"",
+        "inserted_by": "\"MRDS migration\"",
+        "insert_date": "\"29-OCT-02\"",
+        "updated_by": "\"USGS\"",
+        "update_date": "\"29-OCT-02\""
+      }
+    },
+    {
+      "file": "Orebody.txt",
+      "linkingFields": [
+        "DEP_ID"
+      ],
+      "numFields": 26,
+      "sampleData": {
+        "i": "1",
+        "dep_id": "\"10123759\"",
+        "line": "1",
+        "orebody_name": "\"\"",
+        "form": "\"\"",
+        "area": "1591",
+        "area_u": "\"HA\"",
+        "len": "",
+        "len_u": "\"\"",
+        "wid": "",
+        "wid_u": "\"\"",
+        "depth_top": "",
+        "depth_top_u": "\"\"",
+        "depth_bot": "",
+        "depth_bot_u": "\"\"",
+        "thick": "",
+        "thick_u": "\"\"",
+        "strike": "\"\"",
+        "dip": "\"\"",
+        "plunge": "\"\"",
+        "plunge_dir": "\"\"",
+        "mas_matrix": "\"Total Surface Area (HA)    :      1591\\n\\rDate of Last Modification  : 910418\\n\\r\"",
+        "inserted_by": "\"MAS migration\"",
+        "insert_date": "\"29-OCT-02\"",
+        "updated_by": "\"\"",
+        "update_date": "\"02-MAY-06\""
+      }
+    },
+    {
+      "file": "Ore_control.txt",
+      "linkingFields": [
+        "DEP_ID"
+      ],
+      "numFields": 9,
+      "sampleData": {
+        "i": "1",
+        "dep_id": "\"10011291\"",
+        "line": "1",
+        "ore_ctrl": "\"\"",
+        "ore_ctrl_text": "\"Lake Bar\"",
+        "inserted_by": "\"MRDS migration\"",
+        "insert_date": "\"29-OCT-2002 09:07:14\"",
+        "updated_by": "\"\"",
+        "update_date": "\"\""
+      }
+    },
+    {
+      "file": "Other_dbs.txt",
+      "linkingFields": [
+        "DEP_ID"
+      ],
+      "numFields": 12,
+      "sampleData": {
+        "i": "1",
+        "dep_id": "\"10018809\"",
+        "line": "1",
+        "code": "\"MRDS\"",
+        "db_name": "\"Mineral Resources Data System\"",
+        "agency": "\"USGS\"",
+        "rec_id": "\"DC06897\"",
+        "note": "\"\"",
+        "inserted_by": "\"MRDS migration\"",
+        "insert_date": "\"2002-10-29T09:59:26\"",
+        "updated_by": "\"\"",
+        "update_date": "\"\""
+      }
+    },
+    {
+      "file": "Ownership.txt",
+      "linkingFields": [
+        "DEP_ID"
+      ],
+      "numFields": 15,
+      "sampleData": {
+        "i": "1",
+        "dep_id": "\"10303927\"",
+        "rec": "1",
+        "owner_name": "\"Elkem-Spigerverket A/S\"",
+        "owner_tp": "\"Owner-Operator\"",
+        "pct": "",
+        "home_off_loc": "\"Norway\"",
+        "info_yr": "\"\"",
+        "beg_yr": "\"\"",
+        "end_yr": "\"\"",
+        "company_id": "\"\"",
+        "inserted_by": "\"MAS migration\"",
+        "insert_date": "\"29-OCT-2002 10:00:48\"",
+        "updated_by": "\"\"",
+        "update_date": "\"16-JUN-2006 13:06:16\""
+      }
+    },
+    {
+      "file": "Physiography.txt",
+      "linkingFields": [
+        "DEP_ID"
+      ],
+      "numFields": 15,
+      "sampleData": {
+        "i": "1",
+        "dep_id": "\"10000274\"",
+        "line": "1",
+        "p_code": "10436",
+        "phys_div": "\"Intermontane Plateaus\"",
+        "phys_prov": "\"Basin And Range Province\"",
+        "phys_sect": "\"Sonoran Desert\"",
+        "phys_det": "\"x\"",
+        "pd_code": "\"020\"",
+        "pp_code": "\"193\"",
+        "ps_code": "\"1133\"",
+        "inserted_by": "\"MRDS migration\"",
+        "insert_date": "\"29-OCT-2002 00:00:00\"",
+        "updated_by": "\"USGS\"",
+        "update_date": "\"03-OCT-2002 00:00:00\""
+      }
+    },
+    {
+      "file": "Place.txt",
+      "linkingFields": [
+        "DEP_ID"
+      ],
+      "numFields": 4,
+      "sampleData": {
+        "dep_id": "10000001",
+        "fips": "f02201",
+        "quad": "q56135A1",
+        "huc": "h19010103"
+      }
+    },
+    {
+      "file": "Plss_coordinates.txt",
+      "linkingFields": [
+        "DEP_ID"
+      ],
+      "numFields": 15,
+      "sampleData": {
+        "i": "1",
+        "dep_id": "\"10071678\"",
+        "line": "1",
+        "lu_code": "13953",
+        "state": "\"Idaho\"",
+        "state_cd": "\"ID\"",
+        "meridian": "\"Boise\"",
+        "township": "\"022N\"",
+        "range": "\"009E\"",
+        "section": "\"26\"",
+        "sect_fract": "\"SWNWNE\"",
+        "inserted_by": "\"MRDS migration\"",
+        "insert_date": "\"29-OCT-2002 10:01:42\"",
+        "updated_by": "\"WBFERGUS\"",
+        "update_date": "\"06-DEC-2008 05:14:01\""
+      }
+    },
+    {
+      "file": "Production.txt",
+      "linkingFields": [
+        "DEP_ID"
+      ],
+      "numFields": 17,
+      "sampleData": {
+        "i": "1",
+        "dep_id": "\"10206801\"",
+        "yr_ba": "\"\"",
+        "yr": "\"1993\"",
+        "rec": "1",
+        "cum_per": "\"\"",
+        "entry_tp": "\"Y\"",
+        "mined": "",
+        "units": "\"\"",
+        "item": "\"\"",
+        "acc": "\"\"",
+        "best_rec": "\"\"",
+        "work_cmt": "\"Aluminium Production   750000   Metric Tons Per Year.\"",
+        "inserted_by": "\"Data Migration\"",
+        "insert_date": "\"28-JUN-2006 00:00:00\"",
+        "updated_by": "\"\"",
+        "update_date": "\"\""
+      }
+    },
+    {
+      "file": "Production_detail.txt",
+      "linkingFields": [
+        "DEP_ID"
+      ],
+      "numFields": 19,
+      "sampleData": {
+        "i": "1",
+        "dep_id": "\"10304259\"",
+        "yr": "\"1988\"",
+        "rec": "21",
+        "line": "1",
+        "code": "\"AU\"",
+        "commod": "\"Gold\"",
+        "commod_group": "\"Gold\"",
+        "import": "\"\"",
+        "item": "\"\"",
+        "pct": "",
+        "amt": "2",
+        "units": "\"mt\"",
+        "grd": "",
+        "grd_units": "\"\"",
+        "inserted_by": "\"Data Migration\"",
+        "insert_date": "\"28-JUN-06\"",
+        "updated_by": "\"\"",
+        "update_date": "\"\""
+      }
+    },
+    {
+      "file": "Reporter.txt",
+      "linkingFields": [
+        "DEP_ID"
+      ],
+      "numFields": 12,
+      "sampleData": {
+        "i": "1",
+        "dep_id": "\"10105093\"",
+        "line": "1",
+        "reporter": "\"Williams, William C.\"",
+        "rpr_tp": "\"R\"",
+        "rpt_date": "\"01-JUL-1991\"",
+        "affil": "\"University of Arizona\"",
+        "rpr_comment": "\"\"",
+        "inserted_by": "\"MRDS migration\"",
+        "insert_date": "\"29-OCT-2002 10:13:55\"",
+        "updated_by": "\"\"",
+        "update_date": "\"\""
+      }
+    },
+    {
+      "file": "Resources.txt",
+      "linkingFields": [
+        "DEP_ID"
+      ],
+      "numFields": 22,
+      "sampleData": {
+        "i": "1",
+        "dep_id": "\"10183390\"",
+        "yr": "\"1981\"",
+        "line": "1",
+        "res_nm": "\"\"",
+        "res_tp": "\"In-situ\"",
+        "proved": "",
+        "probable": "",
+        "reserves": "",
+        "meas": "250000",
+        "indic": "",
+        "demo": "250000",
+        "infer": "",
+        "tot_resources": "250000",
+        "tot_endowment": "",
+        "units": "\"mt ore\"",
+        "best_rec": "\"Y\"",
+        "remrk": "\"\"",
+        "inserted_by": "\"MAS migration\"",
+        "insert_date": "\"29-OCT-2002 00:00:00\"",
+        "updated_by": "\"Paul Schruben\"",
+        "update_date": "\"10-JAN-2006 00:00:00\""
+      }
+    },
+    {
+      "file": "Resource_detail.txt",
+      "linkingFields": [
+        "DEP_ID"
+      ],
+      "numFields": 16,
+      "sampleData": {
+        "i": "1",
+        "dep_id": "\"10000126\"",
+        "yr": "\"1953\"",
+        "line": "1",
+        "rec": "1",
+        "code": "\"ZN\"",
+        "commod": "\"Zinc\"",
+        "commod_group": "\"Zinc\"",
+        "import": "\"Major\"",
+        "item": "\"Zn\"",
+        "grd": "5.23",
+        "grd_units": "\"wt-pct\"",
+        "inserted_by": "\"MRDS migration\"",
+        "insert_date": "\"29-OCT-2002 00:00:00\"",
+        "updated_by": "\"\"",
+        "update_date": "\"23-JUN-2006 16:38:33\""
+      }
+    },
+    {
+      "file": "Rocks.txt",
+      "linkingFields": [
+        "DEP_ID"
+      ],
+      "numFields": 16,
+      "sampleData": {
+        "i": "1",
+        "dep_id": "\"10073155\"",
+        "rock_line": "4",
+        "rock_cls": "\"Host\"",
+        "rocku": "\"\"",
+        "first_ord_nm": "\"Sedimentary Rock\"",
+        "second_ord_nm": "\"Carbonate\"",
+        "third_ord_nm": "\"Dolomite\"",
+        "fourth_ord_nm": "\"\"",
+        "low_name": "\"Dolomite\"",
+        "rock_desc": "\"\"",
+        "rock_text": "\"\"",
+        "inserted_by": "\"Data Migration\"",
+        "insert_date": "\"28-JUN-2006 10:39:58\"",
+        "updated_by": "\"\"",
+        "update_date": "\"\""
+      }
+    },
+    {
+      "file": "Structure.txt",
+      "linkingFields": [
+        "DEP_ID"
+      ],
+      "numFields": 10,
+      "sampleData": {
+        "i": "1",
+        "dep_id": "\"10012781\"",
+        "line": "1",
+        "struct_type": "\"R\"",
+        "struct": "\"\"",
+        "struct_text": "\"Wasatch Fault\"",
+        "inserted_by": "\"MRDS migration\"",
+        "insert_date": "\"29-OCT-2002 10:12:04\"",
+        "updated_by": "\"\"",
+        "update_date": "\"\""
+      }
+    },
+    {
+      "file": "Tectonic.txt",
+      "linkingFields": [
+        "DEP_ID"
+      ],
+      "numFields": 9,
+      "sampleData": {
+        "i": "1",
+        "dep_id": "\"10022123\"",
+        "line": "1",
+        "tect_set": "\"\"",
+        "tect_set_text": "\"Interior Basin; Deltaic Red Bed Margin\"",
+        "inserted_by": "\"MRDS migration\"",
+        "insert_date": "\"29-OCT-02\"",
+        "updated_by": "\"\"",
+        "update_date": "\"\""
+      }
+    },
+    {
+      "file": "Workings.txt",
+      "linkingFields": [
+        "DEP_ID"
+      ],
+      "numFields": 24,
+      "sampleData": {
+        "i": "1",
+        "dep_id": "\"10183390\"",
+        "line": "1",
+        "wrk_tp": "\"Surface\"",
+        "wrk_name": "\"\"",
+        "area": "6300",
+        "area_u": "\"HA\"",
+        "len": "",
+        "len_u": "\"\"",
+        "wid": "",
+        "wid_u": "\"\"",
+        "height": "",
+        "height_u": "\"\"",
+        "ovr_len": "",
+        "ovr_len_u": "\"\"",
+        "ovr_wid": "",
+        "ovr_wid_u": "\"\"",
+        "depth": "",
+        "depth_u": "\"\"",
+        "add_info": "\"MAS Development Schedule #: 1\\n\\rMining Record #           : 1\\n\\rStatus of Mining Method   : ESTIMATE\\n\\rMining Method             : OPEN PIT\\n\\rAvg. Overburden Thickness : 3.5\\n\\rPrimary Material Cover    : HARDPAN\\n\\rHardness of Ore           : HARDPAN\\n\\rCapacity                  :  17832\\n\\rCapacity Units            : MT ORE/DAY\\n\\rOperating Days per Year   : 286\\n\\rOperating Shifts per Day  : 2\\n\\rYear of Information       : 1987\\n\\r\"",
+        "inserted_by": "\"MAS migration\"",
+        "insert_date": "\"29-OCT-2002 10:15:26\"",
+        "updated_by": "\"USGS\"",
+        "update_date": "\"29-OCT-2002 10:15:44\""
+      }
+    }
+  ],
+  "potentiallyRelated": [],
+  "needsInvestigation": [],
+  "unrelated": []
+}
