@@ -2856,6 +2856,44 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
+          -122.88084,
+          41.60234
+        ]
+      },
+      "properties": {
+        "id": "10111130",
+        "name": "Chaparral Hill",
+        "deposit_type": "",
+        "deposit_status": "Producer",
+        "development_status": "",
+        "host_rocks": "Chert",
+        "rock_age": "",
+        "alteration_types": "",
+        "structural_features": "",
+        "county": "Siskiyou",
+        "district": "",
+        "elevation": "10 ft",
+        "terrain": "Pacific Mountain System, Pacific Border Province, Klamath Mountains",
+        "commodities": "Manganese",
+        "primary_commodity": "Manganese",
+        "production_size": "Small",
+        "production_years": "",
+        "deposit_description": "",
+        "geological_description": "GEOL.DESC: SLIGHTLY DISH SHAPED REMNANT OF MORE EXTENSIVE BED OF MANGANIFEROUS CHERT OVERLIES QUARTZ MICA SCHIST, WHICH IS UNDERLAIN, APPARENTLY BY A GNEISSIC QUARTZITE. CHERT AVERAGES 10 FT. IN THICKNESS, WITH 25 FT. MAXIMUM THICKNESS, AND CROPS OUT OVER AN AREA 40 FT. LONG BY 30 FT. WIDE. ORE IS VERY SILICEOUS OXIDE MATERIAL, DISSEMINATED IN RECRYSTALLIZED CHERT, AND ALSO OCCURS AS FILMS ALONG FRACTURES IN CHERT. Host rocks: Chert",
+        "location_details": "",
+        "workings_description": "",
+        "production_details": "",
+        "development_details": "",
+        "other_details": "",
+        "operation_type": "",
+        "workings": ""
+}
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
           -122.48469,
           40.54765
         ]
@@ -5123,6 +5161,44 @@
         "deposit_description": "FREE GRAVEL WITH PRACTICALLY NO OVER-BURDEN; GROUND IS VIRGIN AND IS SAID TO PROSPECT WELL. CONSISTS OF 3 CLAIMS.",
         "geological_description": "",
         "location_details": "",
+        "workings_description": "",
+        "production_details": "",
+        "development_details": "",
+        "other_details": "",
+        "operation_type": "",
+        "workings": ""
+}
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.9014,
+          41.57678
+        ]
+      },
+      "properties": {
+        "id": "10033622",
+        "name": "Oro Fino No. 2",
+        "deposit_type": "",
+        "deposit_status": "Occurrence",
+        "development_status": "",
+        "host_rocks": "Chert",
+        "rock_age": "",
+        "alteration_types": "",
+        "structural_features": "",
+        "county": "Siskiyou",
+        "district": "",
+        "elevation": "",
+        "terrain": "Pacific Mountain System, Pacific Border Province, Klamath Mountains",
+        "commodities": "Manganese",
+        "primary_commodity": "Manganese",
+        "production_size": "",
+        "production_years": "",
+        "deposit_description": "",
+        "geological_description": "GEOL.DESC: MANGANESE ORE BED STRIKES N 20 E, DIPS ABOUT VERTICAL, WITH BANDED QUARTZITE WALL ROCKS, AND SLATE AND PHYLLITE EXPOSED NEARBY. ORE IS BANDED QUARTZ CARBONATE. GRAY CARBONATE LAYERS, OFTEN CONTORTED AND WITH AUGENS OF BROWN CARBONATE, ALTERNATE WITH QUARTZITE BANDS. SOME PALE YELLOW CARBONATE IS PRESENT. MOST OF ORE IS OXIDIZED TO THIN SURFACE FILMS, BUT LITTLE HIGH GRADE ORE IS PRESENT. Host rocks: Chert",
+        "location_details": "LOCATED IN SE 1/4 SECTION 17 , UTM APPROX",
         "workings_description": "",
         "production_details": "",
         "development_details": "",
@@ -7948,6 +8024,44 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
+          -123.71835,
+          40.92095
+        ]
+      },
+      "properties": {
+        "id": "10030556",
+        "name": "Leaning Tree No. 2",
+        "deposit_type": "Residual",
+        "deposit_status": "Occurrence",
+        "development_status": "",
+        "host_rocks": "",
+        "rock_age": "",
+        "alteration_types": "",
+        "structural_features": "",
+        "county": "Humboldt",
+        "district": "",
+        "elevation": "",
+        "terrain": "Pacific Mountain System, Pacific Border Province, California Coast Ranges",
+        "commodities": "Manganese",
+        "primary_commodity": "Manganese",
+        "production_size": "",
+        "production_years": "",
+        "deposit_description": "",
+        "geological_description": "GEOL.DESC: QUARTZITE AND SLATE ARE INTRUDED BY (OR FAULTED AGAINST) HORNBLENDE, DIORITE AND GREENSTONE. IN A GOUGE ZONE IN THE GREENSTONE, THE SHEARED MATERIAL IS THINLY FILMED WITH PURPLISH MANGANESE OXIDE.",
+        "location_details": "LOCATED IN NE 1/4 SECTION 9 , NW 1/4 SECTION 10",
+        "workings_description": "",
+        "production_details": "NO ORE FOUND; BEST MATERIAL SEEN PROBABLY CARRIES LESS THAN 5 PERCENT MANGANESE. PROSPECT IS OF LITTLE VALUE AND NO DEVELOPMENT WORK SHOULD BE DONE.",
+        "development_details": "",
+        "other_details": "NO ECONOMIC IMPORTANCE",
+        "operation_type": "",
+        "workings": ""
+}
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
           -122.58554,
           40.73124
         ]
@@ -9265,6 +9379,44 @@
         "deposit_description": "",
         "geological_description": "",
         "location_details": "",
+        "workings_description": "",
+        "production_details": "",
+        "development_details": "",
+        "other_details": "",
+        "operation_type": "",
+        "workings": ""
+}
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.94501,
+          41.56262
+        ]
+      },
+      "properties": {
+        "id": "10033623",
+        "name": "Pinery Hill Prospect",
+        "deposit_type": "",
+        "deposit_status": "Occurrence",
+        "development_status": "",
+        "host_rocks": "Chert",
+        "rock_age": "",
+        "alteration_types": "",
+        "structural_features": "",
+        "county": "Siskiyou",
+        "district": "",
+        "elevation": "",
+        "terrain": "Pacific Mountain System, Pacific Border Province, Klamath Mountains",
+        "commodities": "Manganese",
+        "primary_commodity": "Manganese",
+        "production_size": "",
+        "production_years": "",
+        "deposit_description": "",
+        "geological_description": "GEOL.DESC: SCATTERED OUTCROPS OF VERY SILICEOUS MANGANESE OXIDE. PINERY HILL IS LARGELY CONTORTED BANDED GRAY QUARTZITE AND QUARTZITIC SCHIST. Host rocks: Chert",
+        "location_details": "UTM APPROX",
         "workings_description": "",
         "production_details": "",
         "development_details": "",
@@ -11354,6 +11506,44 @@
         "production_years": "",
         "deposit_description": "",
         "geological_description": "",
+        "location_details": "",
+        "workings_description": "",
+        "production_details": "",
+        "development_details": "",
+        "other_details": "",
+        "operation_type": "",
+        "workings": ""
+}
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -123.02694,
+          40.36513
+        ]
+      },
+      "properties": {
+        "id": "10033604",
+        "name": "Victor Mine",
+        "deposit_type": "",
+        "deposit_status": "Occurrence",
+        "development_status": "",
+        "host_rocks": "Chert",
+        "rock_age": "",
+        "alteration_types": "",
+        "structural_features": "",
+        "county": "Shasta",
+        "district": "",
+        "elevation": "",
+        "terrain": "Pacific Mountain System, Pacific Border Province, Klamath Mountains",
+        "commodities": "Manganese",
+        "primary_commodity": "Manganese",
+        "production_size": "",
+        "production_years": "",
+        "deposit_description": "MANGANESE OXIDES OCCUR AS IRREGULAR SOFT BUNCHES AND FRACTURE FILLINGS IN A HARD, BLUISH QUARTZOSE ROCK (METAMORPHOSED CHERT?). IT IS ASSOCIATED WITH QUARTZ MICA. SCHIST, AND BOTH ARE INCLUDED IN A BROAD AREA OF SERPENTINE AND ACIDIC INTRUSIVES, MAINLY QUARTZ PORPHYRY.",
+        "geological_description": "GEOL.DESC: MANGANESE OXIDES OCCUR AS IRREGULAR SOFT BUNCHES AND FRACTURE FILLINGS IN A HARD, BLUISH QUARTZOSE ROCK (METAMORPHOSED CHERT?). IT IS ASSOCIATED WITH QUARTZ MICA. SCHIST, AND BOTH ARE INCLUDED IN A BROAD AREA OF SERPENTINE AND ACIDIC INTRUSIVES, MAINLY QUARTZ PORPHYRY. Host rocks: Chert",
         "location_details": "",
         "workings_description": "",
         "production_details": "",
@@ -16612,6 +16802,44 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
+          -122.54583,
+          41.13624
+        ]
+      },
+      "properties": {
+        "id": "10040731",
+        "name": "Altoona Mine (Altoona District)",
+        "deposit_type": "",
+        "deposit_status": "Past Producer",
+        "development_status": "",
+        "host_rocks": "Diorite Associated; Serpentinite",
+        "rock_age": "",
+        "alteration_types": "L",
+        "structural_features": "L",
+        "county": "Trinity",
+        "district": "Altoona District",
+        "elevation": "750 ft",
+        "terrain": "Pacific Mountain System, Pacific Border Province, Klamath Mountains",
+        "commodities": "Mercury",
+        "primary_commodity": "Mercury",
+        "production_size": "Medium",
+        "production_years": "1875-1880, 1894-1901, 1929-1945(INTERMITTENT)",
+        "deposit_description": "1957 DIREXPL RARE METAL CORP OF AMER - ORE TO 750 FT. Discovery Year: 1824 BUT USED BY INDIANS FOR PAINT BEFORE THIS. FOR AN EXTENSIVE BIBLIOGRAPHY SEE BAILEY AND EVERHART 1964. STEEP TABULAR BODIES UP TO 200 X 200 X 5 FT",
+        "geological_description": "OPAL) AND CARBONATE (USUALLY FERROAN MAGNESITE). THIS IS SOMETIMES CALLED OPALITE. THREE SUCH ZONES HAVE BEEN FOUND IN THE DISTRICT BUT ONLY THE ONE EXTENDING ACROSS ALAMITOS CREEK INTO THE SANTA TERESA HILLS HAS PRODUCED HG. IN THIS DISTRICT THE SILICA IS MOSTLY QUARTZ. FORMATION OF THE SILICA - CARBONATE ROCK IS CHIEFLY A REPLACEMENT PROCESS. A DACITIC TUFF BRECCIA IN THE TEMPLOR MAY BE THE SOURCE OF THE HG BEARING SOLUTIONS. { STRUCTURALLY THE DISTRICT CAN BE DIVIDED INTO 3 BLOCKS SEPARATED BY MAJOR FAULTS. IN THE NORTHERN BLOCK DOMINANT TRENDS ARE E - W. THE CENTRAL BLOCK CONTAINS THE LOS CAPITANCILLOS ANTICILE AND SEVERAL NW TRENDING FAULTS. FAULTS AND FOLDS IN THE SOUTHERN BLOCK TREND WNW. OF THE MANY FAULTS, THE SMALL TENSION FRACTURES ARE SIGNIFICANT TO ORE DEPOSITION { THE ORES CONSIST PRIMARILY OF CINNABAR IN THE SILICA - CARBONATE ROCK BUT MAY ALSO OCCUR IN FRANCISCAN GRAYWACKE AND SHALE. THE DEPOSITS ARE CLASSED AS EPITHERMAL. { FRANCISCAN ROCKS OCCUPY 75 % OF THE DISTRICT AND INCLUDE GRAYWACKE, SILTSTONE, MAFIC VOLCANICS, CHERT, LIMESTONE, MINOR METAMORPHICS. EVERYWHERE THE ROCKS HAVE SMALL SCALE FOLDS AND SHEARS. THE SERPENTINES OCCUR AS TABULAR BODIES WITHIN THE SEDIMENTS AND WERE ALTERED IN LATE TERTIARY TO SILICA - CARBONATE ROCK, WHICH HOSTS THE ORES. OVER THIS ARE TWO UNNAMED SEDIMENTARY UNITS OF SANDSTONE, SHALE, AND LIMESTONE, THE LOWER UNIT IS CRETACEOUS AND THE UPPER EOCENE. OVER THIS LIES THE MIOCENE TEMBLOR FORMATION GRADING FROM CGL THROUGH SANDSTONE TO DIATOMACEOUS SHALE. UNITS ABOVE THIS SHALE ARE THE MONTEREY FORMATION, A SHALE WITH INCLUDED FELSIC VOLCANICS. ALLUVIUM OVERLIES THIS. STRUCTURES TREND W AND NW. OLDEST ROCKS DIP NE AND SHOW CRUMPLING, FOLDING, FLOWING, AND FAULTING. MAJOR FAULTS ARE STRIKE - SLIP; THE LARGEST IS THE BEN TROVATO. ROCKS OF INTERMEDIATE AGE ARE LESS DEFORMED. { THE SILICA - CARBONATE ROCK IS SERPENTINE HYDROTHERMALLY ALTERED TO SILICA (QUARTZ, CHALCEDONY, OR. IN THIS DISTRICT, SERPENTINE IS ASSOCIATED WITH THE ORE ZONES, BUT IS NOT THE PRINCIPAL HOST ROCK AS IN THE COAST RANGES. POSSIBLY A HOT SPRINGS DEPOSIT WITH MANY IRREGULAR CONDUITS, BUT MORE LIKELY A SILICA-CARBONATE DEPOSIT NOT HOSTED BY SERPENTINE. Host rocks: Diorite Associated; Serpentinite",
+        "location_details": "ON EAST FORK OF TRINITY RIVER",
+        "workings_description": "SIZES OF ORE BODIES VARIED GREATLY. DATA ABOVE IS FOR LARGEST (M60 AND M50). NEW ALMADEN IS THE DEEPEST MERCURY MINE IN THE WORLD. CAVED. 258 LB/FT OF WORKINGS. FLOODS EASILY. Surface/Underground (depth: 182.88m, length: 3048m)",
+        "production_details": "DISTRICT HAS YIELDED 40% OF US MERCURY - SEE INDIVIDUAL MINES FOR PRODUCTION FIGURES. 4% HG ORE. PRODUCED MORE THAN 100 FL IN 1959, 1966, 1967, 1969, 1971: MORE THAN 500 FL IN 1968, 1970. IDLE 1960-1965. CLOSED IN 1971",
+        "development_details": "MANY NEW METHODS OF MINING AND REFINING THE ORE WERE FIRST USED AT NEW ALMADEN. 25 TON ROTARY, 1944. GOULD ROTARY FURNACE, ELECTRIC POWER AND A 100 KW DIESEL PLANT FOR EMERGENCY USE, 1958. NO DEVELOPMENT OR MINING HAS BEEN DONE BELOW 600 FT. ; ECON.COM: ELECTRIC POWER AT THE SITE",
+        "other_details": "COPPER IS IN A SINGLE GOSSAN. CHROMITE IS IN SMALL LENSES IN SERPENTINE. MANGANESE IS IN FRANCISCAN CHERT. 1957 DIREXPL DMEA, INDICATED RESERVES OF 55,000 TONS. SUBMARGINAL ORE EXISTS AND HAS BEEN WORKED FROM TIME TO TIME.",
+        "operation_type": "",
+        "workings": ""
+}
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
           -122.46777,
           40.92846
         ]
@@ -19833,6 +20061,44 @@
         "production_details": "KINKEL, A.R., ET.AL., 1956, PG. 140.",
         "development_details": "",
         "other_details": "ORE IS UNIFORM AND STRUCTURELESS IN APPEARANCE, COMPOSED PRINCIPALLY OF MASSIVE PYRITE AND LESSER AMOUNTS OF CHALCOPYRITE AND SPHALERITE.",
+        "operation_type": "",
+        "workings": ""
+}
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.86779,
+          41.6079
+        ]
+      },
+      "properties": {
+        "id": "10095198",
+        "name": "Scott River Prospect",
+        "deposit_type": "",
+        "deposit_status": "Occurrence",
+        "development_status": "",
+        "host_rocks": "",
+        "rock_age": "",
+        "alteration_types": "",
+        "structural_features": "",
+        "county": "Siskiyou",
+        "district": "",
+        "elevation": "",
+        "terrain": "Pacific Mountain System, Pacific Border Province, Klamath Mountains",
+        "commodities": "Manganese",
+        "primary_commodity": "Manganese",
+        "production_size": "",
+        "production_years": "",
+        "deposit_description": "",
+        "geological_description": "GEOL.DESC: 3 LARGE AND NUMEROUS SMALL ANGULAR BLOCKS OF VERY SILICEOUS MANGANESE OXIDE ORE IMBEDDED IN COARSE LANDSLIDE DEBRIS. NEARBY ORE CROPPINGS OF INTENSELY CONTORTED REDDISH QUARTZITE AND GNEISSIC QUARTZITE, STRIKING E. WITH VARIABLE DIP.",
+        "location_details": "",
+        "workings_description": "",
+        "production_details": "",
+        "development_details": "",
+        "other_details": "",
         "operation_type": "",
         "workings": ""
 }
@@ -23135,6 +23401,44 @@
         "deposit_description": "",
         "geological_description": "",
         "location_details": "",
+        "workings_description": "",
+        "production_details": "",
+        "development_details": "",
+        "other_details": "",
+        "operation_type": "",
+        "workings": ""
+}
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.95249,
+          40.12292
+        ]
+      },
+      "properties": {
+        "id": "10033663",
+        "name": "Tehama Claims",
+        "deposit_type": "",
+        "deposit_status": "Occurrence",
+        "development_status": "",
+        "host_rocks": "Quartzite",
+        "rock_age": "",
+        "alteration_types": "",
+        "structural_features": "",
+        "county": "Tehama",
+        "district": "",
+        "elevation": "",
+        "terrain": "Pacific Mountain System, Pacific Border Province, Klamath Mountains",
+        "commodities": "Manganese",
+        "primary_commodity": "Manganese",
+        "production_size": "",
+        "production_years": "",
+        "deposit_description": "",
+        "geological_description": "GEOL.DESC: ORE SAMPLE CONSISTED OF QUARTZITE HEAVILY COATED WITH MANGANESE OXIDE, AND A LITTLE BROWN IRON OXIDE STAIN. Host rocks: Quartzite",
+        "location_details": "UTM APPROX. LAND STATUS VALUE CALCULATED 7-94 USING GIS OVERLAY ANALYSIS WITH USFS LAND OWNERSHIP BOUNDARIES, 1:126,720 SCALE.",
         "workings_description": "",
         "production_details": "",
         "development_details": "",
@@ -30026,6 +30330,44 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
+          -123.53112,
+          40.13291
+        ]
+      },
+      "properties": {
+        "id": "10077857",
+        "name": "White Deposit",
+        "deposit_type": "",
+        "deposit_status": "Occurrence",
+        "development_status": "",
+        "host_rocks": "",
+        "rock_age": "",
+        "alteration_types": "",
+        "structural_features": "",
+        "county": "Trinity",
+        "district": "",
+        "elevation": "100 ft",
+        "terrain": "Pacific Mountain System, Pacific Border Province, California Coast Ranges",
+        "commodities": "Manganese",
+        "primary_commodity": "Manganese",
+        "production_size": "",
+        "production_years": "",
+        "deposit_description": "",
+        "geological_description": "GEOL.DESC: ORE OCCURS IN BLOCK OF MASSIVE MANGANIFEROUS CHERT APPROXIMATELY 100 FT. IN DIAMETER. CHERT PARTLY RECRYSTALLIZED TO QUARTZ, APPEARS TO BE HYDROTHERMALLY ALTERED. MAIN ORE ZONE IS 50 FT. LONG, 10 FT. WIDE, STRIKING N.W., WITH UNCERTAIN DIP, PERHAPS 70 N.E. OXIDES AT SURFACE GIVE WAY TO PRIMARY MANGANESE SILICATE, PROBABLY BEMENTITE, WITHIN 5 FT. OF SURFACE.",
+        "location_details": "LOCATED IN NW 1/4 SECTION 8",
+        "workings_description": "",
+        "production_details": "",
+        "development_details": "",
+        "other_details": "",
+        "operation_type": "",
+        "workings": ""
+}
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
           -122.41889,
           40.50845
         ]
@@ -30621,6 +30963,44 @@
         "deposit_description": "",
         "geological_description": "",
         "location_details": "",
+        "workings_description": "",
+        "production_details": "",
+        "development_details": "",
+        "other_details": "",
+        "operation_type": "",
+        "workings": ""
+}
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -123.27611,
+          40.40429
+        ]
+      },
+      "properties": {
+        "id": "10033720",
+        "name": "The Manganese",
+        "deposit_type": "",
+        "deposit_status": "Occurrence",
+        "development_status": "",
+        "host_rocks": "Chert",
+        "rock_age": "",
+        "alteration_types": "",
+        "structural_features": "",
+        "county": "Trinity",
+        "district": "",
+        "elevation": "3 ft",
+        "terrain": "Pacific Mountain System, Pacific Border Province, Klamath Mountains",
+        "commodities": "Manganese",
+        "primary_commodity": "Manganese",
+        "production_size": "",
+        "production_years": "",
+        "deposit_description": "",
+        "geological_description": "GEOL.DESC: 3 FT. THICK ORE BODY ENCLOSED IN CHERTY SHALE, WHICH STRIKES N 65 W AND DIPS 50 N. E. ORE BODY IS CUT OFF TO N. W. BY FAULT STRIKING N 10 E. TO S. ORE RUNS INTO MASSIVE WHITE AND GRAY CHERT CUT BY QUARTZ VEINS, CONTAINING NO MANGANESE. CHERT IS SURROUNDED BY SANDSTONE AND GREENSTONE, AND SERPENTINE APPEARS TO THE W. ORE CONSISTS OF PARTIALLY TO COMPLETELY OXIDIZED PINK, FINELY CRYSTALLINE RHODONITE AND BROWN MANGANESE CHERT. Host rocks: Chert",
+        "location_details": "LOCATED IN SE 1/4 SECTION 4 , UTM APPROX",
         "workings_description": "",
         "production_details": "",
         "development_details": "",
@@ -32370,6 +32750,82 @@
         "geological_description": "",
         "location_details": "",
         "workings_description": "",
+        "production_details": "",
+        "development_details": "",
+        "other_details": "",
+        "operation_type": "",
+        "workings": ""
+}
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -123.67475,
+          41.57566
+        ]
+      },
+      "properties": {
+        "id": "10033614",
+        "name": "Highlight No. 1",
+        "deposit_type": "",
+        "deposit_status": "Occurrence",
+        "development_status": "",
+        "host_rocks": "Chert",
+        "rock_age": "",
+        "alteration_types": "",
+        "structural_features": "",
+        "county": "Siskiyou",
+        "district": "",
+        "elevation": "",
+        "terrain": "Pacific Mountain System, Pacific Border Province, Klamath Mountains",
+        "commodities": "Manganese",
+        "primary_commodity": "Manganese",
+        "production_size": "",
+        "production_years": "",
+        "deposit_description": "",
+        "geological_description": "GEOL.DESC: THIN FILMS OF PURPLISH MANGANESE OXIDE WITHIN LARGE IRREGULAR QUARTZITE (METACHERT) MASS. ON FRESH SURFACE ROCK IS BROWNISH COARSE GRAINED QUARTZITE. Host rocks: Chert",
+        "location_details": "",
+        "workings_description": "",
+        "production_details": "",
+        "development_details": "",
+        "other_details": "",
+        "operation_type": "",
+        "workings": ""
+}
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.56444,
+          41.38595
+        ]
+      },
+      "properties": {
+        "id": "10033944",
+        "name": "Ten Lakes",
+        "deposit_type": "",
+        "deposit_status": "Occurrence",
+        "development_status": "",
+        "host_rocks": "Granite; Granite Associated",
+        "rock_age": "",
+        "alteration_types": "",
+        "structural_features": "",
+        "county": "Siskiyou",
+        "district": "",
+        "elevation": "",
+        "terrain": "Pacific Mountain System, Pacific Border Province, Klamath Mountains",
+        "commodities": "Copper",
+        "primary_commodity": "Copper",
+        "production_size": "",
+        "production_years": "",
+        "deposit_description": "CARBONATES AND SULFIDES IN A SHATTERED QUARTZ OF VEIN-LIKE STRUCTURE.",
+        "geological_description": "GEOL.DESC: HORNBLENDE TAKES THE PLACE OF MICA IN MUCH OF THE GRANITE. Host rocks: Granite; Granite Associated",
+        "location_details": "",
+        "workings_description": "9 CLAIMS; SEVERAL OPEN CUTS",
         "production_details": "",
         "development_details": "",
         "other_details": "",
@@ -36106,6 +36562,44 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
+          -122.72333,
+          41.33012
+        ]
+      },
+      "properties": {
+        "id": "10102968",
+        "name": "Hummer (Callahan)",
+        "deposit_type": "",
+        "deposit_status": "Past Producer",
+        "development_status": "",
+        "host_rocks": "Serpentinite",
+        "rock_age": "",
+        "alteration_types": "",
+        "structural_features": "",
+        "county": "Siskiyou",
+        "district": "Callahan",
+        "elevation": "",
+        "terrain": "Pacific Mountain System, Pacific Border Province, Klamath Mountains",
+        "commodities": "Copper, Nickel",
+        "primary_commodity": "Copper",
+        "production_size": "Small",
+        "production_years": "",
+        "deposit_description": "",
+        "geological_description": "GEOL.DESC: ORE DEPOSITS ARE CONNECTED WITH DIKES, QUARTZ-PORPHYRY IN THE SERPENTINE. Host rocks: Serpentinite",
+        "location_details": "",
+        "workings_description": "SHALLOW SHAFTS AND OPEN CUTS",
+        "production_details": "NO PRODUCTION VALUES",
+        "development_details": "",
+        "other_details": "",
+        "operation_type": "",
+        "workings": ""
+}
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
           -123.06334,
           41.27623
         ]
@@ -37930,6 +38424,44 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
+          -122.70361,
+          41.31567
+        ]
+      },
+      "properties": {
+        "id": "10111150",
+        "name": "Copper King Claim",
+        "deposit_type": "Vein",
+        "deposit_status": "Producer",
+        "development_status": "",
+        "host_rocks": "Serpentinite",
+        "rock_age": "",
+        "alteration_types": "",
+        "structural_features": "",
+        "county": "Siskiyou",
+        "district": "",
+        "elevation": "300 ft",
+        "terrain": "Pacific Mountain System, Pacific Border Province, Klamath Mountains",
+        "commodities": "Copper",
+        "primary_commodity": "Copper",
+        "production_size": "Small",
+        "production_years": "",
+        "deposit_description": "",
+        "geological_description": "Host rocks: Serpentinite",
+        "location_details": "",
+        "workings_description": "DEVELOPED BY AN ADIT 300 FT. LONG ALONG QUARTZ VEIN ABOVE ADIT IS OLD SHAFT 15 FT. DEEP. Underground (depth: 4.57m, length: 96.01m)",
+        "production_details": "50 TONS OF ORE ASSAYED 5 % CU AND $8 IN AU.",
+        "development_details": "",
+        "other_details": "",
+        "operation_type": "",
+        "workings": ""
+}
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
           -122.8689,
           40.56845
         ]
@@ -39336,6 +39868,82 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
+          -123.11,
+          40.36374
+        ]
+      },
+      "properties": {
+        "id": "10033688",
+        "name": "Foss Prospect",
+        "deposit_type": "",
+        "deposit_status": "Occurrence",
+        "development_status": "",
+        "host_rocks": "Chert",
+        "rock_age": "",
+        "alteration_types": "",
+        "structural_features": "",
+        "county": "Trinity",
+        "district": "",
+        "elevation": "",
+        "terrain": "Pacific Mountain System, Pacific Border Province, Klamath Mountains",
+        "commodities": "Manganese",
+        "primary_commodity": "Manganese",
+        "production_size": "",
+        "production_years": "",
+        "deposit_description": "",
+        "geological_description": "GEOL.DESC: DENSE BLACK CHERT BELT SEVERAL YARDS WIDE IS HEAVILY STAINED WITH MANGANESE OXIDE. SMALL AMOUNT OF LIMONITE IS MIXED WITH OXIDES NEAR SURFACE. PSILOMELANE OCCURS AS BANDS, SELVEDGES ON FRACTURE PLANES, AND SMALL VEINLETS IN THE CHERT. WHITE QUARTZ VEINLETS CARRYING PYRITE CUT THROUGH DARK GREEN CHERT. Host rocks: Chert",
+        "location_details": "",
+        "workings_description": "",
+        "production_details": "",
+        "development_details": "",
+        "other_details": "",
+        "operation_type": "",
+        "workings": ""
+}
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -123.41973,
+          40.53928
+        ]
+      },
+      "properties": {
+        "id": "10034198",
+        "name": "Cold Creek (South Fork)",
+        "deposit_type": "",
+        "deposit_status": "Occurrence",
+        "development_status": "",
+        "host_rocks": "Serpentinite; Diorite Associated",
+        "rock_age": "",
+        "alteration_types": "",
+        "structural_features": "",
+        "county": "Trinity",
+        "district": "South Fork",
+        "elevation": "",
+        "terrain": "Pacific Mountain System, Pacific Border Province, Klamath Mountains",
+        "commodities": "Copper",
+        "primary_commodity": "Copper",
+        "production_size": "",
+        "production_years": "",
+        "deposit_description": "ORE OCCURS IN SMALL BODIES OF QUARTZ CARRING SULFIDES.",
+        "geological_description": "Host rocks: Serpentinite; Diorite Associated",
+        "location_details": "",
+        "workings_description": "OPEN CUTS.",
+        "production_details": "",
+        "development_details": "",
+        "other_details": "SULFIDES ARE OF LOW GRADE.",
+        "operation_type": "",
+        "workings": ""
+}
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
           -122.51554,
           40.64541
         ]
@@ -39441,6 +40049,44 @@
         "production_details": "1916 0.0000033 OZ/TON (0.055 PPB) PT, 0.0000008 OZ/TON (0.014 PPB) OS. \"\"GREAT DEAL\"\" OF GOLD EACH YEAR. UNVERIFIED BYPRODUCT PGE PRODUCTION",
         "development_details": "DREDGING BEGAN 1903. OPERATED BY YUBA GOLDFIELDS, INC., FROM MARCH 1975 TO JUNE 1976 WHEN IT WAS CLOSED AS UNPROFITABLE. PROPERTY WAS CALIFORNIA'S LARGEST PLACER OPERATION IN 1988",
         "other_details": "LARGEST PT NUGGET WEIGHED 23 GRAINS. PT AND OS ESTIMATES FOR COMBINED RESERVES AND POTENTIAL RESOURCES",
+        "operation_type": "",
+        "workings": ""
+}
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -123.01195,
+          41.32817
+        ]
+      },
+      "properties": {
+        "id": "10095197",
+        "name": "National Defense Mining Claims 1 and 2",
+        "deposit_type": "",
+        "deposit_status": "Occurrence",
+        "development_status": "",
+        "host_rocks": "Chert",
+        "rock_age": "",
+        "alteration_types": "",
+        "structural_features": "",
+        "county": "Siskiyou",
+        "district": "",
+        "elevation": "60 ft",
+        "terrain": "Pacific Mountain System, Pacific Border Province, Klamath Mountains",
+        "commodities": "Manganese",
+        "primary_commodity": "Manganese",
+        "production_size": "",
+        "production_years": "",
+        "deposit_description": "",
+        "geological_description": "GEOL.DESC: QUARTZITE LENS 60 FT. LONG, AND 7 FT. THICK AT THICKEST PART IS ENCLOSED IN QUARTZ-MICA SCHIST. ROCKS STRIKE N. AND DIP 25 W. THE QUARTZITE IS PROBABLY METACHERT. THE MIDDLE 5 FT. OF CHERT CONTAINS SMALL AMOUNTS OF SLIGHTLY OXIDIZED RHODONITE, SOMETIMES IN BANDS WITH INTERCALATED QUARTZ BANDS, BUT USUALLY IN IRREGULAR PATCHES. NEAR THE CENTER OF THE EXPOSURE IS A VERTICAL VEIN OF MANGANESE CARBONATE 1 TO 2 FT. THICK. Host rocks: Chert",
+        "location_details": "UTM APPROX",
+        "workings_description": "",
+        "production_details": "",
+        "development_details": "",
+        "other_details": "",
         "operation_type": "",
         "workings": ""
 }
@@ -51116,6 +51762,44 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
+          -122.41943,
+          40.74846
+        ]
+      },
+      "properties": {
+        "id": "10033874",
+        "name": "Red Rock (West Shasta Copper-Zinc)",
+        "deposit_type": "",
+        "deposit_status": "Occurrence",
+        "development_status": "",
+        "host_rocks": "Quartzite",
+        "rock_age": "",
+        "alteration_types": "",
+        "structural_features": "",
+        "county": "Shasta",
+        "district": "West Shasta Copper-Zinc",
+        "elevation": "",
+        "terrain": "Pacific Mountain System, Pacific Border Province, Klamath Mountains",
+        "commodities": "Copper",
+        "primary_commodity": "Copper",
+        "production_size": "",
+        "production_years": "",
+        "deposit_description": "",
+        "geological_description": "GEOL.DESC: PORPHYRY ON HANGING WALL - QUARTZITE ON FOOTWALL. Host rocks: Quartzite",
+        "location_details": "UTM EST. LAND STATUS VALUE CALCULATED 7-94 USING GIS OVERLAY ANALYSIS WITH USFS LAND OWNERSHIP BOUNDARIES, 1:126,720 SCALE.",
+        "workings_description": "Underground (depth: 7.62m, length: 32m)",
+        "production_details": "",
+        "development_details": "",
+        "other_details": "",
+        "operation_type": "",
+        "workings": ""
+}
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
           -122.4572,
           40.61402
         ]
@@ -55705,6 +56389,44 @@
         "production_details": "Pge Not Saved Until 1917",
         "development_details": "",
         "other_details": "The original site name contained a derogatory word that has been changed according to Department of the Interior policy outlined at http://geonames.usgs.gov/docs/pro_pol_pro.pdf. See Chap. 3, Policy V. The revised form of the name now appears in the permanent record as the \"\"Current\"\" or preferred site name, and the prior, derogatory name is labeled \"\"Previous\"\". A Pt Nugget Weighing 1/2 Oz Reported",
+        "operation_type": "",
+        "workings": ""
+}
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.75556,
+          41.45234
+        ]
+      },
+      "properties": {
+        "id": "10077767",
+        "name": "Bonanza",
+        "deposit_type": "Vein",
+        "deposit_status": "Occurrence",
+        "development_status": "",
+        "host_rocks": "",
+        "rock_age": "",
+        "alteration_types": "",
+        "structural_features": "",
+        "county": "Siskiyou",
+        "district": "",
+        "elevation": "",
+        "terrain": "Pacific Mountain System, Pacific Border Province, Klamath Mountains",
+        "commodities": "Copper",
+        "primary_commodity": "Copper",
+        "production_size": "",
+        "production_years": "",
+        "deposit_description": "SULFIDES IN QUARTZ VEIN",
+        "geological_description": "",
+        "location_details": "",
+        "workings_description": "DEVELOPED BY SHAFTS AND TUNNELS.",
+        "production_details": "",
+        "development_details": "",
+        "other_details": "",
         "operation_type": "",
         "workings": ""
 }
@@ -64074,6 +64796,44 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
+          -122.47527,
+          40.75152
+        ]
+      },
+      "properties": {
+        "id": "10102965",
+        "name": "Colma Group (West Shasta Copper-Zinc)",
+        "deposit_type": "Vein",
+        "deposit_status": "Past Producer",
+        "development_status": "",
+        "host_rocks": "Rhyolite; Rhyolite Associated",
+        "rock_age": "",
+        "alteration_types": "",
+        "structural_features": "",
+        "county": "Shasta",
+        "district": "West Shasta Copper-Zinc",
+        "elevation": "1200 ft",
+        "terrain": "Pacific Mountain System, Pacific Border Province, Klamath Mountains",
+        "commodities": "Copper",
+        "primary_commodity": "Copper",
+        "production_size": "Small",
+        "production_years": "",
+        "deposit_description": "QUARTZ HEAVILY MINERALIZED WITH CHALCOPYRITE AND PYRITE.",
+        "geological_description": "Host rocks: Rhyolite; Rhyolite Associated",
+        "location_details": "",
+        "workings_description": "CLAIMS DEVELOPED THROUGH NO. 5 TUNNEL LEVEL OF UNCLE SAM MINE TREND OF TUNNEL IS N 40 DEGREES E, IT INTERSECTS THE UNCLE SAM VEIN 1200 FT. FROM THE PORTAL 350 FT. BEYOND THIS VEIN, THE QUARTZ VEIN WAS CUT. Underground (length: 914.4m)",
+        "production_details": "NO PRODUCTION REPORTED",
+        "development_details": "",
+        "other_details": "",
+        "operation_type": "",
+        "workings": ""
+}
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
           -123.42308,
           41.72372
         ]
@@ -66620,6 +67380,44 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
+          -122.7914,
+          41.67984
+        ]
+      },
+      "properties": {
+        "id": "10033606",
+        "name": "Allen Prospect",
+        "deposit_type": "",
+        "deposit_status": "Producer",
+        "development_status": "",
+        "host_rocks": "Chert",
+        "rock_age": "",
+        "alteration_types": "",
+        "structural_features": "",
+        "county": "Siskiyou",
+        "district": "",
+        "elevation": "20 ft",
+        "terrain": "Pacific Mountain System, Pacific Border Province, Klamath Mountains",
+        "commodities": "Manganese",
+        "primary_commodity": "Manganese",
+        "production_size": "Small",
+        "production_years": "",
+        "deposit_description": "",
+        "geological_description": "GEOL.DESC: 20 FT. OF SILICEOUS MANGANESE OXIDE ORE IS EXPOSED, STRIKING N. E. AND DIPPING 60 S. E. ABOUT 5 FT. OF QUARTZ-RHODONITE ORE IS EXPOSED ALONG HANGING WALL. MOST OF ORE IS SKELETONS OF MANGANESE OXIDE SURROUNDING CORES OF LEECHED SILICA. WALL ROCKS ARE INTERBEDDED QUARTZITE AND QUARTZ MICA SCHIST. 10 FT. OF SIMILAR ORE IS EXPOSED TO THE S. W. A THIN STRINGER OF ORE IS PRESENT. PRIMARY ORE IS PROBABLY RHODONITE, DUE TO SILICEOUS NATURE OF ORE. Host rocks: Chert",
+        "location_details": "",
+        "workings_description": "",
+        "production_details": "",
+        "development_details": "",
+        "other_details": "",
+        "operation_type": "",
+        "workings": ""
+}
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
           -122.56138,
           40.94902
         ]
@@ -68406,6 +69204,44 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
+          -122.86473,
+          41.60317
+        ]
+      },
+      "properties": {
+        "id": "10077718",
+        "name": "Fort Jones Mine",
+        "deposit_type": "",
+        "deposit_status": "Producer",
+        "development_status": "",
+        "host_rocks": "Mica Schist",
+        "rock_age": "",
+        "alteration_types": "",
+        "structural_features": "",
+        "county": "Siskiyou",
+        "district": "",
+        "elevation": "6 ft",
+        "terrain": "Pacific Mountain System, Pacific Border Province, Klamath Mountains",
+        "commodities": "Manganese",
+        "primary_commodity": "Manganese",
+        "production_size": "Small",
+        "production_years": "",
+        "deposit_description": "",
+        "geological_description": "GEOL.DESC: SILICEOUS MANGANESE OXIDE ORE BED STRIKES N 30 E AND DIPS 60 S.E. IT IS FAULTED OFF AT THE N. END, AND APPEARS TO LENSE OUT AT THE S. MAXIMUM THICKNESS IS 6 FT., NEAR N. END. WALL ROCKS ARE VERY MICACEOUS MICA QUARTZ SCHIST, WITH SOME GLAUCOPHANE SCHIST. NEAR N. END, ROCKS ARE INTRUDED BY 2 FT. THICK WEATHERED BASALT DIKE. ALL ROCKS ARE FRACTURED AND SHEARED. SILICEOUS MANGANESE OXIDE SURROUNDS SILICA CORES. Host rocks: Mica Schist",
+        "location_details": "UTM APPROX. ; INFO FROM LAND.ST :UNDETERMINED",
+        "workings_description": "",
+        "production_details": "",
+        "development_details": "",
+        "other_details": "",
+        "operation_type": "",
+        "workings": ""
+}
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
           -122.74334,
           41.72373
         ]
@@ -69041,6 +69877,44 @@
         "location_details": "",
         "workings_description": "",
         "production_details": "",
+        "development_details": "",
+        "other_details": "",
+        "operation_type": "",
+        "workings": ""
+}
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -123.71003,
+          41.07872
+        ]
+      },
+      "properties": {
+        "id": "10030561",
+        "name": "Sam Brown World War No. 2 Prospect",
+        "deposit_type": "",
+        "deposit_status": "Occurrence",
+        "development_status": "",
+        "host_rocks": "Quartzite; Gabbro; Gabbro Associated",
+        "rock_age": "",
+        "alteration_types": "",
+        "structural_features": "",
+        "county": "Humboldt",
+        "district": "",
+        "elevation": "",
+        "terrain": "",
+        "commodities": "Manganese",
+        "primary_commodity": "Manganese",
+        "production_size": "",
+        "production_years": "",
+        "deposit_description": "",
+        "geological_description": "GEOL.DESC: RHODONITE ORE INTERBEDDED WITH QUARTZITE, AND A COARSE GRAINED GABBRO CROPS OUT TO THE EAST OF THE ORE BODY WITH AN INTRUSIVE OR FAULT CONTACT. LOWER EXPOSURE OF ORE MAY BE FLOAT OR CONTINUATION OF UPPER BED. SMALL AMOUNTS OF PYRITE, NATIVE COPPER, MALACHITE (?) AND SOME SILICEOUS BROWN ORE ARE PRESENT. Host rocks: Quartzite; Gabbro; Gabbro Associated",
+        "location_details": "UTM APPROX",
+        "workings_description": "NO DEVELOPMENT.",
+        "production_details": "IT IS ESTIMATED THAT THERE ARE 250 TONS OF ORE IN ONE OUTCROP AND IF THE TWO EXPOSURES ARE PARTS OF THE SAME OREBODY, A MUCH LARGER TONNAGE IS AVAILABLE. A SMALL AMOUNT OF OXIDE ORE IS ALSO PRESENT BUT PROBABLY DOES NOT EXCEED MORE THAN ONE TON, AVERAGING 40 PERCENT MANGANESE.",
         "development_details": "",
         "other_details": "",
         "operation_type": "",
@@ -74524,6 +75398,44 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
+          -122.48054,
+          40.69402
+        ]
+      },
+      "properties": {
+        "id": "10033849",
+        "name": "Jumping Jack (West Shasta Copper-Zinc)",
+        "deposit_type": "",
+        "deposit_status": "Occurrence",
+        "development_status": "",
+        "host_rocks": "Rhyolite Associated; Quartzite",
+        "rock_age": "",
+        "alteration_types": "",
+        "structural_features": "",
+        "county": "Shasta",
+        "district": "West Shasta Copper-Zinc",
+        "elevation": "",
+        "terrain": "Pacific Mountain System, Pacific Border Province, Klamath Mountains",
+        "commodities": "Copper",
+        "primary_commodity": "Copper",
+        "production_size": "",
+        "production_years": "",
+        "deposit_description": "CHARACTER OF ORE IS SULFIDES",
+        "geological_description": "GEOL.DESC: RHYOLITE ON HANGING WALL - QUARTZITE ON FOOTWALL. Host rocks: Rhyolite Associated; Quartzite",
+        "location_details": "UTM EST. LAND STATUS VALUE CALCULATED 7-94 USING GIS OVERLAY ANALYSIS WITH USFS LAND OWNERSHIP BOUNDARIES, 1:126,720 SCALE.",
+        "workings_description": "5 CLAIMS. Underground (length: 121.92m)",
+        "production_details": "",
+        "development_details": "",
+        "other_details": "",
+        "operation_type": "",
+        "workings": ""
+}
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
           -122.79305,
           40.82818
         ]
@@ -74588,6 +75500,44 @@
         "geological_description": "GEOL.DESC: FISSURE VEIN WITH CRUSHED QUARTZ AND GOUGE ASSOCIATED WITH INTRUSIVE CONTACT OF QUARTZ DIORITE. Host rocks: Andesite; Diorite; Diorite Associated",
         "location_details": "",
         "workings_description": "4 CLAIMS, SHORT ADIT, SHAFT, WINZE, STOPE. Underground",
+        "production_details": "",
+        "development_details": "",
+        "other_details": "",
+        "operation_type": "",
+        "workings": ""
+}
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -123.32528,
+          40.42707
+        ]
+      },
+      "properties": {
+        "id": "10095213",
+        "name": "Gool No. 3",
+        "deposit_type": "",
+        "deposit_status": "Occurrence",
+        "development_status": "",
+        "host_rocks": "Chert",
+        "rock_age": "",
+        "alteration_types": "",
+        "structural_features": "",
+        "county": "Trinity",
+        "district": "",
+        "elevation": "35 ft",
+        "terrain": "Pacific Mountain System, Pacific Border Province, Klamath Mountains",
+        "commodities": "Manganese",
+        "primary_commodity": "Manganese",
+        "production_size": "",
+        "production_years": "",
+        "deposit_description": "",
+        "geological_description": "GEOL.DESC: 3 BODIES OF RED AND PURPLE MANGANIFEROUS CHERT, WHICH ARE FROM S. TO N., 35 FT. LONG, 20 FT. THICK; 20 FT. LONG, 10 FT. THICK; AND 70 FT. LONG, 20 FT. THICK. CHERT IS SURROUNDED BY GREENSTONE, AND SERPENTINE APPEARS TO THE W. CHERT BODIES CONTAIN COATING AND SOME PENETRATIONS OF MANGANESE OXIDES. SOUTHERNMOST BODY CONTAINS A BED 10 FT. LONG, 3 FT. THICK WHICH CONSISTS OF BLACK OXIDE ORE CUT BY QUARTZ VEINS AND CONTAINING PATCHES OF YELLOW BROWN MANGANESE CHERT, AND MAY RUN 25 PERCENT MANGANESE. Host rocks: Chert",
+        "location_details": "LOCATED 300 FT. N. OF THE QUARTER CORNER BETWEEN SECTIONS 30 AND 31 , UTM APPROX",
+        "workings_description": "",
         "production_details": "",
         "development_details": "",
         "other_details": "",
@@ -79312,6 +80262,44 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
+          -122.47193,
+          40.78207
+        ]
+      },
+      "properties": {
+        "id": "10033835",
+        "name": "Graves Group (West Shasta Copper-Zinc)",
+        "deposit_type": "",
+        "deposit_status": "Past Producer",
+        "development_status": "",
+        "host_rocks": "Rhyolite; Rhyolite Associated",
+        "rock_age": "",
+        "alteration_types": "",
+        "structural_features": "",
+        "county": "Shasta",
+        "district": "West Shasta Copper-Zinc",
+        "elevation": "400 ft",
+        "terrain": "Pacific Mountain System, Pacific Border Province, Klamath Mountains",
+        "commodities": "Copper",
+        "primary_commodity": "Copper",
+        "production_size": "Small",
+        "production_years": "",
+        "deposit_description": "",
+        "geological_description": "Host rocks: Rhyolite; Rhyolite Associated",
+        "location_details": "",
+        "workings_description": "3 TUNNELS, ONE 400 FT. LONG WITH A 350 FT. RAISE. TUNNEL NO. 1 ; FIRST 90 FT. THROUGH A SECONDARY DEPOSITION CAUSED BY LEACHING OF ORE BODY, NEXT 50 FT. THROUGH QUARTZITE FOOTWALL WITH NUMEROUS SEAMS BEARING SULFIDE ORE. ORE FOUND IN TUNNEL NO. 3 IN DISSEMINATED STATE. Underground (length: 365.76m)",
+        "production_details": "NO PRODUCTION REPORTED",
+        "development_details": "",
+        "other_details": "",
+        "operation_type": "",
+        "workings": ""
+}
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
           -122.6705,
           40.72205
         ]
@@ -82149,6 +83137,82 @@
         "deposit_description": "",
         "geological_description": "",
         "location_details": "T33N R9W ALSO IN SECTION 19",
+        "workings_description": "",
+        "production_details": "",
+        "development_details": "",
+        "other_details": "",
+        "operation_type": "",
+        "workings": ""
+}
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.98613,
+          41.73511
+        ]
+      },
+      "properties": {
+        "id": "10033619",
+        "name": "Lighthill Prospect",
+        "deposit_type": "",
+        "deposit_status": "Occurrence",
+        "development_status": "",
+        "host_rocks": "Chert",
+        "rock_age": "",
+        "alteration_types": "",
+        "structural_features": "",
+        "county": "Siskiyou",
+        "district": "",
+        "elevation": "300 ft",
+        "terrain": "Pacific Mountain System, Pacific Border Province, Klamath Mountains",
+        "commodities": "Manganese",
+        "primary_commodity": "Manganese",
+        "production_size": "",
+        "production_years": "",
+        "deposit_description": "",
+        "geological_description": "GEOL.DESC: PROMINENT OUTCROP OF QUARTZITE AND QUARTZ MICA SCHIST STRIKE E., DIP 25 S, AND CAN BE TRACED FOR 300 FT. NEAR LOWER W. END AN EXPOSURE OF SHEARED MANGANESE OXIDE ORE IS 6 FT. THICK AND 15 FT. LONG. ORE IS MIXTURE OF MANGANESE OXIDE AND QUARTZ. Host rocks: Chert",
+        "location_details": "",
+        "workings_description": "",
+        "production_details": "",
+        "development_details": "",
+        "other_details": "",
+        "operation_type": "",
+        "workings": ""
+}
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.90195,
+          41.58095
+        ]
+      },
+      "properties": {
+        "id": "10033621",
+        "name": "Ora Fino Prospect No. 1",
+        "deposit_type": "",
+        "deposit_status": "Occurrence",
+        "development_status": "",
+        "host_rocks": "Schist",
+        "rock_age": "",
+        "alteration_types": "",
+        "structural_features": "",
+        "county": "Siskiyou",
+        "district": "",
+        "elevation": "10 ft",
+        "terrain": "Pacific Mountain System, Pacific Border Province, Klamath Mountains",
+        "commodities": "Manganese",
+        "primary_commodity": "Manganese",
+        "production_size": "",
+        "production_years": "",
+        "deposit_description": "",
+        "geological_description": "GEOL.DESC: SILICEOUS MANGANESE OXIDE ORE BED STRIKES N 55 W AND DIPS 25 N. E. ORE BED HAS 10 FT. MAXIMUM THICKNESS AND CAN BE TRACED FOR 75 FT. ALONG STRIKE. WALL ROCKS ARE QUARTZ SCHIST. ALL ROCKS ARE BADLY FAULTED. NO PRIMARY ORE IS PRESENT. Host rocks: Schist",
+        "location_details": "LOCATED IN NE 1/4 SECTION 17",
         "workings_description": "",
         "production_details": "",
         "development_details": "",
@@ -86445,6 +87509,44 @@
         "location_details": "",
         "workings_description": "2 STOPES, 60 BY 4 BY 70 FT., WINZE 60 FT. DEEP. Underground (depth: 56.08m, length: 213.36m)",
         "production_details": "HIGH-GRADE ORE WAS UNDERHAND STOPED. NO OTHER PRODUCTION RECORD FOUND.",
+        "development_details": "",
+        "other_details": "",
+        "operation_type": "",
+        "workings": ""
+}
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.73277,
+          40.45291
+        ]
+      },
+      "properties": {
+        "id": "10109393",
+        "name": "Blackies Hill Claims",
+        "deposit_type": "",
+        "deposit_status": "Producer",
+        "development_status": "",
+        "host_rocks": "Chert",
+        "rock_age": "",
+        "alteration_types": "",
+        "structural_features": "",
+        "county": "Shasta",
+        "district": "",
+        "elevation": "",
+        "terrain": "Pacific Mountain System, Pacific Border Province, Klamath Mountains",
+        "commodities": "Manganese",
+        "primary_commodity": "Manganese",
+        "production_size": "Small",
+        "production_years": "",
+        "deposit_description": "",
+        "geological_description": "Geol.Desc: Manganese Ore Occurs In Series Of Beds Or Lenses Of Fine Grained Quartzite Or Quartz Schist (Meta Chert) Which Is Enclosed In A Quartz Rich Quartz Muscovite Biotite Schist. These Units Are Cut By 3 To 4 Inch Thick Quartz Veins. Mangani Ferous Chert Beds And Enclosing Schists At Main Working Strike N 45 To 70 W, Dip 40 To 50 N. E., And Are Offset By Faulting In Places. Ore Is Mainly Psilomelane And Pyrolusite, With Red Mon Oxide Stains And Patches Of Quartzose Material Of Meta Chert. Partially Oxidized Pink Rhodonite Is Exposed In One Outcrop, And Is Probably The Main Primary Mineral. Host rocks: Chert",
+        "location_details": "Located In W 1/2 E 1/2 Section 14 , And W 1/2 Section 14",
+        "workings_description": "",
+        "production_details": "",
         "development_details": "",
         "other_details": "",
         "operation_type": "",
@@ -94512,6 +95614,44 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
+          -122.8989,
+          41.5629
+        ]
+      },
+      "properties": {
+        "id": "10033618",
+        "name": "John J. Lewis Prospect",
+        "deposit_type": "",
+        "deposit_status": "Occurrence",
+        "development_status": "",
+        "host_rocks": "Chert",
+        "rock_age": "",
+        "alteration_types": "",
+        "structural_features": "",
+        "county": "Siskiyou",
+        "district": "",
+        "elevation": "15 ft",
+        "terrain": "Pacific Mountain System, Pacific Border Province, Klamath Mountains",
+        "commodities": "Manganese",
+        "primary_commodity": "Manganese",
+        "production_size": "",
+        "production_years": "",
+        "deposit_description": "",
+        "geological_description": "GEOL.DESC: ORE CONSISTS OF CRUDELY BANDED OXIDE IN QUARTZITE. PRIMARY ORE MAY BE BANDED RHODOCHROSITE AND QUARTZITE, AS IN SIMILAR DEPOSIT. HOST ROCK IS FINE GRAINED QUARTZITE SEEMINGLY DERIVED FROM THIN-BEDDED CHERT. STRIKE IS N. E. AND DIP IS VERTICAL. ORE BODY IS LENTICULAR, 15 FT. LONG, WITH MAXIMUM WIDTH OF 4 FT. Host rocks: Chert",
+        "location_details": "",
+        "workings_description": "",
+        "production_details": "",
+        "development_details": "",
+        "other_details": "",
+        "operation_type": "",
+        "workings": ""
+}
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
           -122.39415,
           40.65818
         ]
@@ -100732,6 +101872,44 @@
         "geological_description": "Host rocks: Gneiss",
         "location_details": "UTM ACC. SE 1/4 NW 1/4 AND SW 1/4 NE 1/4",
         "workings_description": "SEVERAL ADITS AND PITS",
+        "production_details": "",
+        "development_details": "",
+        "other_details": "",
+        "operation_type": "",
+        "workings": ""
+}
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -123.24611,
+          40.11179
+        ]
+      },
+      "properties": {
+        "id": "10109404",
+        "name": "Blue Jay Mine",
+        "deposit_type": "",
+        "deposit_status": "Producer",
+        "development_status": "",
+        "host_rocks": "Chert",
+        "rock_age": "",
+        "alteration_types": "",
+        "structural_features": "",
+        "county": "Trinity",
+        "district": "",
+        "elevation": "4 ft",
+        "terrain": "Pacific Mountain System, Pacific Border Province, California Coast Ranges",
+        "commodities": "Manganese",
+        "primary_commodity": "Manganese",
+        "production_size": "Large",
+        "production_years": "",
+        "deposit_description": "",
+        "geological_description": "ORE HOSTED IN FRANCISCAN COMPLEX--L. TO L. ; GEOL.DESC: MANGANESE ORE OCCURS IN TWO BEDS AVERAGING 3 TO 4 FT. IN THICKNESS, ABOUT 15 FT APART ENCLOSED IN THIN-BEDDED FRANCISCAN CHERT. ON E. SLOPE OF RIDGE AVERAGE STRIKE IS N. 55 W., DIPPING 60 TO 75 N. E. THIS TREND CONTINUES W. TO RIDGE CREST WHERE A FAULT STRIKING N 50 E AND DIPPING 55 S. E. DISPLACES BEDS SLIGHTLY. W. OF FAULT BEDS STRIKE N 20 TO 30 W AND DIP 20 TO 30 N. E. THIN GREENSTONE BODY EXPOSED WAS APPARENTLY INJECTED ALONG CONTACT OF CHERT AND SANDSTONE. N. W. OF GREENSTONE, CHERT MERGES ALONG STRIKE WITH SANDSTONE. ORE IS LARGELY PRIMARY, AS SURFACE OXIDATION FORMS BLACK OXIDE COATING 1 TO 2 INCHES THICK. PRIMARY ORE IS MOSTLY REDDISH-BROWN HAUSMANNITE, CUT BY RHODOCHROSITE VEINLETS, OR HYDROUS SILICATES. QUARTZ VEINS CARRY SOME CHALCOCITE. SECONDARY COPPER MINERALS PRESENT ARE NATIVE COPPER, CUPRITE AND MALACHITE. Host rocks: Chert",
+        "location_details": "LOCATED IN NW 1/4 SECTION 17",
+        "workings_description": "",
         "production_details": "",
         "development_details": "",
         "other_details": "",

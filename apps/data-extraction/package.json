@@ -4,12 +4,19 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "fetch-blm": "node src/fetch-blm-claims.js",
+    "combine-data": "node src/create-combined-gold-data.js",
+    "process-all": "node src/compile-northern-california.js && node src/fetch-blm-claims.js && node src/create-combined-gold-data.js",
+    "generate-focused-gold":"node src/create-focused-gold-geojson.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "Tools for extracting and combining USGS and BLM mining data",
+  "dependencies": {
+    "node-fetch": "^3.3.2",
+    "tokml": "^0.4.0"
+  },
   "devDependencies": {
     "@types/node": "^20.10.5",
     "ts-node": "^10.9.2",

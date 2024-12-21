@@ -180,28 +180,30 @@ const isLodeGoldMine = (site) => {
     ].join(' ').toLowerCase();
 
     // Check for placer indicators (exclude these)
-    const placerKeywords = ['placer', 'alluvial', 'stream', 'dredge', 'hydraulic mining'];
+    const placerKeywords = [
+        'placer', 'alluvial', 'stream', 'dredge', 'hydraulic',
+        'gravel deposit', 'sand deposit', 'river deposit'
+    ];
     if (placerKeywords.some(keyword => allText.includes(keyword))) {
         return false;
     }
 
-    // Check for lode indicators (include if any of these are true)
-    const hasUndergroundWorkings = site.workings?.some(w => 
-        w.type?.toLowerCase().includes('underground')
-    );
+    // Include if it's a past producer or producer (unless already excluded as placer)
+    const status = getNestedValue(site, 'deposit.status')?.toLowerCase();
+    if (status === 'past producer' || status === 'producer') {
+        return true;
+    }
 
-    const hasLodeIndicators = [
-        'vein', 'lode', 'quartz', 'shaft', 'adit', 'tunnel', 
-        'stope', 'drift', 'underground', 'hard rock'
-    ].some(keyword => allText.includes(keyword));
+    // Include if it mentions mine-related terms or quartz
+    const mineKeywords = [
+        'mine', 'quartz', 'vein', 'shaft', 'adit', 'tunnel', 
+        'stope', 'drift', 'underground', 'lode'
+    ];
+    if (mineKeywords.some(keyword => allText.includes(keyword))) {
+        return true;
+    }
 
-    // Additional geological indicators
-    const hasGeologicalIndicators = [
-        'mineralized zone', 'ore shoot', 'bedrock', 'outcrop',
-        'fault', 'shear zone', 'intrusive', 'hydrothermal'
-    ].some(keyword => allText.includes(keyword));
-
-    return hasUndergroundWorkings || hasLodeIndicators || hasGeologicalIndicators;
+    return false;
 };
 
 // Helper function to process comments by category
@@ -389,21 +391,6 @@ fs.readFile(inputPath, 'utf8', (err, data) => {
                 console.log(`- ${type}: ${count} sites (${((count/geojson.features.length)*100).toFixed(2)}%)`);
             });
 
-            console.log('\nIncluded properties for each feature:');
-            console.log('- Site identification (ID, name with district)');
-            console.log('- Deposit information (type, status, development)');
-            console.log('- Geological details (host rocks, age, alteration, structure)');
-            console.log('- Location context (county, district, elevation, terrain)');
-            console.log('- Commodity information');
-            console.log('- Production information (size, years)');
-            console.log('- Detailed descriptions:');
-            console.log('  * Deposit characteristics');
-            console.log('  * Geological features');
-            console.log('  * Location specifics');
-            console.log('  * Workings and development');
-            console.log('  * Production history');
-            console.log('  * Other relevant details');
-            
             // Find a good example site
             if (geojson.features.length > 0) {
                 console.log('\nSample Lode Gold Mine:');

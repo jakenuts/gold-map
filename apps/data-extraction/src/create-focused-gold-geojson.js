@@ -23,7 +23,8 @@ const isGoldSite = (site) => {
     const comments = site.metadata?.comments || [];
     const hasGoldInComments = comments.some(c => 
         c.text?.toLowerCase().includes('gold') ||
-        c.text?.toLowerCase().includes('au ')
+        c.text?.toLowerCase().includes('au ') || 
+        c.text?.toLowerCase().includes('quartz') 
     );
     if (hasGoldInComments) return true;
 
@@ -31,10 +32,12 @@ const isGoldSite = (site) => {
     if (site.deposit?.description?.toLowerCase().includes('gold')) return true;
 
     // Check geology description
-    if (site.geology?.description?.toLowerCase().includes('gold')) return true;
+    if (site.geology?.description?.toLowerCase().includes('gold') ||
+        site.geology?.description?.toLowerCase().includes('quartz')) return true;
 
     // Check remarks
-    if (site.remarks?.toLowerCase().includes('gold')) return true;
+    if (site.remarks?.toLowerCase().includes('gold') ||
+        site.remarks?.toLowerCase().includes('quartz')) return true;
 
     return false;
 };
