@@ -15,6 +15,194 @@ Tasks
 * Commit each significant change to git with a list of tasks accomplished
 * Extend, improve and mark off tasks in this document.
 
+Feed Analysis and Data Relationships (Updated 2024-01-09)
+---------------------------
+
+### USGS Data Feed Analysis
+
+1. MRDS (Mineral Resources Data System)
+   - Primary data source for mineral deposits
+   - Capabilities:
+     * WFS 1.1.0 with GML 3.1.1 output
+     * Rich filtering (spatial, attribute-based)
+     * Global coverage (-179,-73 to 180,81)
+   - Key Data Elements:
+     * Deposit identification and names
+     * Development status and significance
+     * Commodity information
+     * Geographic and administrative location
+     * Bibliographic references
+     * Links to related records
+   - Strengths:
+     * Comprehensive mineral resource information
+     * Historical and geological context
+     * Production and development details
+   - Limitations:
+     * Point-based locations only
+     * Some historical data may be incomplete
+
+2. SGMC (State Geologic Map Compilation)
+   - Geological context at 1:500,000 scale
+   - Capabilities:
+     * WFS 1.1.0 with GML 3.1.1 output
+     * US coverage (-125,24.5 to -66.9,49.4)
+     * Three feature types
+   - Feature Types:
+     * Lithology: Bedrock and surficial geology
+     * Contacts: Geological boundaries
+     * Structure: Faults and other features
+   - Strengths:
+     * Consistent geology across state boundaries
+     * Rich geological context for mineral deposits
+     * Complete spatial coverage
+   - Limitations:
+     * 1:500,000 scale may miss local details
+     * Complex polygon and line geometries
+
+3. USMIN (Mining Features)
+   - Physical mining infrastructure from USGS topo maps
+   - Capabilities:
+     * WFS 1.1.0 with GML 3.1.1 output
+     * Western US coverage (-125,29 to -94.35,49.1)
+     * Both point and polygon features
+   - Feature Types:
+     * Points: shafts, adits, prospects, etc.
+       - Location and feature type
+       - Source map details (name, date, scale)
+       - Feature orientation (azimuth)
+     * Polygons: mining areas and facilities
+   - Strengths:
+     * Detailed physical infrastructure
+     * Historical map source tracking
+     * Spatial relationships between features
+   - Limitations:
+     * Western US coverage only
+     * Historical data may not reflect current conditions
+
+4. Geophysics and Additional Data
+   - Magnetic Anomaly Data:
+     * WMS-based interactive map service
+     * Gridded data covering North America
+     * Shows variations in earth materials/structure
+     * Available through map viewer interface
+     * Direct WMS service endpoints unstable
+   - Additional Geophysical Data:
+     * Airborne geophysical surveys available
+     * Includes magnetic field, resistivity, gamma ray
+     * Coverage varies by survey area
+   - Integration Considerations:
+     * Primary access through map viewers
+     * Direct service access needs reliability testing
+     * May need to implement caching/fallback options
+     * Consider using downloaded data for reliability
+
+5. Data Relationships and Integration
+   - MRDS provides the authoritative deposit information
+   - USMIN adds physical infrastructure context
+   - Linkage opportunities:
+     * Spatial proximity
+     * Name matching where available
+     * Cross-referencing with historical documents
+   - Integration considerations:
+     * Different spatial coverages
+     * Temporal differences in data collection
+     * Varying levels of attribute completeness
+
+4. Best Practices for Feed Usage
+   - Use MRDS as primary data source
+   - Enhance with USMIN physical features
+   - Consider temporal aspects of data
+   - Implement robust error handling for:
+     * Missing attributes
+     * Coordinate transformations
+     * XML namespace handling
+   - Cache responses to reduce API load
+   - Implement progressive loading for large areas
+
+5. Data Quality Considerations
+   - Validate coordinate systems (WGS84/NAD27)
+   - Check completeness of required fields
+   - Consider historical context of data
+   - Verify spatial relationships
+   - Track data sources and dates
+
+
+### Completed Tasks
+
+1. Data Source Analysis ✓
+   - Analyzed USGS MRDS, USMIN, SGMC, and geophysics data feeds
+   - Documented feed formats and capabilities in feeds-summary.md
+   - Identified WFS/WMS/WMTS endpoints and their specific features
+
+2. Data Collection and Storage ✓
+   - Implemented TypeScript-based data manager with PostGIS integration
+   - Created flexible GeoLocation schema supporting multiple data types
+   - Built robust WFS client with XML/JSON response handling
+   - Implemented bounding box validation and coordinate parsing
+
+3. Feed Retrieval Clients ✓
+   - Developed USGS MRDS data extraction pipeline
+   - Implemented BLM mining claims data fetching
+   - Created data transformation and validation layers
+   - Added support for multiple coordinate systems
+
+4. Data Processing and Linking ✓
+   - Created scripts for Northern California data compilation
+   - Implemented data relationship analysis
+   - Built gold-specific data filtering and enhancement
+   - Combined USGS and BLM data into unified datasets
+
+5. Export System ✓
+   - Implemented GeoJSON and KML export capabilities
+   - Created optimized and focused datasets for different use cases
+   - Added rich description generation for sites
+
+### Key Insights
+
+1. Feed Characteristics
+   - MRDS WFS feed provides richest historical and geological data
+   - USMIN WFS complements MRDS with detailed site features
+   - SGMC provides crucial geological context but requires careful processing
+   - Geophysics feeds best accessed through WMS for visualization
+
+2. Implementation Challenges
+   - WFS responses require robust XML parsing with namespace handling
+   - Coordinate systems vary between feeds requiring transformation
+   - Large datasets need optimization for web visualization
+   - Complex relationships between sites require careful data modeling
+
+3. Data Quality Considerations
+   - Historical USGS data has varying levels of completeness
+   - BLM claim data more current but requires regular updates
+   - Spatial accuracy varies between data sources
+   - Some site relationships only discoverable through text analysis
+
+4. Best Practices
+   - Use PostGIS for efficient spatial queries
+   - Implement flexible schema for varied data types
+   - Cache WFS responses to reduce API load
+   - Use spatial indexing for performance
+   - Maintain source data integrity while enhancing relationships
+
+### Future Recommendations
+
+1. Data Enhancement
+   - Implement automated updates from BLM API
+   - Add state-level mining records
+   - Incorporate historical maps and surveys
+   - Add environmental impact data
+
+2. System Improvements
+   - Add spatial clustering for better visualization
+   - Implement change detection between updates
+   - Add version tracking for data changes
+   - Enhance cross-reference between data sources
+
+3. Performance Optimization
+   - Implement tile-based data loading
+   - Add client-side caching
+   - Optimize property filtering
+   - Add progressive loading for large datasets
 
 Data Sources
 
@@ -81,3 +269,64 @@ Geochemistry
 	NGDB Soil geochemistry
 	NGDB Concentrate geochemistry
 
+Code Entry Points and Scripts
+---------------------------
+
+### Data Manager (TypeScript/Node.js)
+Location: `data-manager/`
+- `src/server.ts` - Main application server with PostGIS integration
+- `src/test-mrds.ts` - USGS MRDS feed client and testing
+- `src/test-mrds-storage.ts` - Data storage and retrieval testing
+- `src/run-migrations.ts` - Database schema management
+
+### Data Extraction Scripts (Node.js)
+Location: `data-extraction/src/`
+
+Data Collection:
+- `compile-northern-california.js` - Processes USGS MRDS text files for Northern California
+- `fetch-blm-claims.js` - Fetches BLM mining claims data
+- `create-combined-gold-data.js` - Combines USGS and BLM data
+
+Analysis:
+- `analyze-data-relationships.js` - Examines relationships between data fields
+- `analyze-gold-references.js` - Analyzes gold-specific data points
+- `analyze-data-completeness.js` - Checks data quality and completeness
+
+Export:
+- `convert-to-geojson.js` - Creates standard GeoJSON output
+- `convert-to-rich-geojson.js` - Creates enhanced GeoJSON with full details
+- `convert-to-optimized-geojson.js` - Creates size-optimized GeoJSON
+- `create-focused-gold-geojson.js` - Creates gold-specific datasets
+
+### Web Application (TypeScript/React)
+Location: `diggings-map/`
+- `src/main.tsx` - Application entry point
+- `src/App.tsx` - Main application component
+- `src/services/` - Data fetching and processing services
+
+To evaluate progress:
+
+1. Data Collection System:
+```bash
+cd data-manager
+pnpm install
+# Set up .env file with database credentials
+pnpm typeorm migration:run
+node src/server.js
+```
+
+2. Data Processing:
+```bash
+cd data-extraction
+npm install
+node src/compile-northern-california.js
+node src/fetch-blm-claims.js
+node src/create-combined-gold-data.js
+```
+
+3. Web Visualization:
+```bash
+cd diggings-map
+pnpm install
+pnpm dev
+```
