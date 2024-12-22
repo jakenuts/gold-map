@@ -1,26 +1,16 @@
-import { KMLTable } from './components/KMLTable';
+import { DataTable } from './components/DataTable';
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-100">
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
-          <h1 className="text-2xl font-bold text-gray-900">
-            KML/KMZ File Viewer
-          </h1>
-          <p className="mt-1 text-sm text-gray-600">
-            Upload KML or KMZ files to view their contents in a sortable, filterable table
-          </p>
-        </div>
-      </header>
-
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
-          <div className="bg-white rounded-lg shadow">
-            <KMLTable />
-          </div>
-        </div>
-      </main>
+    <div className="container mx-auto py-10">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold">Data Viewer</h1>
+        <p className="text-muted-foreground mt-2">
+          View and analyze data from multiple sources including USGS feeds and KML/KMZ files.
+        </p>
+      </div>
+      
+      <DataTable />
     </div>
   );
 }

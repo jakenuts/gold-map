@@ -269,6 +269,51 @@ Geochemistry
 	NGDB Soil geochemistry
 	NGDB Concentrate geochemistry
 
+Data Viewer Implementation (Updated 2024-01-09)
+---------------------------
+
+### Architecture Overview
+
+1. Data Source Abstraction
+   - Common interface for all data sources (WFS, KML, database)
+   - Standardized data fetching and column definitions
+   - Support for filtering and pagination
+   - Geometry handling for spatial data
+
+2. UI Components
+   - Modern table interface using shadcn/ui
+   - Source selection dropdown
+   - File upload for KML/KMZ
+   - Search and filtering capabilities
+   - Responsive design
+
+3. Data Sources
+   - MRDS WFS feed integration
+   - KML/KMZ file support
+   - Future: Database integration
+   - Future: Additional USGS feeds
+
+### Implementation Status
+
+1. Core Framework ✓
+   - Data source interface defined
+   - UI components created
+   - Table view implementation
+   - Basic filtering support
+
+2. Data Sources
+   - KML/KMZ: File loading and parsing ✓
+   - MRDS: WFS client implementation ✓
+   - Pending: Additional USGS feeds
+   - Pending: Database integration
+
+3. Next Steps
+   - Test MRDS feed integration
+   - Add column customization
+   - Implement advanced filtering
+   - Add export capabilities
+   - Add visualization options
+
 Code Entry Points and Scripts
 ---------------------------
 
