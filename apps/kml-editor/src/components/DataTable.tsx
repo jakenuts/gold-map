@@ -1,4 +1,4 @@
- import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Table,
   TableBody,
@@ -6,15 +6,15 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from './ui/table';
+} from '../components/ui/table';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from './ui/dropdown-menu';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
+} from '../components/ui/dropdown-menu';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
 import { DataSource, DataRecord } from '../types/data-source';
 import { dataSourceRegistry } from '../data-sources/registry';
 
@@ -37,6 +37,7 @@ export const DataTable: React.FC<DataTableProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedRecord, setSelectedRecord] = useState<DataRecord | null>(null);
 
   // Load initial source if provided
   useEffect(() => {
@@ -104,7 +105,8 @@ export const DataTable: React.FC<DataTableProps> = ({
   };
 
   const filteredData = data.filter(record => 
-    Object.values(record).some(value => 
+    Object.entries(record).some(([key, value]) => 
+      key !== '_allProperties' && // Exclude _allProperties from search
       value?.toString().toLowerCase().includes(searchTerm.toLowerCase())
     )
   );
@@ -112,11 +114,41 @@ export const DataTable: React.FC<DataTableProps> = ({
   const renderCell = (value: any, type: string) => {
     if (type === 'geometry') {
       if (value?.type === 'Point') {
-        return `${value.coordinates[1]}, ${value.coordinates[0]}`;
+        return `${value.coordinates[1].toFixed(6)}, ${value.coordinates[0].toFixed(6)}`;
       }
-      return 'Complex geometry';
+      return 'No location';
     }
     return value?.toString() || '';
+  };
+
+  const renderPropertyTable = (record: DataRecord) => {
+    if (!record._allProperties) return null;
+
+    return (
+      <div className="mt-4">
+        <h3 className="text-lg font-semibold mb-2">All Properties</h3>
+        <div className="max-h-96 overflow-y-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Property</TableHead>
+                <TableHead>Value</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {Object.entries(record._allProperties)
+                .sort(([a], [b]) => a.localeCompare(b))
+                .map(([key, value]) => (
+                  <TableRow key={key}>
+                    <TableCell className="font-medium">{key}</TableCell>
+                    <TableCell>{value?.toString() || ''}</TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -158,7 +190,7 @@ export const DataTable: React.FC<DataTableProps> = ({
         <Input
           placeholder="Search..."
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
           className="max-w-sm"
         />
       </div>
@@ -176,6 +208,7 @@ export const DataTable: React.FC<DataTableProps> = ({
               {columns.map(column => (
                 <TableHead key={column.id}>{column.header}</TableHead>
               ))}
+              <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -186,11 +219,22 @@ export const DataTable: React.FC<DataTableProps> = ({
                     {renderCell(record[column.id], column.type)}
                   </TableCell>
                 ))}
+                <TableCell>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setSelectedRecord(selectedRecord?.id === record.id ? null : record)}
+                  >
+                    {selectedRecord?.id === record.id ? 'Hide Details' : 'View Details'}
+                  </Button>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </div>
+
+      {selectedRecord && renderPropertyTable(selectedRecord)}
 
       <div className="text-sm text-gray-500">
         Showing {filteredData.length} records
