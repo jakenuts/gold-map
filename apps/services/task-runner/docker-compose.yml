@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  task-runner:
+    build:
+      context: ../..
+      dockerfile: services/task-runner/Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - HOST=0.0.0.0
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=goldmap
+      - POSTGRES_USER=postgres
+      - LOG_LEVEL=info
+    depends_on:
+      - redis
+      - postgres
+    networks:
+      - goldmap-network
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    networks:
+      - goldmap-network
+    restart: unless-stopped
+
+  postgres:
+    image: postgis/postgis:15-3.3
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=goldmap
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - goldmap-network
+    restart: unless-stopped
+    command: ["postgres", "-c", "shared_buffers=256MB", "-c", "max_connections=200"]
+
+volumes:
+  redis-data:
+  postgres-data:
+
+networks:
+  goldmap-network:
+    driver: bridge

@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "jsx": "preserve",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "incremental": true,
+    "baseUrl": ".",
+    "paths": {
+      "@gold-map/core": ["packages/core/src"],
+      "@gold-map/data-sources": ["packages/data-sources/src"],
+      "@gold-map/geo-utils": ["packages/geo-utils/src"],
+      "@gold-map/ui-components": ["packages/ui-components/src"]
+    }
+  },
+  "exclude": ["**/node_modules", "**/dist", "**/build"]
+}

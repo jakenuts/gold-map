@@ -1,0 +1,11 @@
+packages:
+  # All packages in direct subdirs of packages/
+  - 'packages/*'
+  # All packages in direct subdirs of services/
+  - 'services/*'
+  # All packages in direct subdirs of apps/
+  - 'apps/*'
+  # Exclude files
+  - '!**/test/**'
+  - '!**/tests/**'
+  - '!**/*.md'
