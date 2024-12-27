@@ -9,7 +9,16 @@
     "lint": "turbo run lint",
     "test": "turbo run test",
     "clean": "turbo run clean",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "cleanup": "node tools/scripts/cleanup.js",
+    "setup": "pnpm install && pnpm build",
+    "start": "turbo run start",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f",
+    "db:migrate": "pnpm --filter task-runner typeorm migration:run",
+    "db:generate": "pnpm --filter task-runner typeorm migration:generate",
+    "docs:serve": "docsify serve docs"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.18.1",
