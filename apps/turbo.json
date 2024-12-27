@@ -4,7 +4,14 @@
   "pipeline": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**"]
+      "outputs": ["dist/**", ".tsbuildinfo"]
+    },
+    "@gold-map/core#build": {
+      "outputs": ["dist/**", ".tsbuildinfo"]
+    },
+    "@gold-map/data-sources#build": {
+      "dependsOn": ["@gold-map/core#build"],
+      "outputs": ["dist/**", ".tsbuildinfo"]
     },
     "dev": {
       "cache": false,
