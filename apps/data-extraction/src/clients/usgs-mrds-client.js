@@ -3,127 +3,163 @@ import { WFSBaseClient } from './wfs-base-client.js';
 export class USGSMRDSClient extends WFSBaseClient {
     constructor() {
         super({
-            baseUrl: 'https://mrdata.usgs.gov/services/wfs/mrds',
-            version: '1.0.0', // Use 1.0.0 for consistent lon,lat order
+            baseUrl: 'https://mrdata.usgs.gov/wfs/mrds',
+            version: '1.0.0',
             typeName: 'mrds',
             srsName: 'EPSG:4326',
             maxFeatures: 10000
         });
+        this.fields = [];
     }
 
     /**
-     * Parse coordinates from MRDS format
+     * Initialize fields from WFS service
      */
-    parseCoordinates(coordString) {
+    async initialize() {
         try {
-            // Take just the first coordinate pair (they're duplicated)
-            const firstPair = coordString.trim().split(' ')[0];
+            console.log('Fetching sample MRDS feature to determine fields...');
+            // Make a GetFeature request to get all fields
+            const xmlData = await this.makeRequest('GetFeature', this.defaultBBox, {
+                maxFeatures: '1',
+                typeName: this.typeName,
+                srsName: this.srsName
+            });
             
-            // Find the decimal points
-            const firstDecimal = firstPair.indexOf('.');
-            if (firstDecimal === -1) return null;
+            const parsed = this.xmlParser.parse(xmlData);
+            console.log('Full parsed response:', JSON.stringify(parsed, null, 2));
             
-            // Find the second decimal by skipping the first one
-            const secondDecimal = firstPair.indexOf('.', firstDecimal + 1);
-            if (secondDecimal === -1) return null;
+            const featureMember = parsed?.['wfs:FeatureCollection']?.['gml:featureMember']?.[0] || {};
+            const feature = featureMember['ms:mrds'] || {};
+            
+            // Extract field names from the feature
+            this.fields = Object.keys(feature).filter(key => 
+                !key.startsWith('@_') && 
+                !key.startsWith('gml:') &&
+                !key.startsWith('ms:') &&
+                key !== 'msGeometry' &&
+                key !== 'boundedBy'
+            );
 
-            // Extract the numbers
-            const lon = parseFloat(firstPair.substring(0, secondDecimal - 2));
-            const lat = parseFloat(firstPair.substring(secondDecimal - 2));
-
-            // Validate the numbers
-            if (isNaN(lon) || isNaN(lat)) {
-                console.log('Failed to parse numbers:', { lon, lat, original: firstPair });
-                return null;
-            }
-
-            // Validate coordinate ranges
-            if (Math.abs(lon) <= 180 && Math.abs(lat) <= 90) {
-                return [lon, lat];
-            }
-
-            console.log('Coordinates out of range:', { lon, lat });
-            return null;
+            console.log('Found fields:', this.fields);
         } catch (error) {
-            console.error('Error parsing coordinates:', error);
+            console.error('Error initializing fields:', error);
+            // Use known working fields as fallback
+            this.fields = [
+                'dep_id', 'site_name', 'dev_stat', 'commodity', 'commodmod',
+                'ore_ctrl', 'host_rock', 'ore_miner', 'gangue', 'alteration',
+                'prod_size', 'dep_type', 'model', 'oper_type', 'work_type',
+                'ore_text', 'geology', 'geologyt', 'prod_grade', 'prod_years',
+                'reserves', 'dresinfo', 'comments', 'dec_long', 'dec_lat'
+            ];
+            console.log('Using fallback fields:', this.fields);
+        }
+    }
+
+    /**
+     * Get field names for WFS request
+     */
+    getFieldNames() {
+        return this.fields.join(',');
+    }
+
+    /**
+     * Parse coordinates from WFS feature
+     */
+    parseCoordinates(feature) {
+        const lon = parseFloat(feature.dec_long);
+        const lat = parseFloat(feature.dec_lat);
+        
+        if (isNaN(lon) || isNaN(lat)) {
             return null;
         }
+
+        if (Math.abs(lon) <= 180 && Math.abs(lat) <= 90) {
+            return [lon, lat];
+        }
+
+        return null;
     }
 
     /**
      * Get MRDS features as parsed objects
      */
     async getMRDSFeatures(bbox) {
+        // Ensure fields are initialized
+        if (this.fields.length === 0) {
+            await this.initialize();
+        }
         try {
-            const xmlData = await this.getFeatures(bbox);
-            const features = [];
-            const featureRegex = /<gml:featureMember>([\s\S]*?)<\/gml:featureMember>/g;
-            const fieldRegex = /<ms:(\w+)>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/ms:\w+>/g;
+            // Request features with specific fields
+            const xmlData = await this.getFeatures(bbox, {
+                propertyName: this.getFieldNames()
+            });
+
+            // Log the first part of the response to debug
+            console.log('XML Response Sample:', xmlData.substring(0, 500));
             
-            let featureMatch;
-            while ((featureMatch = featureRegex.exec(xmlData)) !== null) {
-                const featureXml = featureMatch[1];
-                let coordinates = null;
-                const rawProps = {};
+            const parsed = this.xmlParser.parse(xmlData);
+            console.log('Parsed structure:', JSON.stringify(parsed, null, 2).substring(0, 500));
+            
+            // Handle different possible response structures
+            const featureMembers = 
+                parsed?.['wfs:FeatureCollection']?.['gml:featureMember'] ||
+                parsed?.FeatureCollection?.featureMember ||
+                [];
+            
+            const features = featureMembers.map(member => {
+                const feature = member['ms:mrds'] || {};
+                if (!feature) return null;
 
-                // Extract coordinates
-                const coordMatch = /<gml:coordinates>(.*?)<\/gml:coordinates>/.exec(featureXml);
-                if (coordMatch) {
-                    coordinates = this.parseCoordinates(coordMatch[1]);
-                }
-
-                // Extract field values
-                let fieldMatch;
-                while ((fieldMatch = fieldRegex.exec(featureXml)) !== null) {
-                    const [_, fieldName, value] = fieldMatch;
-                    rawProps[fieldName] = value || null;
-                }
-
-                // Skip features without coordinates
-                if (!coordinates) {
-                    console.log('No valid coordinates found in feature:', {
-                        id: rawProps.dep_id || 'unknown',
-                        name: rawProps.site_name || 'Unknown'
-                    });
-                    continue;
-                }
+                const coordinates = this.parseCoordinates(feature);
+                if (!coordinates) return null;
 
                 // Map raw properties to schema properties
                 const properties = {
-                    name: rawProps.site_name || 'Unknown',
-                    dep_type: rawProps.dep_type || null,
-                    commod1: rawProps.code_list?.trim() || null,
-                    id: rawProps.dep_id || null,
-                    site_type: rawProps.site_type || null,
-                    development_status: rawProps.dev_stat || null,
-                    state: rawProps.state || null,
-                    county: rawProps.county || null,
-                    ftr_type: rawProps.ftr_type || null,
-                    ftr_name: rawProps.ftr_name || null,
-                    ftr_azimut: rawProps.ftr_azimut ? parseInt(rawProps.ftr_azimut) : null,
-                    topo_name: rawProps.topo_name || null,
-                    topo_date: rawProps.topo_date ? parseInt(rawProps.topo_date) : null,
-                    topo_scale: rawProps.topo_scale || null,
-                    compiledby: rawProps.compiledby || null,
-                    remarks: rawProps.remarks || null,
-                    gda_id: rawProps.gda_id ? parseInt(rawProps.gda_id) : null,
-                    scanid: rawProps.scanid ? parseInt(rawProps.scanid) : null,
-                    original_type: rawProps.original_type || null,
-                    category: rawProps.category || null,
-                    group: rawProps.group || null,
-                    geometry_type: rawProps.geometry_type || null,
-                    feature_class: rawProps.feature_class || null
+                    name: feature.site_name || 'Unknown',
+                    id: feature.dep_id || null,
+                    development_status: feature.dev_stat || null,
+                    commodities: {
+                        primary: feature.commod1?.split(',').map(c => c.trim()) || [],
+                        secondary: feature.commod2?.split(',').map(c => c.trim()) || [],
+                        tertiary: feature.commod3?.split(',').map(c => c.trim()) || []
+                    },
+                    geology: {
+                        ore_control: feature.ore_ctrl || null,
+                        host_rock: feature.host_rock || null,
+                        ore_minerals: feature.ore_miner?.split(',').map(m => m.trim()) || [],
+                        gangue_minerals: feature.gangue?.split(',').map(m => m.trim()) || [],
+                        alteration: feature.alteration || null,
+                        deposit_type: feature.dep_type || null,
+                        model: feature.model || null,
+                        age: feature.geol_age || null,
+                        description: feature.geologyt || null
+                    },
+                    production: {
+                        size: feature.prod_size || null,
+                        grade: feature.prod_grade || null,
+                        years: feature.prod_years || null,
+                        type: feature.oper_type || null,
+                        work_type: feature.work_type || null
+                    },
+                    details: {
+                        ore_text: feature.ore_text || null,
+                        comments: feature.comments || null,
+                        references: feature.refs || null,
+                        reporter: feature.reporter || null,
+                        reserves: feature.reserves || null,
+                        processing: feature.dresinfo || null
+                    }
                 };
 
-                features.push({
+                return {
                     type: 'Feature',
                     geometry: {
                         type: 'Point',
                         coordinates
                     },
                     properties
-                });
-            }
+                };
+            }).filter(feature => feature !== null);
 
             console.log(`Found ${features.length} valid MRDS features`);
             return features;

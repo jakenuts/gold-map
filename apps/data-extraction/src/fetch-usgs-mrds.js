@@ -22,28 +22,60 @@ async function fetchMRDSData() {
     try {
         const features = await client.getMRDSFeatures(BOUNDS);
         
-        // Filter and score sites for gold mining potential
-        const scoredFeatures = features.map(feature => {
-            const props = feature.properties;
-            let score = 0;
-            
-            // Development status scoring
-            if (props.development_status === 'Producer') score += 3;
-            if (props.development_status === 'Past Producer') score += 2;
-            
-            // Name indicators
-            const nameLower = props.name?.toLowerCase() || '';
-            if (nameLower.includes('mine')) score += 1;
-            if (nameLower.includes('gold')) score += 2;
-            if (nameLower.includes('quartz')) score += 1;
-            
-            // Commodity scoring
-            const commodities = props.commod1?.split(' ') || [];
-            if (commodities.includes('AU')) score += 3;
-            // Common gold-associated minerals
-            if (commodities.includes('AG')) score += 1; // Silver
-            if (commodities.includes('CU')) score += 0.5; // Copper
-            if (commodities.includes('PB')) score += 0.5; // Lead
+            // Filter and score sites for gold mining potential
+            const scoredFeatures = features.map(feature => {
+                const props = feature.properties;
+                let score = 0;
+                
+                // Development status scoring
+                if (props.development_status === 'Producer') score += 3;
+                if (props.development_status === 'Past Producer') score += 2;
+                
+                // Name indicators
+                const nameLower = props.name?.toLowerCase() || '';
+                if (nameLower.includes('mine')) score += 1;
+                if (nameLower.includes('gold')) score += 2;
+                if (nameLower.includes('quartz')) score += 1;
+                
+                // Commodity scoring
+                const allCommodities = [
+                    ...(props.commodities.primary || []),
+                    ...(props.commodities.secondary || []),
+                    ...(props.commodities.tertiary || [])
+                ].map(c => c.toLowerCase());
+
+                if (allCommodities.some(c => c.includes('gold') || c.includes('au'))) score += 3;
+                if (allCommodities.some(c => c.includes('silver') || c.includes('ag'))) score += 1;
+                if (allCommodities.some(c => c.includes('copper') || c.includes('cu'))) score += 0.5;
+                
+                // Geological indicators
+                const hostRock = props.geology.host_rock?.toLowerCase() || '';
+                if (hostRock.includes('quartz') || hostRock.includes('vein')) score += 2;
+                
+                const oreMinerals = props.geology.ore_minerals.map(m => m.toLowerCase());
+                if (oreMinerals.some(m => m.includes('gold') || m.includes('electrum'))) score += 2;
+                if (oreMinerals.some(m => m.includes('pyrite') || m.includes('arsenopyrite'))) score += 1;
+                
+                const alteration = props.geology.alteration?.toLowerCase() || '';
+                if (alteration.includes('silicification') || alteration.includes('quartz')) score += 1;
+                
+                const depositType = props.geology.deposit_type?.toLowerCase() || '';
+                if (depositType.includes('lode') || depositType.includes('vein')) score += 2;
+                
+                // Production indicators
+                const prodSize = props.production.size?.toLowerCase() || '';
+                if (prodSize.includes('large')) score += 2;
+                if (prodSize.includes('medium')) score += 1;
+                
+                const prodGrade = props.production.grade?.toLowerCase() || '';
+                if (prodGrade.includes('high')) score += 2;
+                if (prodGrade.includes('medium')) score += 1;
+                
+                // Text analysis
+                const oreText = props.details.ore_text?.toLowerCase() || '';
+                const comments = props.details.comments?.toLowerCase() || '';
+                if (oreText.includes('gold') || oreText.includes('au')) score += 1;
+                if (comments.includes('gold') || comments.includes('au')) score += 1;
             
             return {
                 ...feature,

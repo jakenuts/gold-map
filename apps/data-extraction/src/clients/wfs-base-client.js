@@ -22,14 +22,26 @@ export class WFSBaseClient {
             maxLat: 41.740961
         };
 
-        // Initialize XML parser with common options
+        // Initialize XML parser with options tuned for USGS WFS
         this.xmlParser = new XMLParser({
             ignoreAttributes: false,
             attributeNamePrefix: '@_',
             parseAttributeValue: true,
-            textNodeName: '_text',
-            isArray: (name) => ['featureMember', 'coordinates'].indexOf(name) !== -1,
-            trimValues: true
+            textNodeName: '#text',
+            isArray: (name) => [
+                'featureMember',
+                'coordinates',
+                'element',
+                'sequence',
+                'complexType'
+            ].indexOf(name) !== -1,
+            removeNSPrefix: false,
+            trimValues: true,
+            parseTagValue: true,
+            parseTrueNumberOnly: true,
+            ignoreDeclaration: true,
+            ignorePiTags: true,
+            allowBooleanAttributes: true
         });
     }
 
@@ -79,6 +91,16 @@ export class WFSBaseClient {
     }
 
     /**
+     * Get feature type description from WFS service
+     */
+    async describeFeatureType() {
+        const response = await this.makeRequest('DescribeFeatureType', null, {
+            typeName: this.typeName
+        });
+        return response;
+    }
+
+    /**
      * Build request parameters for WFS operation
      */
     getRequestParams(operation, bbox, additionalParams = {}) {
@@ -95,6 +117,11 @@ export class WFSBaseClient {
             params.maxFeatures = this.maxFeatures.toString();
             if (bbox) {
                 params.bbox = this.formatBBox(bbox);
+            }
+            
+            // Only include propertyName if it has a non-empty value
+            if (additionalParams.propertyName === '') {
+                delete params.propertyName;
             }
         }
 
