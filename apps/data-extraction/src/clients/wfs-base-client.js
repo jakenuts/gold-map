@@ -119,7 +119,7 @@ export class WFSBaseClient {
                 params.bbox = this.formatBBox(bbox);
             }
             
-            // Only include propertyName if it has a non-empty value
+            // Don't specify propertyName to get all available fields
             if (additionalParams.propertyName === '') {
                 delete params.propertyName;
             }
@@ -154,6 +154,7 @@ export class WFSBaseClient {
 
             console.log(`Making ${operation} request to:`, url.toString());
 
+            console.log('Making request to URL:', url.toString());
             const response = await axios.get(url.toString(), {
                 headers: {
                     'Accept': 'application/xml',
@@ -168,6 +169,7 @@ export class WFSBaseClient {
             });
 
             if (typeof response.data === 'string') {
+                console.log('Raw XML response:', response.data.substring(0, 1000));
                 // Check for service exceptions
                 this.checkServiceException(response.data);
                 return response.data;
