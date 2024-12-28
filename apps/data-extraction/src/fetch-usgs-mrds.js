@@ -39,31 +39,19 @@ async function fetchMRDSData() {
             if (nameLower.includes('quartz')) score += 1;
             if (nameLower.includes('placer')) score += 1;
             
-            // Commodity scoring
+            // Commodity scoring - only use code_list to avoid double counting
             const commodities = props.commodities || [];
-            if (commodities.includes('AU')) score += 3;
-            if (commodities.includes('AG')) score += 1;
-            if (commodities.includes('CU')) score += 0.5;
+            const hasGold = commodities.includes('AU');
+            const hasSilver = commodities.includes('AG');
+            const hasCopper = commodities.includes('CU');
+
+            // Primary gold sites get higher score
+            if (hasGold && commodities[0] === 'AU') score += 4;
+            else if (hasGold) score += 3;
             
-            // Production size scoring
-            if (props.production_size === 'Large') score += 2;
-            if (props.production_size === 'Medium') score += 1;
-            
-            // Deposit type scoring
-            const depositType = props.deposit_type?.toLowerCase() || '';
-            if (depositType.includes('lode')) score += 2;
-            if (depositType.includes('vein')) score += 2;
-            if (depositType.includes('placer')) score += 1;
-            
-            // Workings type scoring
-            const workingsType = props.workings_type?.toLowerCase() || '';
-            if (workingsType.includes('underground')) score += 1;
-            if (workingsType.includes('surface')) score += 0.5;
-            
-            // Commodity description scoring
-            const commodityDesc = props.commodity_desc?.toLowerCase() || '';
-            if (commodityDesc.includes('gold')) score += 1;
-            if (commodityDesc.includes('silver')) score += 0.5;
+            // Secondary metals
+            if (hasSilver) score += 1;
+            if (hasCopper) score += 0.5;
             
             return {
                 ...feature,
@@ -88,9 +76,16 @@ async function fetchMRDSData() {
                 console.log(`Score ${score}: ${count} sites`);
             });
 
-        // Filter for features with high gold potential (score > 4)
+        // Filter for features with high gold potential (score > 6) and exclude placer mines
         const goldLodeFeatures = scoredFeatures
-            .filter(feature => feature.properties.goldPotentialScore > 4)
+            .filter(feature => {
+                const props = feature.properties;
+                const nameLower = props.name?.toLowerCase() || '';
+                // Exclude placer mines
+                if (nameLower.includes('placer')) return false;
+                // Only include high-scoring sites
+                return props.goldPotentialScore > 6;
+            })
             .sort((a, b) => b.properties.goldPotentialScore - a.properties.goldPotentialScore);
 
         // Log some examples of high-scoring sites
@@ -98,11 +93,10 @@ async function fetchMRDSData() {
         goldLodeFeatures.slice(0, 5).forEach(feature => {
             const props = feature.properties;
             console.log(`\n- ${props.name} (Score: ${props.goldPotentialScore})`);
+            console.log(`  Location: ${props.state} (County Code: ${props.county_code})`);
             console.log(`  Status: ${props.development_status}`);
             console.log(`  Commodities: ${props.commodity_desc}`);
-            console.log(`  Deposit Type: ${props.deposit_type}`);
-            console.log(`  Production Size: ${props.production_size}`);
-            console.log(`  Workings: ${props.workings_type}`);
+            console.log(`  URL: ${props.url}`);
         });
 
         // Create output directory if it doesn't exist

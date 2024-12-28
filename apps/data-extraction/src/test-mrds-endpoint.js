@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 async function testMRDSEndpoint() {
-    const url = new URL('https://mrdata.usgs.gov/wfs/mrds');
+    const url = new URL('https://mrdata.usgs.gov/services/wfs/mrds');
     
     // Basic WFS GetFeature request parameters
     const params = {

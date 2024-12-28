@@ -3,7 +3,7 @@ import { WFSBaseClient } from './wfs-base-client.js';
 export class USGSMRDSClient extends WFSBaseClient {
     constructor() {
         super({
-            baseUrl: 'https://mrdata.usgs.gov/wfs/mrds',
+            baseUrl: 'https://mrdata.usgs.gov/services/wfs/mrds',
             version: '1.0.0',
             typeName: 'mrds',
             srsName: 'EPSG:4326',
@@ -23,48 +23,39 @@ export class USGSMRDSClient extends WFSBaseClient {
                 return null;
             }
 
-            // Split the coordinate string on common delimiters
-            const parts = coordStr.trim().split(/[,\s]+/);
+            // Take just the first coordinate pair (they're duplicated)
+            const firstPair = coordStr.trim().split(' ')[0];
             
-            // If we got exactly two parts, try parsing them
-            if (parts.length === 2) {
-                const [lon, lat] = parts.map(parseFloat);
-                
-                // Validate the coordinates
-                if (!isNaN(lon) && !isNaN(lat) && 
-                    Math.abs(lon) <= 180 && Math.abs(lat) <= 90) {
-                    return [lon, lat];
-                }
-                console.warn('Invalid coordinate values:', lon, lat);
+            // Find the decimal points
+            const firstDecimal = firstPair.indexOf('.');
+            if (firstDecimal === -1) {
+                console.warn('No decimal point found in coordinate string:', firstPair);
                 return null;
             }
             
-            // Fallback to original concatenated string parsing if needed
-            const cleanStr = coordStr.trim();
-            const firstDecimal = cleanStr.indexOf('.');
-            
-            if (firstDecimal > 0) {
-                // Look for the second number start after some decimal places
-                let secondNumStart = -1;
-                for (let i = firstDecimal + 7; i < cleanStr.length; i++) {
-                    if (cleanStr[i] === '-' || (!isNaN(cleanStr[i]) && cleanStr[i] !== '.')) {
-                        secondNumStart = i;
-                        break;
-                    }
-                }
-                
-                if (secondNumStart > 0) {
-                    const lon = parseFloat(cleanStr.substring(0, secondNumStart));
-                    const lat = parseFloat(cleanStr.substring(secondNumStart));
-                    
-                    if (!isNaN(lon) && !isNaN(lat) && 
-                        Math.abs(lon) <= 180 && Math.abs(lat) <= 90) {
-                        return [lon, lat];
-                    }
-                }
+            // Find the second decimal by skipping the first one
+            const secondDecimal = firstPair.indexOf('.', firstDecimal + 1);
+            if (secondDecimal === -1) {
+                console.warn('Second decimal point not found in coordinate string:', firstPair);
+                return null;
             }
-            
-            console.warn('Failed to parse coordinate string:', coordStr);
+
+            // Extract the numbers
+            const lon = parseFloat(firstPair.substring(0, secondDecimal - 2)); // -2 to handle the digits before the second decimal
+            const lat = parseFloat(firstPair.substring(secondDecimal - 2));
+
+            // Validate the numbers
+            if (isNaN(lon) || isNaN(lat)) {
+                console.warn('Failed to parse numbers:', { lon, lat, original: firstPair });
+                return null;
+            }
+
+            // Validate coordinate ranges
+            if (Math.abs(lon) <= 180 && Math.abs(lat) <= 90) {
+                return [lon, lat];
+            }
+
+            console.warn('Coordinates out of range:', { lon, lat });
             return null;
         } catch (error) {
             console.warn('Error parsing coordinates:', error);
@@ -82,12 +73,8 @@ export class USGSMRDSClient extends WFSBaseClient {
             const descXml = await this.describeFeatureType();
             console.log('Feature type description:', descXml);
 
-            // Request features with basic fields first
-            const xmlData = await this.getFeatures(bbox, {
-                propertyName: [
-                    'dep_id', 'site_name', 'dev_stat'
-                ].map(field => `ms:${field}`).join(',')
-            });
+            // Request all features without restricting fields
+            const xmlData = await this.getFeatures(bbox);
             
             if (!xmlData) {
                 console.error('No XML data received from WFS service');
@@ -118,21 +105,30 @@ export class USGSMRDSClient extends WFSBaseClient {
                     return null;
                 }
 
-                // Map raw properties to schema properties with improved field handling
+                // Parse FIPS code for state/county info
+                const fipsCode = feature['ms:fips_code'] || '';
+                const stateCode = fipsCode.substring(1, 3); // Skip 'f' prefix
+                const countyCode = fipsCode.substring(3);
+                
+                // Map state codes to names
+                const stateMap = {
+                    '06': 'California',
+                    '41': 'Oregon'
+                };
+
+                // Map raw properties to schema properties
                 const properties = {
                     name: feature['ms:site_name'] || 'Unknown',
                     id: feature['ms:dep_id'] || null,
                     development_status: feature['ms:dev_stat'] || null,
-                    commodities: (feature['ms:commodity'] || '').trim().split(/[,;]\s*/).filter(Boolean),
-                    commodity_desc: feature['ms:commodity'] || '',
-                    production_size: feature['ms:prod_size'] || null,
-                    ore_control: feature['ms:ore_ctrl'] || null,
-                    deposit_type: feature['ms:dep_type'] || null,
-                    workings_type: feature['ms:work_type'] || null,
+                    commodities: (feature['ms:code_list'] || '').trim().split(/[,\s]+/).filter(Boolean),
+                    commodity_desc: feature['ms:code_list'] || '',
                     url: feature['ms:url'] || null,
-                    fips_code: feature['ms:fips_cd'] || null,
-                    huc_code: feature['ms:huc_cd'] || null,
-                    quad_name: feature['ms:quad_name'] || null
+                    state: stateMap[stateCode] || null,
+                    county_code: countyCode || null,
+                    fips_code: feature['ms:fips_code'] || null,
+                    huc_code: feature['ms:huc_code'] || null,
+                    quad_code: feature['ms:quad_code'] || null
                 };
 
                 return {
