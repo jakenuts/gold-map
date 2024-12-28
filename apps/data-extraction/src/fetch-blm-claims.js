@@ -60,17 +60,67 @@ async function fetchAllClaims() {
         feature.properties.status = 'closed';
     });
 
+    // Create a map to track overlapping claims
+    const locationMap = new Map();
+    
+    // Process active claims first
+    activeClaims.features.forEach(feature => {
+        const coords = JSON.stringify(feature.geometry.coordinates);
+        if (!locationMap.has(coords)) {
+            locationMap.set(coords, { active: [], closed: [] });
+        }
+        locationMap.get(coords).active.push(feature);
+    });
+    
+    // Process closed claims and check for overlaps
+    closedClaims.features.forEach(feature => {
+        const coords = JSON.stringify(feature.geometry.coordinates);
+        if (!locationMap.has(coords)) {
+            locationMap.set(coords, { active: [], closed: [] });
+        }
+        locationMap.get(coords).closed.push(feature);
+    });
+    
+    // Add overlap information to features
+    locationMap.forEach(({active, closed}, coords) => {
+        const hasOverlap = active.length > 0 && closed.length > 0;
+        [...active, ...closed].forEach(feature => {
+            feature.properties.hasOverlap = hasOverlap;
+            feature.properties.totalClaimsAtLocation = active.length + closed.length;
+        });
+    });
+
     // Combine active and closed claims
     const combinedClaims = {
         type: 'FeatureCollection',
         features: [...activeClaims.features, ...closedClaims.features]
     };
 
-    // Save the raw GeoJSON data
-    const outputPath = path.join(__dirname, '..', 'extracted', 'blm_mining_claims.geojson');
-    await fs.writeFile(outputPath, JSON.stringify(combinedClaims, null, 2));
+    // Save the raw GeoJSON data for combined, active, and closed claims
+    const outputDir = path.join(__dirname, '..', 'extracted');
     
-    console.log(`Saved ${combinedClaims.features.length} mining claims to blm_mining_claims.geojson`);
+    // Write combined claims
+    const combinedPath = path.join(outputDir, 'blm_mining_claims.geojson');
+    await fs.writeFile(combinedPath, JSON.stringify(combinedClaims, null, 2));
+    
+    // Write active claims
+    const activePath = path.join(outputDir, 'blm_mining_claims_active.geojson');
+    await fs.writeFile(activePath, JSON.stringify({
+        type: 'FeatureCollection',
+        features: activeClaims.features
+    }, null, 2));
+    
+    // Write closed claims
+    const closedPath = path.join(outputDir, 'blm_mining_claims_closed.geojson');
+    await fs.writeFile(closedPath, JSON.stringify({
+        type: 'FeatureCollection',
+        features: closedClaims.features
+    }, null, 2));
+    
+    console.log(`Saved ${combinedClaims.features.length} total mining claims:`);
+    console.log(`- ${activeClaims.features.length} active claims to blm_mining_claims_active.geojson`);
+    console.log(`- ${closedClaims.features.length} closed claims to blm_mining_claims_closed.geojson`);
+    console.log('- Combined claims saved to blm_mining_claims.geojson');
     
     return combinedClaims;
 }

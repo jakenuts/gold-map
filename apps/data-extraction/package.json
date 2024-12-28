@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "fetch-blm": "node src/fetch-blm-claims.js",
+    "fetch-mrds": "node src/fetch-usgs-mrds.js",
     "combine-data": "node src/create-combined-gold-data.js",
-    "process-all": "node src/compile-northern-california.js && node src/fetch-blm-claims.js && node src/create-combined-gold-data.js",
+    "process-all": "node src/compile-northern-california.js && node src/fetch-blm-claims.js && node src/fetch-usgs-mrds.js && node src/create-combined-gold-data.js",
     "generate-focused-gold":"node src/create-focused-gold-geojson.js"
   },
   "keywords": [],
@@ -15,7 +16,10 @@
   "description": "Tools for extracting and combining USGS and BLM mining data",
   "dependencies": {
     "node-fetch": "^3.3.2",
-    "tokml": "^0.4.0"
+    "tokml": "^0.4.0",
+    "axios": "^1.7.9",
+    "fast-xml-parser": "^4.5.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/node": "^20.10.5",
