@@ -116,28 +116,43 @@ export class USGSMRDSClient extends WFSBaseClient {
                     '41': 'Oregon'
                 };
 
-                // Map raw properties to schema properties
-                const properties = {
-                    name: feature['ms:site_name'] || 'Unknown',
-                    id: feature['ms:dep_id'] || null,
-                    development_status: feature['ms:dev_stat'] || null,
-                    commodities: (feature['ms:code_list'] || '').trim().split(/[,\s]+/).filter(Boolean),
-                    commodity_desc: feature['ms:code_list'] || '',
-                    url: feature['ms:url'] || null,
-                    state: stateMap[stateCode] || null,
-                    county_code: countyCode || null,
-                    fips_code: feature['ms:fips_code'] || null,
-                    huc_code: feature['ms:huc_code'] || null,
-                    quad_code: feature['ms:quad_code'] || null
-                };
+                // Get development status for subcategory
+                const devStatus = feature['ms:dev_stat'] || 'Unknown';
 
+                // Format data for compatibility with data manager
                 return {
-                    type: 'Feature',
-                    geometry: {
+                    id: feature['ms:dep_id'] || String(index),
+                    name: feature['ms:site_name'] || 'Unknown',
+                    category: 'mineral_deposit',
+                    subcategory: devStatus,
+                    location: {
                         type: 'Point',
                         coordinates
                     },
-                    properties
+                    properties: {
+                        // Basic info
+                        development_status: devStatus,
+                        commodities: (feature['ms:code_list'] || '').trim().split(/[,\s]+/).filter(Boolean),
+                        commodity_desc: feature['ms:code_list'] || '',
+                        
+                        // Location info
+                        state: stateMap[stateCode] || null,
+                        county_code: countyCode || null,
+                        fips_code: feature['ms:fips_code'] || null,
+                        huc_code: feature['ms:huc_code'] || null,
+                        quad_code: feature['ms:quad_code'] || null,
+                        
+                        // Reference info
+                        url: feature['ms:url'] || null,
+                        
+                        // Coordinates for popup display
+                        latitude: coordinates[1],
+                        longitude: coordinates[0]
+                    },
+                    dataSource: {
+                        name: 'USGS MRDS',
+                        description: 'USGS Mineral Resources Data System'
+                    }
                 };
             }).filter(feature => feature !== null);
 

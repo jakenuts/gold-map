@@ -33,7 +33,7 @@ async function fetchMRDSData() {
             if (props.development_status === 'Prospect') score += 1;
             
             // Name indicators
-            const nameLower = props.name?.toLowerCase() || '';
+            const nameLower = feature.name?.toLowerCase() || '';
             if (nameLower.includes('mine')) score += 1;
             if (nameLower.includes('gold')) score += 2;
             if (nameLower.includes('quartz')) score += 1;
@@ -80,7 +80,7 @@ async function fetchMRDSData() {
         const goldLodeFeatures = scoredFeatures
             .filter(feature => {
                 const props = feature.properties;
-                const nameLower = props.name?.toLowerCase() || '';
+                const nameLower = feature.name?.toLowerCase() || '';
                 // Exclude placer mines
                 if (nameLower.includes('placer')) return false;
                 // Only include high-scoring sites
@@ -92,7 +92,7 @@ async function fetchMRDSData() {
         console.log('\nTop 5 highest scoring sites:');
         goldLodeFeatures.slice(0, 5).forEach(feature => {
             const props = feature.properties;
-            console.log(`\n- ${props.name} (Score: ${props.goldPotentialScore})`);
+            console.log(`\n- ${feature.name} (Score: ${props.goldPotentialScore})`);
             console.log(`  Location: ${props.state} (County Code: ${props.county_code})`);
             console.log(`  Status: ${props.development_status}`);
             console.log(`  Commodities: ${props.commodity_desc}`);
@@ -105,19 +105,45 @@ async function fetchMRDSData() {
 
         // Save all MRDS features
         const allOutputPath = path.join(outputDir, 'usgs_mrds_sites.geojson');
+        console.log('\nSaving all MRDS features...');
         await fs.writeFile(allOutputPath, JSON.stringify({
             type: 'FeatureCollection',
-            features: features
+            features: features.map(feature => ({
+                type: 'Feature',
+                geometry: {
+                    type: 'Point',
+                    coordinates: feature.location.coordinates
+                },
+                properties: {
+                    ...feature.properties,
+                    name: feature.name,
+                    id: feature.id,
+                    development_status: feature.subcategory
+                }
+            }))
         }, null, 2));
+        console.log(`Saved ${features.length} total MRDS sites to usgs_mrds_sites.geojson`);
 
         // Save filtered gold lode features
         const goldOutputPath = path.join(outputDir, 'usgs_mrds_gold_lode.geojson');
+        console.log('\nSaving gold lode features...');
         await fs.writeFile(goldOutputPath, JSON.stringify({
             type: 'FeatureCollection',
-            features: goldLodeFeatures
+            features: goldLodeFeatures.map(feature => ({
+                type: 'Feature',
+                geometry: {
+                    type: 'Point',
+                    coordinates: feature.location.coordinates
+                },
+                properties: {
+                    ...feature.properties,
+                    name: feature.name,
+                    id: feature.id,
+                    development_status: feature.subcategory,
+                    goldPotentialScore: feature.properties.goldPotentialScore
+                }
+            }))
         }, null, 2));
-
-        console.log(`\nSaved ${features.length} total MRDS sites to usgs_mrds_sites.geojson`);
         console.log(`Saved ${goldLodeFeatures.length} gold/quartz lode sites to usgs_mrds_gold_lode.geojson`);
         
         return { features, goldLodeFeatures };

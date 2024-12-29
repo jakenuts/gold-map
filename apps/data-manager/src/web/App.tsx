@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Map } from './components/Map';
+import { FileUpload } from './components/FileUpload';
+import './styles.css';
 
 interface Location {
   id: string;
@@ -32,6 +34,26 @@ interface IngestResponse {
   };
 }
 
+// GeoJSON types
+interface GeoJSONFeature {
+  type: 'Feature';
+  geometry: {
+    type: 'Point';
+    coordinates: [number, number];
+  };
+  properties: {
+    id?: string;
+    name?: string;
+    development_status?: string;
+    [key: string]: any;
+  };
+}
+
+interface GeoJSONFeatureCollection {
+  type: 'FeatureCollection';
+  features: GeoJSONFeature[];
+}
+
 const DEFAULT_CENTER: [number, number] = [40.9061, -123.4003];
 const DEFAULT_ZOOM = 8;
 const API_BASE_URL = 'http://localhost:3010';
@@ -48,6 +70,7 @@ export default function App() {
   const [selectedCategory, setSelectedCategory] = useState<string>('mineral_deposit');
   const [selectedSubcategory, setSelectedSubcategory] = useState<string>('');
   const [lastRefreshStats, setLastRefreshStats] = useState<IngestResponse['stats'] | null>(null);
+  const [selectedFile, setSelectedFile] = useState<string | null>(null);
 
   useEffect(() => {
     fetchCategories();
@@ -123,6 +146,57 @@ export default function App() {
     }
   };
 
+  const handleFileUpload = async (file: File) => {
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      const text = await file.text();
+      const geojson = JSON.parse(text) as GeoJSONFeatureCollection;
+
+      if (!geojson.features || !Array.isArray(geojson.features)) {
+        throw new Error('Invalid GeoJSON: missing features array');
+      }
+
+      // Transform GeoJSON features to Location format
+      const transformedLocations: Location[] = geojson.features.map((feature: GeoJSONFeature, index: number) => ({
+        id: feature.properties?.id || String(index),
+        name: feature.properties?.name || `Location ${index}`,
+        category: 'mineral_deposit',
+        subcategory: feature.properties?.development_status || 'Unknown',
+        location: {
+          coordinates: feature.geometry.coordinates
+        },
+        properties: {
+          ...feature.properties,
+          // Add any additional property transformations here
+        },
+        dataSource: {
+          name: 'GeoJSON Upload',
+          description: `Uploaded from ${file.name}`
+        }
+      }));
+
+      setLocations(transformedLocations);
+      setLastRefreshStats({
+        totalLocations: transformedLocations.length,
+        sources: ['GeoJSON Upload'],
+        categories: ['mineral_deposit']
+      });
+
+      // Update categories if needed
+      const subcategories = [...new Set(transformedLocations.map(loc => loc.subcategory))];
+      setCategories([{ category: 'mineral_deposit', subcategories }]);
+
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to parse GeoJSON file');
+      console.error('Error processing file:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const currentCategory = categories.find(c => c.category === selectedCategory);
 
   const renderRefreshStats = () => {
@@ -142,6 +216,14 @@ export default function App() {
     React.createElement('div', { key: 'header', className: 'header' }, [
       React.createElement('h1', { key: 'title' }, 'GeoData Manager'),
       React.createElement('div', { key: 'controls', className: 'controls' }, [
+        // File upload component
+        React.createElement(FileUpload, {
+          key: 'file-upload',
+          onFileSelect: handleFileUpload,
+          loading: loading,
+          accept: '.json,.geojson',
+          maxSize: 50 * 1024 * 1024 // 50MB limit
+        }),
         React.createElement('select', {
           key: 'category-select',
           value: selectedCategory,
