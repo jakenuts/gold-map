@@ -4,6 +4,7 @@
   "pipeline": {
     "build": {
       "dependsOn": ["^build"],
+<<<<<<< HEAD
       "outputs": ["dist/**", ".tsbuildinfo"]
     },
     "@gold-map/core#build": {
@@ -12,6 +13,9 @@
     "@gold-map/data-sources#build": {
       "dependsOn": ["@gold-map/core#build"],
       "outputs": ["dist/**", ".tsbuildinfo"]
+=======
+      "outputs": ["dist/**"]
+>>>>>>> 351aa1e (Cleaned up.)
     },
     "dev": {
       "cache": false,

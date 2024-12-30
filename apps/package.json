@@ -11,7 +11,10 @@
     "clean": "turbo run clean",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "cleanup": "node tools/scripts/cleanup.js",
+<<<<<<< HEAD
     "cleanup:deep": "node tools/scripts/deep-cleanup.js",
+=======
+>>>>>>> 351aa1e (Cleaned up.)
     "setup": "pnpm install && pnpm build",
     "start": "turbo run start",
     "docker:up": "docker compose up -d",
